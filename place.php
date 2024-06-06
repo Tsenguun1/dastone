@@ -44,7 +44,7 @@
                         <ul class="nav-second-level" aria-expanded="false">
                             <li class="nav-item"><a class="nav-link" href="place.php"><i class="ti-control-record"></i>Газар нэгж</a></li>
                             <li class="nav-item"><a class="nav-link" href="#.php"><i class="ti-control-record"></i>Албан тушаал</a></li> 
-                            <li class="nav-item"><a class="nav-link" href="#.php"><i class="ti-control-record"></i>Ажилтны бүртгэл</a></li> 
+                            <li class="nav-item"><a class="nav-link" href="worker.php"><i class="ti-control-record"></i>Ажилтны бүртгэл</a></li> 
                         </ul>
                     </li>
                     <hr class="hr-dashed hr-menu">                           
