@@ -6,6 +6,146 @@ use Illuminate\Support\Facades\DB;
 
 class NewController extends Controller
 {
+    public function viewemployee()
+    {
+        return view('viewemployee');
+    }
+
+    public function addemployee()
+    {
+        return view('addemployee');
+    }
+
+    public function addFormemployee()
+    {
+        $conn = $this->db_conn(); 
+
+        if (isset($_POST['submit'])) {
+            $Last_Name = $_POST['last_name'];
+            $First_Name = $_POST['first_name'];
+            $Register = $_POST['reg_number'];
+            $Position = $_POST['position'];
+            $Email = $_POST['email'];
+            $HandPhone = $_POST['phone_number'];
+            $Gender = $_POST['gender'];
+            $Register = $_POST['reg_number'];
+            $BirthDate = $_POST['birth_date'];
+            $StartDate = $_POST['start_date'];
+            $HomePhone = $_POST['home_number'];
+            $WorkPhone = $_POST['work_number'];
+            $Photo = $_POST['photo'];
+            $Status = $_POST['state'];
+            $editEmpId = '6666';
+            $DepId = '9';
+            $Pass = 'pass';
+            $editDate = date('Y-m-d');
+            $finger = '12345678';
+            $Pass_Date = date('Y-m-d');
+            $PASS_EXPIRE_TERM = '3';
+
+            $sql = "INSERT INTO ORG_EMPLOYEE (REGISTER,	FIRSTNAME,	LASTNAME,	POS_ID,	DEP_ID,	EMAIL,	PASS,	WORK_DATE,	STATUS,	BIRTHDATE,	HANDPHONE,	HOMEPHONE,	WORKPHONE,	FINGERID,	SEX,	PICTURE_LINK,	EDIT_DATE,	EDIT_EMPID,	PASS_DATE,	PASS_EXPIRE_TERM,	PASS_ENDDATE,	PASS_WRONG,	LAST_LOGINDATE	) 
+                    VALUES ('$Register', '$First_Name', '$Last_Name','$Position','$DepId','$Email','$Pass','$StartDate','$Status','$BirthDate','$HandPhone','$HomePhone','$WorkPhone','$finger','$Gender','$Photo','$editDate','$editEmpId','$Pass_Date','$PASS_EXPIRE_TERM','$editDate','$PASS_EXPIRE_TERM','$editDate')";
+
+            if (mysqli_query($conn, $sql)) {
+                return view('addemployee');
+            } else {
+                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+            }
+        }
+    }
+
+    public function deleteemployee($id)
+    {
+        $conn = $this->db_conn(); 
+
+        $sql = "DELETE FROM ORG_EMPLOYEE WHERE EMP_ID='$id'";
+
+        if (mysqli_query($conn, $sql)) {
+            mysqli_close($conn);
+            return redirect()->route('viewemployee');
+        } else {
+            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        }
+    }
+
+    public function updateemployee(Request $request, $id)
+{
+    $conn = $this->db_conn(); 
+
+    if ($request->isMethod('post')) {
+        $Last_Name = $request->input('last_name');
+        $First_Name = $request->input('first_name');
+        $Register = $request->input('reg_number');
+        $Position = $request->input('position');
+        $Email = $request->input('email');
+        $HandPhone = $request->input('phone_number');
+        $Gender = $request->input('gender');
+        $BirthDate = $request->input('birth_date');
+        $StartDate = $request->input('start_date');
+        $HomePhone = $request->input('home_number');
+        $WorkPhone = $request->input('work_number');
+        $Photo = $request->input('photo');  // Handle file uploads separately if applicable
+        $Status = $request->input('state');
+        $editEmpId = '6666';
+        $DepId = '9';
+        $Pass = 'pass';
+        $editDate = date('Y-m-d');
+        $finger = '12345678';
+        $Pass_Date = date('Y-m-d');
+        $PASS_EXPIRE_TERM = '3';
+
+        $sql = "UPDATE ORG_EMPLOYEE SET 
+                REGISTER='$Register', 
+                FIRSTNAME='$First_Name', 
+                LASTNAME='$Last_Name', 
+                POS_ID='$Position', 
+                DEP_ID='$DepId', 
+                EMAIL='$Email', 
+                PASS='$Pass', 
+                WORK_DATE='$StartDate', 
+                STATUS='$Status', 
+                BIRTHDATE='$BirthDate', 
+                HANDPHONE='$HandPhone', 
+                HOMEPHONE='$HomePhone', 
+                WORKPHONE='$WorkPhone', 
+                FINGERID='$finger', 
+                SEX='$Gender', 
+                PICTURE_LINK='$Photo', 
+                EDIT_DATE='$editDate', 
+                EDIT_EMPID='$editEmpId', 
+                PASS_DATE='$Pass_Date', 
+                PASS_EXPIRE_TERM='$PASS_EXPIRE_TERM', 
+                PASS_ENDDATE='$editDate', 
+                PASS_WRONG='$PASS_EXPIRE_TERM', 
+                LAST_LOGINDATE='$editDate'
+                WHERE EMP_ID='$id'";
+
+        if (mysqli_query($conn, $sql)) {
+            mysqli_close($conn);
+            return redirect()->route('viewemployee');
+        } else {
+            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        }
+    } else {
+        $sql = "SELECT * FROM ORG_EMPLOYEE WHERE EMP_ID='$id'";
+        $result = mysqli_query($conn, $sql);
+        $place = mysqli_fetch_assoc($result);
+
+        mysqli_close($conn);
+
+        return view('updateemployee', compact('place'));
+    }
+}
+
+
+
+
+
+
+
+
+
+
     public function viewposition()
     {
         return view('viewposition');
@@ -90,33 +230,6 @@ class NewController extends Controller
     
 
 
-
-
-
-
-
-    public function showForm()
-    {
-        $conn = $this->db_conn();
-        $sql = "SELECT D.DEP_ID, D.DEP_NAME, D.STATUS, D.SORT_ORDER, LEVEL
-                FROM ORG_DEPARTMENT D
-                LEFT JOIN ORG_EMPLOYEE E ON E.EMP_ID = D.DIRECTOR_EMPID
-                WHERE D.STATUS != 'D'
-                START WITH D.PARENT_DEPID IS NULL
-                CONNECT BY PRIOR D.DEP_ID = D.PARENT_DEPID AND D.STATUS != 'D'
-                ORDER SIBLINGS BY D.SORT_ORDER";
-        
-        $result = mysqli_query($conn, $sql);
-        $departments = [];
-        
-        while ($row = mysqli_fetch_assoc($result)) {
-            $departments[] = $row;
-        }
-
-        mysqli_close($conn);
-
-        return view('addplace', compact('departments'));
-    }
 
     public function viewplace()
     {

@@ -7,7 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/addplace', [NewController::class, 'showForm'])->name('showform');
 Route::post('/addform', [NewController::class, 'addForm'])->name('addform');
 Route::get('/place', [NewController::class, 'viewplace'])->name('viewplace');
 Route::get('/place/add', [NewController::class, 'addplace'])->name('addplace');
@@ -19,3 +18,9 @@ Route::get('/position', [NewController::class, 'viewposition'])->name('viewposit
 Route::get('/position/add', [NewController::class, 'addposition'])->name('addposition');
 Route::match(['get', 'post'], '/position/update/{id}', [NewController::class, 'updateposition'])->name('updateposition');
 Route::get('/delete-position/{id}', [NewController::class, 'deleteposition'])->name('deleteposition');
+
+Route::post('/addformemployee', [NewController::class, 'addFormemployee'])->name('addformemployee');
+Route::get('/employee', [NewController::class, 'viewemployee'])->name('viewemployee');
+Route::get('/employee/add', [NewController::class, 'addemployee'])->name('addemployee');
+Route::match(['get', 'post'], '/employee/update/{id}', [NewController::class, 'updateemployee'])->name('updateemployee');
+Route::get('/delete-employee/{id}', [NewController::class, 'deleteemployee'])->name('deleteemployee');
