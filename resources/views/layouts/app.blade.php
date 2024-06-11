@@ -36,7 +36,7 @@
                     <ul class="nav-second-level" aria-expanded="false">
                         <li class="nav-item"><a class="nav-link" href="{{ route('viewplace') }}"><i class="ti-control-record"></i>Газар нэгж</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('viewposition') }}"><i class="ti-control-record"></i>Албан тушаал</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="ti-control-record"></i>Ажилтны бүртгэл</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('viewemployee') }}"><i class="ti-control-record"></i>Ажилтны бүртгэл</a></li>
                     </ul>
                 </li>
                 <hr class="hr-dashed hr-menu">
