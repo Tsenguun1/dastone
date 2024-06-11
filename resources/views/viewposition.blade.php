@@ -11,7 +11,7 @@
                 $sname = "localhost";
                 $unmae = "root";
                 $password = "";
-                $db_name = "dastone";
+                $db_name = "trans_database";
                 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 
                 if (!$conn) {
