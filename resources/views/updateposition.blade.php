@@ -11,8 +11,8 @@
         <label for="status" class="form-check-label">Төлөв:</label>
         <select id="status" name="status" required>
             
-            <option value="A" @if ($place['STATUS'] == 'Идэвхитэй') selected @endif>Идэвхитэй</option>
-            <option value="N" @if ($place['STATUS'] == 'Идэвхгүй') selected @endif>Идэвхгүй</option>
+            <option value="A" @if ($place['STATUS'] == 'A') selected @endif>Идэвхитэй</option>
+            <option value="N" @if ($place['STATUS'] == 'N') selected @endif>Идэвхгүй</option>
         </select><br>
 
         <label for="sortOrder" class="form-check-label">Эрэмбэ:</label>

@@ -36,7 +36,7 @@ class NewController extends Controller
             $Photo = $_POST['photo'];
             $Status = $_POST['state'];
             $editEmpId = '6666';
-            $DepId = '9';
+            $DepId = $_POST['place'];
             $Pass = 'pass';
             $editDate = date('Y-m-d');
             $finger = '12345678';
@@ -47,7 +47,7 @@ class NewController extends Controller
                     VALUES ('$Register', '$First_Name', '$Last_Name','$Position','$DepId','$Email','$Pass','$StartDate','$Status','$BirthDate','$HandPhone','$HomePhone','$WorkPhone','$finger','$Gender','$Photo','$editDate','$editEmpId','$Pass_Date','$PASS_EXPIRE_TERM','$editDate','$PASS_EXPIRE_TERM','$editDate')";
 
             if (mysqli_query($conn, $sql)) {
-                return view('addemployee');
+                return view('viewemployee');
             } else {
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -87,7 +87,7 @@ class NewController extends Controller
         $Photo = $request->input('photo');  // Handle file uploads separately if applicable
         $Status = $request->input('state');
         $editEmpId = '6666';
-        $DepId = '9';
+        $DepId = $_POST['place'];
         $Pass = 'pass';
         $editDate = date('Y-m-d');
         $finger = '12345678';

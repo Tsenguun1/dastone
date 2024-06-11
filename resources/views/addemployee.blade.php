@@ -25,12 +25,69 @@
        
             <label class="form-label" for="reg_number">Регистрийн дугаар:</label>
             <input class="form-control" type="text" id="reg_number" name="reg_number" required>
+
+            <label class="form-label" for="place">Газар нэгж:</label>
+            <select class="form-control" id="place" name="place" required>
+                <option value="">[Сонгоно уу]</option>
+                <?php
+                $sname = "localhost";
+                $uname = "root"; 
+                $password = "";
+                $db_name = "dastone";
+
+                $conn = mysqli_connect($sname, $uname, $password, $db_name); 
+
+                // Check connection
+                if (!$conn) {
+                    echo "Connection failed!";
+                } else {
+                    $sql = "SELECT DEP_ID, DEP_NAME FROM ORG_DEPARTMENT";
+
+                    $stmt = mysqli_query($conn, $sql);
+                    if($stmt) {
+                        while($row = mysqli_fetch_assoc($stmt)) {
+                            ?>
+                            <option value="<?= $row["DEP_ID"] ?>">
+                                <?= $row["DEP_NAME"] ?>
+                            </option>
+                            <?php
+                        }
+                    }
+                    mysqli_close($conn); // Close the connection when done
+                }
+                ?>
+            </select>
         
             <label class="form-label" for="position">Албан тушаал:</label>
             <select class="form-control" id="position" name="position" required>
-                <option value="Founder">Founder</option>
-                <option value="CEO">CEO</option>
-                <option value="Security">Security</option>
+            <option value="">[Сонгоно уу]</option>
+                <?php
+                $sname = "localhost";
+                $uname = "root"; 
+                $password = "";
+                $db_name = "dastone";
+
+                $conn = mysqli_connect($sname, $uname, $password, $db_name); 
+
+                // Check connection
+                if (!$conn) {
+                    echo "Connection failed!";
+                } else {
+                    $sql = "SELECT POS_ID, POS_NAME FROM ORG_POSITION";
+
+                    $stmt = mysqli_query($conn, $sql);
+                    if($stmt) {
+                        while($row = mysqli_fetch_assoc($stmt)) {
+                            ?>
+                            <option value="<?= $row["POS_ID"] ?>">
+                                <?= $row["POS_NAME"] ?>
+                            </option>
+                            <?php
+                        }
+                    }
+                    mysqli_close($conn); // Close the connection when done
+                }
+                ?>
             </select>
       
             <label class="form-label" for="email">И-мэйл:</label>
