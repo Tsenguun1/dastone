@@ -12,14 +12,9 @@ class NewController extends Controller
         return view('viewemployee');
     }
 
-    public function addemployee()
-    {
-        return view('addemployee');
-    }
-
     public function addFormemployee()
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         if (isset($_POST['submit'])) {
             $Last_Name = $_POST['last_name'];
@@ -54,10 +49,9 @@ class NewController extends Controller
             }
         }
     }
-
     public function deleteemployee($id)
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         $sql = "DELETE FROM ORG_EMPLOYEE WHERE EMP_ID='$id'";
 
@@ -68,98 +62,13 @@ class NewController extends Controller
             echo "Error: " . $sql . "<br>" . mysqli_error($conn);
         }
     }
-
-    public function updateemployee(Request $request, $id)
-{
-    $conn = $this->db_conn(); 
-
-    if ($request->isMethod('post')) {
-        $Last_Name = $request->input('last_name');
-        $First_Name = $request->input('first_name');
-        $Register = $request->input('reg_number');
-        $Position = $request->input('position');
-        $Email = $request->input('email');
-        $HandPhone = $request->input('phone_number');
-        $Gender = $request->input('gender');
-        $BirthDate = $request->input('birth_date');
-        $StartDate = $request->input('start_date');
-        $HomePhone = $request->input('home_number');
-        $WorkPhone = $request->input('work_number');
-        $Photo = $request->input('photo');  // Handle file uploads separately if applicable
-        $Status = $request->input('state');
-        $editEmpId = '6666';
-        $DepId = $_POST['place'];
-        $Pass = 'pass';
-        $editDate = date('Y-m-d');
-        $finger = '12345678';
-        $Pass_Date = date('Y-m-d');
-        $PASS_EXPIRE_TERM = '3';
-
-        $sql = "UPDATE ORG_EMPLOYEE SET 
-                REGISTER='$Register', 
-                FIRSTNAME='$First_Name', 
-                LASTNAME='$Last_Name', 
-                POS_ID='$Position', 
-                DEP_ID='$DepId', 
-                EMAIL='$Email', 
-                PASS='$Pass', 
-                WORK_DATE='$StartDate', 
-                STATUS='$Status', 
-                BIRTHDATE='$BirthDate', 
-                HANDPHONE='$HandPhone', 
-                HOMEPHONE='$HomePhone', 
-                WORKPHONE='$WorkPhone', 
-                FINGERID='$finger', 
-                SEX='$Gender', 
-                PICTURE_LINK='$Photo', 
-                EDIT_DATE='$editDate', 
-                EDIT_EMPID='$editEmpId', 
-                PASS_DATE='$Pass_Date', 
-                PASS_EXPIRE_TERM='$PASS_EXPIRE_TERM', 
-                PASS_ENDDATE='$editDate', 
-                PASS_WRONG='$PASS_EXPIRE_TERM', 
-                LAST_LOGINDATE='$editDate'
-                WHERE EMP_ID='$id'";
-
-        if (mysqli_query($conn, $sql)) {
-            mysqli_close($conn);
-            return redirect()->route('viewemployee');
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }
-    } else {
-        $sql = "SELECT * FROM ORG_EMPLOYEE WHERE EMP_ID='$id'";
-        $result = mysqli_query($conn, $sql);
-        $place = mysqli_fetch_assoc($result);
-
-        mysqli_close($conn);
-
-        return view('updateemployee', compact('place'));
-    }
-}
-
-
-
-
-
-
-
-
-
-
     public function viewposition()
     {
         return view('viewposition');
     }
-
-    public function addposition()
-    {
-        return view('addposition');
-    }
-
     public function addFormpos()
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         if (isset($_POST['submit'])) {
             $posName = $_POST['posName'];
@@ -172,16 +81,18 @@ class NewController extends Controller
                     VALUES ('$posName', '$status', '$editDate', '$editEmpId','$sortOrder')";
 
             if (mysqli_query($conn, $sql)) {
-                return view('viewposition');
+                header("Location: " . route('viewposition'));
+                exit();
             } else {
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                header("Location: " . route('viewposition'));
+                exit();
             }
         }
     }
-
     public function deleteposition($id)
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         $sql = "DELETE FROM ORG_POSITION WHERE POS_ID='$id'";
 
@@ -192,64 +103,19 @@ class NewController extends Controller
             echo "Error: " . $sql . "<br>" . mysqli_error($conn);
         }
     }
-
-    public function updateposition(Request $request, $id)
-    {
-        $conn = $this->db_conn(); 
-    
-        if ($request->isMethod('post')) {
-            $posName = $request->input('posName');
-            $status = $request->input('status');
-            $sortOrder = $request->input('sortOrder');
-            $editEmpId = '6666';
-            $editDate = date('Y-m-d');
-    
-            $sql = "UPDATE ORG_POSITION SET 
-                        POS_NAME='$posName', 
-                        STATUS='$status', 
-                        EDIT_DATE='$editDate', 
-                        EDIT_EMPID='$editEmpId', 
-                        SORT_ORDER='$sortOrder'
-                    WHERE POS_ID='$id'";
-    
-            if (mysqli_query($conn, $sql)) {
-                mysqli_close($conn);
-                return redirect()->route('viewposition');
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-            }
-        }
-    
-        $sql = "SELECT * FROM ORG_POSITION WHERE POS_ID='$id'";
-        $result = mysqli_query($conn, $sql);
-        $place = mysqli_fetch_assoc($result);
-    
-        mysqli_close($conn);
-    
-        return view('updateposition', compact('place'));
-    }
-    
-
-
-
     public function viewplace()
     {
         return view('viewplace');
     }
 
-    public function addplace()
-    {
-        return view('addplace');
-    }
-
     private function db_conn()
     {
         $sname = "localhost";
-        $uname = "root"; 
+        $uname = "root";
         $password = "";
         $db_name = "dastone";
 
-        $conn = mysqli_connect($sname, $uname, $password, $db_name); 
+        $conn = mysqli_connect($sname, $uname, $password, $db_name);
 
         if (!$conn) {
             echo "Connection failed!";
@@ -257,10 +123,9 @@ class NewController extends Controller
             return $conn;
         }
     }
-
     public function addForm()
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         if (isset($_POST['submit'])) {
             $depName = $_POST['depName'];
@@ -285,10 +150,9 @@ class NewController extends Controller
             }
         }
     }
-
     public function deleteplace($id)
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         $sql = "DELETE FROM ORG_DEPARTMENT WHERE DEP_ID='$id'";
 
@@ -299,11 +163,12 @@ class NewController extends Controller
             echo "Error: " . $sql . "<br>" . mysqli_error($conn);
         }
     }
-    public function updateplace(Request $request, $id)
+    public function updateplace(Request $request)
     {
-        $conn = $this->db_conn(); 
+        $conn = $this->db_conn();
 
         if ($request->isMethod('post')) {
+            $depId = $request->input('DEP_ID');
             $depName = $request->input('depName');
             $status = $request->input('status');
             $sortOrder = $request->input('sortOrder');
@@ -314,15 +179,15 @@ class NewController extends Controller
             $editDate = date('Y-m-d');
 
             $sql = "UPDATE ORG_DEPARTMENT SET 
-                        DEP_NAME='$depName', 
-                        STATUS='$status', 
-                        SORT_ORDER='$sortOrder', 
-                        PARENT_DEPID='$parentDepId', 
-                        DIRECTOR_EMPID='$directorEmpId', 
-                        APPROVE_EMPID='$approveEmpId', 
-                        EDIT_EMPID='$editEmpId', 
-                        EDIT_DATE='$editDate' 
-                    WHERE DEP_ID='$id'";
+                    DEP_NAME='$depName', 
+                    STATUS='$status', 
+                    SORT_ORDER='$sortOrder', 
+                    PARENT_DEPID='$parentDepId', 
+                    DIRECTOR_EMPID='$directorEmpId', 
+                    APPROVE_EMPID='$approveEmpId', 
+                    EDIT_EMPID='$editEmpId', 
+                    EDIT_DATE='$editDate' 
+                WHERE DEP_ID='$depId'";
 
             if (mysqli_query($conn, $sql)) {
                 mysqli_close($conn);
@@ -331,15 +196,95 @@ class NewController extends Controller
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
         }
+    }
+    public function updateposition(Request $request)
+    {
+        $conn = $this->db_conn();
 
-        $sql = "SELECT * FROM ORG_DEPARTMENT WHERE DEP_ID='$id'";
-        $result = mysqli_query($conn, $sql);
-        $place = mysqli_fetch_assoc($result);
+        if ($request->isMethod('post')) {
+            $posId = $request->input('POS_ID');
+            $posName = $request->input('posName');
+            $status = $request->input('status');
+            $sortOrder = $request->input('sortOrder');
+            $editEmpId = '6666';
+            $editDate = date('Y-m-d');
 
-        mysqli_close($conn);
+            $sql = "UPDATE ORG_POSITION SET 
+                    POS_NAME='$posName', 
+                    STATUS='$status', 
+                    EDIT_DATE='$editDate', 
+                    EDIT_EMPID='$editEmpId', 
+                    SORT_ORDER='$sortOrder'
+                WHERE POS_ID='$posId'";
 
-        return view('updateplace', compact('place'));
+            if (mysqli_query($conn, $sql)) {
+                mysqli_close($conn);
+                return redirect()->route('viewposition');
+            } else {
+                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+            }
+        }
     }
 
+    public function updateemployee(Request $request)
+    {
+        $conn = $this->db_conn();
 
+        if ($request->isMethod('post')) {
+            $empId = $request->input('EMP_ID');
+            $Last_Name = $request->input('last_name');
+            $First_Name = $request->input('first_name');
+            $Register = $request->input('reg_number');
+            $Position = $request->input('position');
+            $Email = $request->input('email');
+            $HandPhone = $request->input('phone_number');
+            $Gender = $request->input('gender');
+            $BirthDate = $request->input('birth_date');
+            $StartDate = $request->input('start_date');
+            $HomePhone = $request->input('home_number');
+            $WorkPhone = $request->input('work_number');
+            $Photo = $request->input('photo');  // Handle file uploads separately if applicable
+            $Status = $request->input('state');
+            $editEmpId = '6666';
+            $DepId = $_POST['place'];
+            $Pass = 'pass';
+            $editDate = date('Y-m-d');
+            $finger = '12345678';
+            $Pass_Date = date('Y-m-d');
+            $PASS_EXPIRE_TERM = '3';
+
+            $sql = "UPDATE ORG_EMPLOYEE SET 
+                REGISTER='$Register', 
+                FIRSTNAME='$First_Name', 
+                LASTNAME='$Last_Name', 
+                POS_ID='$Position', 
+                DEP_ID='$DepId', 
+                EMAIL='$Email', 
+                PASS='$Pass', 
+                WORK_DATE='$StartDate', 
+                STATUS='$Status', 
+                BIRTHDATE='$BirthDate', 
+                HANDPHONE='$HandPhone', 
+                HOMEPHONE='$HomePhone', 
+                WORKPHONE='$WorkPhone', 
+                FINGERID='$finger', 
+                SEX='$Gender', 
+                PICTURE_LINK='$Photo', 
+                EDIT_DATE='$editDate', 
+                EDIT_EMPID='$editEmpId', 
+                PASS_DATE='$Pass_Date', 
+                PASS_EXPIRE_TERM='$PASS_EXPIRE_TERM', 
+                PASS_ENDDATE='$editDate', 
+                PASS_WRONG='$PASS_EXPIRE_TERM', 
+                LAST_LOGINDATE='$editDate'
+                WHERE EMP_ID='$empId'";
+
+            if (mysqli_query($conn, $sql)) {
+                mysqli_close($conn);
+                return redirect()->route('viewemployee');
+            } else {
+                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+            }
+        }
+    }
 }

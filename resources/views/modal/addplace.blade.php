@@ -127,7 +127,7 @@
                         </ul>
                     </div>
                 @endif
-                <form id="registrationForm" method="POST" action="{{ route('updateplace', ['id' => $place['EMP_ID']]) }}">
+                <form method="POST" action="{{ route('updateplace') }}">
                     @csrf
                     <label for="depName" class="form-check-label">Газар нэгжийн нэршил</label>
                     <input type="text" class="form-check-input" id="depName" name="depName" required>
