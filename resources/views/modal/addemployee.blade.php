@@ -1,5 +1,5 @@
-@extends('viewemployee')
-@section('viewform')
+<form action="" method="post" enctype="multipart/form-data">
+    <div class="modal fade text-left" id="AddEmployeeForm" tabindex="-10">
 <div class="form-container" style='position: absolute; top: 10%; z-index: 1; background-color: white' id="formContainer">
     @if(session('success'))
         <div class="alert alert-success">
@@ -127,4 +127,5 @@
         <button class="btn btn-danger" type="button" onclick="window.location='{{ route('viewemployee') }}'">Буцах</button>
     </form>
 </div>  
-@endsection
+</div>
+</form>

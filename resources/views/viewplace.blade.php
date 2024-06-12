@@ -1,12 +1,14 @@
+<!-- resources/views/viewplace.blade.php -->
 @extends('layouts.app')
+
 @section('content')
 <div class="page-wrapper">
     <div class="topbar">
         <nav class="navbar-custom">
             <ul class="list-unstyled topbar-nav mb-0">
                 <h4 class="page-title" style="margin: 10px;">Газар нэгжийн бүртгэл</h4>
-                <button class="btn btn-sm btn-soft-primary" onclick="window.location='{{ route('addplace') }}'" style="margin: 10px; margin-top: 30px;">+ Шинээр бүртгэх</button>
-                @yield('viewform')
+                <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 10px; margin-top: 30px;" data-bs-toggle="modal" data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
+                
                 <?php
                 $sname = "localhost";
                 $unmae = "root";
@@ -45,9 +47,8 @@
                                 <td>" . $row["SORT_ORDER"] . "</td>
                                 <td>" . $row["EDIT_DATE"] . "</td>
                                 <td>
-                                    <a class='btn btn-success' href='" . route('updateplace', ['id' => $row['DEP_ID']]) . "'>Засах</a>
-                                    <a class='btn btn-danger' href='" . route('deleteplace', ['id' => $row['DEP_ID']]) . "')>Устгах</a>
-                                    
+                                    <button type='button' class='btn btn-succes' data-bs-toggle='modal' data-bs-target='#UpdatePlaceForm' href='" . route('updateplace', ['id' => $row['DEP_ID']]) . "'>Засах</button>
+                                    <a class='btn btn-danger' href='" . route('deleteplace', ['id' => $row['DEP_ID']]) . "'>Устгах</a>
                                 </td>
                             </tr>";
                     }
@@ -66,4 +67,8 @@
         </nav>
     </div>
 </div>
+
+<!-- Include the Modal -->
+@include('modal.addplace')
+
 @endsection

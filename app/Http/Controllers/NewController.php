@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\OrgDepartment;
 
 class NewController extends Controller
 {
@@ -171,7 +172,7 @@ class NewController extends Controller
                     VALUES ('$posName', '$status', '$editDate', '$editEmpId','$sortOrder')";
 
             if (mysqli_query($conn, $sql)) {
-                return view('addposition');
+                return view('viewposition');
             } else {
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -275,9 +276,12 @@ class NewController extends Controller
                     VALUES ('$depName', '$status', '$sortOrder', '$parentDepId', '$directorEmpId', '$approveEmpId', '$editEmpId', '$editDate')";
 
             if (mysqli_query($conn, $sql)) {
-                return view('addplace');
+                header("Location: " . route('viewplace'));
+                exit();
             } else {
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                header("Location: " . route('viewplace'));
+                exit();
             }
         }
     }
@@ -295,7 +299,6 @@ class NewController extends Controller
             echo "Error: " . $sql . "<br>" . mysqli_error($conn);
         }
     }
-
     public function updateplace(Request $request, $id)
     {
         $conn = $this->db_conn(); 
@@ -337,4 +340,6 @@ class NewController extends Controller
 
         return view('updateplace', compact('place'));
     }
+
+
 }

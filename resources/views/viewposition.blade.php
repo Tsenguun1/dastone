@@ -5,7 +5,7 @@
         <nav class="navbar-custom">
             <ul class="list-unstyled topbar-nav mb-0">
                 <h4 class="page-title" style="margin: 10px;">Албан тушаалын бүртгэл</h4>
-                <button class="btn btn-sm btn-soft-primary" onclick="window.location='{{ route('addposition') }}'" style="margin: 10px; margin-top: 30px;">+ Шинээр бүртгэх</button>
+                <a class="btn btn-sm btn-soft-primary" href="#" style="margin: 10px; margin-top: 30px;" data-toggle="modal" data-target="#AddPositionForm">+ Шинээр бүртгэх</a>
                 @yield('viewpos')
                 <?php
                 $sname = "localhost";
@@ -64,4 +64,5 @@
         </nav>
     </div>
 </div>
+@include('modal.addposition')
 @endsection
