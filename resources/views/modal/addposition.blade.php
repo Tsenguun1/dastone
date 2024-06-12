@@ -1,8 +1,8 @@
 <div class="modal fade" id="AddPositionForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
-            <div class="form-container" style="background-color: white;">
+            <div class="form-container"  id="formContainer">
                 <form id="registrationForm" method="POST" action="{{ route('addformpos') }}">
                     @csrf
                     <div class="form-group">
@@ -31,9 +31,9 @@
 <!-- addplace.blade.php -->
 <div class="modal fade" id="UpdatePositionForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
-            <div class="form-container" style="background-color: white;">
+            <div class="form-container" id="formContainer">
                 <form method="POST" action="{{ route('updateposition') }}">
                     @csrf
                     <input type="hidden" name="POS_ID" id="modal-pos-id">

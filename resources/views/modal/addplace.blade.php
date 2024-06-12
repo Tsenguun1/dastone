@@ -1,7 +1,7 @@
 <div class="modal fade" id="AddPlaceForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
-            <div class="form-container" style='position: absolute; top: 10%; z-index: 1; background-color: white' id="formContainer">
+            <div class="form-container" id="formContainer">
                 @if(session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -110,9 +110,9 @@
 </div><!--end modal-->
 
 <div class="modal fade" id="UpdatePlaceForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
-            <div class="form-container" style='position: absolute; top: 10%; z-index: 1; background-color: white' id="formContainer">
+            <div class="form-container" id="formContainer">
                 @if(session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -129,6 +129,7 @@
                 @endif
                 <form method="POST" action="{{ route('updateplace') }}">
                     @csrf
+                    <input type="hidden" name="DEP_ID" id="modal-dep-id">
                     <label for="depName" class="form-check-label">Газар нэгжийн нэршил</label>
                     <input type="text" class="form-check-input" id="depName" name="depName" required>
 

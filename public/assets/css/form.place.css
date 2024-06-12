@@ -1,15 +1,16 @@
 .form-container {
-    width: 60%;
-    margin-top: 5%;
-    margin-left: 20%;
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display:block; /* Hide the form initially */
+    position: absolute;
+    z-index: 1;
+    background-color: white;
 }
 .form-container-update{
-    width: 50%;
+    width: 100%;
     margin-top: 5%;
     margin-left: 20%;
     padding: 10px;
