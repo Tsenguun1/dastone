@@ -18,7 +18,7 @@
                                         <th>Төлөв</th>
                                         <th>Эрэмбэ</th>
                                         <th>Зассан</th>
-                                        <th>Үйлдэл</th>
+                                        <th style=" text-align: center; ">Үйлдэл</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -29,17 +29,18 @@
                                             <td>{{ $position->SORT_ORDER }}</td>
                                             <td>{{ $position->EDIT_DATE }}</td>
                                             <td>
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            <form action="{{ route('deleteposition', $position->POS_ID) }}" method="POST"
+                                                    style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type='submit' class='btn btn-danger' style="float: right;">Устгах</button>
+                                                </form>
+                                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                                style="float: right;"
                                                     data-bs-target="#UpdatePositionForm" data-id="{{ $position->POS_ID }}"
                                                     data-name="{{ $position->POS_NAME }}"
                                                     data-status="{{ $position->STATUS }}"
                                                     data-sort="{{ $position->SORT_ORDER }}">Засах</button>
-                                                <form action="{{ route('deleteposition', $position->POS_ID) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type='submit' class='btn btn-danger'>Устгах</button>
-                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach

@@ -44,6 +44,7 @@
     margin-bottom: 5px;
 }
 .form-container input, .form-container select, .form-container button {
+    height: 3em;
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;

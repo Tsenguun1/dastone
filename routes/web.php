@@ -16,10 +16,12 @@ Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
 Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
 Route::post('/updateplace', [PlaceController::class, 'updateplace'])->name('updateplace');
 
+
 Route::get('/employee', [EmployeeController::class, 'viewemployee'])->name('viewemployee');
 Route::post('/addformemployee', [EmployeeController::class, 'addFormemployee'])->name('addformemployee');
 Route::delete('/delete-employee/{id}', [EmployeeController::class, 'deleteemployee'])->name('deleteemployee');
 Route::post('/updateemployee', [EmployeeController::class, 'updateemployee'])->name('updateemployee');
+
 
 Route::get('/viewpositions', [PositionController::class, 'viewpositions'])->name('viewposition');
 Route::post('/addposition', [PositionController::class, 'addFormpos'])->name('addformpos');

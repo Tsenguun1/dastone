@@ -18,33 +18,12 @@
                                         <th>Төлөв</th>
                                         <th>Эрэмбэ</th>
                                         <th>Зассан</th>
-                                        <th>Үйлдэл</th>
+                                        <th style=" text-align: center; ">Үйлдэл</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($departments as $department)
-                                        <tr>
-                                            <td><span class='co-name'>{{ $department->DEP_NAME }}</span></td>
-                                            <td>{{ $department->DIRECTOR_EMPID }}</td>
-                                            <td>{{ $department->STATUS }}</td>
-                                            <td>{{ $department->SORT_ORDER }}</td>
-                                            <td>{{ $department->EDIT_DATE }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                                    data-bs-target="#UpdatePlaceForm" data-id="{{ $department->DEP_ID }}"
-                                                    data-name="{{ $department->DEP_NAME }}"
-                                                    data-status="{{ $department->STATUS }}"
-                                                    data-sort="{{ $department->SORT_ORDER }}"
-                                                    data-parent="{{ $department->PARENT_DEPID }}"
-                                                    data-director="{{ $department->DIRECTOR_EMPID }}">Засах</button>
-                                                <form action="{{ route('deleteplace', $department->DEP_ID) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type='submit' class='btn btn-danger'>Устгах</button>
-                                                </form>
-                                            </td>
-                                        </tr>
+                                    @foreach($departmentTree as $department)
+                                        @include('partials.department_row', ['department' => $department, 'level' => 0])
                                     @endforeach
                                 </tbody>
                             </table>

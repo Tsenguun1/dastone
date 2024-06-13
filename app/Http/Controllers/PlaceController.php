@@ -17,11 +17,11 @@ class PlaceController extends Controller
             ->where('STATUS', '!=', 'D')
             ->orderBy('SORT_ORDER')
             ->get();
-
+    
         $employees = DB::table('ORG_EMPLOYEE')
             ->select(
-                'ORG_EMPLOYEE.EMP_ID',
-                DB::raw("CONCAT(ORG_EMPLOYEE.FIRSTNAME, '.', LEFT(ORG_EMPLOYEE.LASTNAME, 1)) AS EMPNAME"),
+                'EMP_ID',
+                DB::raw("CONCAT(FIRSTNAME, '.', LEFT(LASTNAME, 1)) AS EMPNAME"),
                 'ORG_POSITION.POS_NAME',
                 'ORG_DEPARTMENT.DEP_NAME'
             )
@@ -31,9 +31,30 @@ class PlaceController extends Controller
             ->orderBy('ORG_EMPLOYEE.DEP_ID')
             ->orderBy('ORG_EMPLOYEE.FIRSTNAME')
             ->get();
-
-        return view('viewplace', ['departments' => $departments, 'employees' => $employees]);
+    
+        $departments = $departments->toArray(); // Convert collection to array
+        $departmentTree = $this->buildTree($departments);
+    
+        return view('viewplace', ['departmentTree' => $departmentTree, 'employees' => $employees, 'departments' => $departments,]);
     }
+    
+
+    public function buildTree(array $elements, $parentId = null)
+    {
+        $branch = [];
+        foreach ($elements as $element) {
+            if ($element->PARENT_DEPID == $parentId) {
+                $children = $this->buildTree($elements, $element->DEP_ID);
+                if ($children) {
+                    $element->children = $children;
+                }
+                $branch[] = $element;
+            }
+        }
+        return $branch;
+    }
+    
+
 
     public function addForm(Request $request)
     {
@@ -71,7 +92,8 @@ class PlaceController extends Controller
     public function deleteplace($id)
     {
         $place = OrgDepartment::findOrFail($id);
-        $place->delete();
+        $place->status = 'D'; // Assuming 'D' represents deleted or deactivated status
+        $place->save();
 
         return redirect()->route('viewplace');
     }
@@ -100,6 +122,6 @@ class PlaceController extends Controller
 
         $place->save();
 
-        return redirect()->route('viewplace')->with('success', 'Department updated successfully!');
+        return redirect()->route('viewplace');
     }
 }

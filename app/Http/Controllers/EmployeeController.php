@@ -2,98 +2,133 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\OrgEmployee;
 use App\Models\OrgDepartment;
+use App\Models\OrgEmployee;
+use Illuminate\Http\Request;
+use App\Models\Employee;
 use App\Models\OrgPosition;
+use App\Models\Department;
 
 class EmployeeController extends Controller
 {
     public function viewemployee()
     {
         $employees = OrgEmployee::all();
-        return view('viewemployee', compact('employees'));
+        $positions = OrgPosition::all();
+        $departments = OrgDepartment::all();
+        return view('viewemployee', compact('employees', 'positions', 'departments'));
     }
 
     public function addFormemployee(Request $request)
     {
-        if ($request->isMethod('post')) {
-            $request->validate([
-                // Define validation rules for employee creation here
-            ]);
+        $validatedData = $request->validate([
+            'REGISTER' => 'required|string|max:255',
+            'FIRSTNAME' => 'required|string|max:255',
+            'LASTNAME' => 'required|string|max:255',
+            'POS_ID' => 'required|integer',
+            'DEP_ID' => 'required|integer',
+            'EMAIL' => 'required|string|email|max:255',
+            'WORK_DATE' => 'required|date',
+            'STATUS' => 'required|string|max:255',
+            'BIRTHDATE' => 'required|date',
+            'HANDPHONE' => 'required|string|max:255',
+            'HOMEPHONE' => 'nullable|string|max:255',
+            'WORKPHONE' => 'nullable|string|max:255',
+            'SEX' => 'required|string|max:255',
+            'PICTURE_LINK' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-            // Create new employee
-            OrgEmployee::create([
-                'REGISTER' => $request->register,
-                'FIRSTNAME' => $request->firstname,
-                'LASTNAME' => $request->lastname,
-                'POS_ID' => $request->pos_id,
-                'DEP_ID' => $request->dep_id,
-                'EMAIL' => $request->email,
-                'PASS' => $request->pass,
-                'WORK_DATE' => $request->work_date,
-                'STATUS' => $request->status,
-                'BIRTHDATE' => $request->birthdate,
-                'HANDPHONE' => $request->handphone,
-                'HOMEPHONE' => $request->homephone,
-                'WORKPHONE' => $request->workphone,
-                'FINGERID' => $request->fingerid,
-                'SEX' => $request->sex,
-                'PICTURE_LINK' => $request->picture_link,
-                'EDIT_DATE' => now(),
-                'EDIT_EMPID' => auth()->id(), // Example of capturing authenticated user's ID
-                // Add other fields as needed
-            ]);
+        $employee = new OrgEmployee();
+        $employee->REGISTER = $validatedData['REGISTER'];
+        $employee->FIRSTNAME = $validatedData['FIRSTNAME'];
+        $employee->LASTNAME = $validatedData['LASTNAME'];
+        $employee->POS_ID = $validatedData['POS_ID'];
+        $employee->DEP_ID = $validatedData['DEP_ID'];
+        $employee->EMAIL = $validatedData['EMAIL'];
+        $employee->PASS = bcrypt('default_password'); // Ensure to hash the password
+        $employee->WORK_DATE = $validatedData['WORK_DATE'];
+        $employee->STATUS = $validatedData['STATUS'];
+        $employee->BIRTHDATE = $validatedData['BIRTHDATE'];
+        $employee->HANDPHONE = $validatedData['HANDPHONE'];
+        $employee->HOMEPHONE = $validatedData['HOMEPHONE'];
+        $employee->WORKPHONE = $validatedData['WORKPHONE'];
+        $employee->SEX = $validatedData['SEX'];
+        $employee->FINGERID = 0; // Set a default value for FINGERID
 
-            return redirect()->route('viewemployee')->with('success', 'Employee added successfully!');
+        if ($request->hasFile('PICTURE_LINK')) {
+            $file = $request->file('PICTURE_LINK');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('pictures', $filename, 'public');
+            $employee->PICTURE_LINK = '/storage/' . $path;
         }
 
-        // Load necessary data for the form if needed
-        $departments = OrgDepartment::all();
-        $positions = OrgPosition::all();
+        $employee->save();
 
-        return view('addemployee', compact('departments', 'positions'));
+        return redirect()->back()->with('success', 'Ажилтан амжилттай нэмэгдлээ.');
+    }
+
+
+
+    public function updateemployee(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'EMP_ID' => 'required|integer',
+            'REGISTER' => 'required|string|max:255',
+            'FIRSTNAME' => 'required|string|max:255',
+            'LASTNAME' => 'required|string|max:255',
+            'POS_ID' => 'required|integer',
+            'DEP_ID' => 'required|integer',
+            'EMAIL' => 'required|string|email|max:255',
+            'WORK_DATE' => 'required|date',
+            'STATUS' => 'required|string|max:255',
+            'BIRTHDATE' => 'required|date',
+            'HANDPHONE' => 'required|string|max:255',
+            'HOMEPHONE' => 'nullable|string|max:255',
+            'WORKPHONE' => 'nullable|string|max:255',
+            'SEX' => 'required|string|max:255',
+            'PICTURE_LINK' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Find the employee by ID
+        $employee = OrgEmployee::findOrFail($validatedData['EMP_ID']);
+
+        // Update the employee's details
+        $employee->REGISTER = $validatedData['REGISTER'];
+        $employee->FIRSTNAME = $validatedData['FIRSTNAME'];
+        $employee->LASTNAME = $validatedData['LASTNAME'];
+        $employee->POS_ID = $validatedData['POS_ID'];
+        $employee->DEP_ID = $validatedData['DEP_ID'];
+        $employee->EMAIL = $validatedData['EMAIL'];
+        $employee->WORK_DATE = $validatedData['WORK_DATE'];
+        $employee->STATUS = $validatedData['STATUS'];
+        $employee->BIRTHDATE = $validatedData['BIRTHDATE'];
+        $employee->HANDPHONE = $validatedData['HANDPHONE'];
+        $employee->HOMEPHONE = $validatedData['HOMEPHONE'];
+        $employee->WORKPHONE = $validatedData['WORKPHONE'];
+        $employee->SEX = $validatedData['SEX'];
+        $employee->FINGERID = $request->input('FINGERID'); // Assuming FINGERID is part of the request
+
+        // Handle the picture upload if provided
+        if ($request->hasFile('PICTURE_LINK')) {
+            $file = $request->file('PICTURE_LINK');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('pictures', $filename, 'public');
+            $employee->PICTURE_LINK = '/storage/' . $path;
+        }
+
+        // Save the updated employee details
+        $employee->save();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Ажилтан амжилттай шинэчлэгдлээ.');
     }
 
     public function deleteemployee($id)
     {
-        $employee = OrgEmployee::findOrFail($id);
+        $employee = OrgEmployee::find($id);
         $employee->delete();
 
-        return redirect()->route('viewemployee')->with('success', 'Employee deleted successfully!');
-    }
-
-    public function updateemployee(Request $request)
-    {
-        $id = $request->input('empId');
-        $employee = OrgEmployee::findOrFail($id);
-
-        $request->validate([
-            // Define validation rules for updating employee here
-        ]);
-
-        $employee->update([
-            'REGISTER' => $request->register,
-            'FIRSTNAME' => $request->firstname,
-            'LASTNAME' => $request->lastname,
-            'POS_ID' => $request->pos_id,
-            'DEP_ID' => $request->dep_id,
-            'EMAIL' => $request->email,
-            'PASS' => $request->pass,
-            'WORK_DATE' => $request->work_date,
-            'STATUS' => $request->status,
-            'BIRTHDATE' => $request->birthdate,
-            'HANDPHONE' => $request->handphone,
-            'HOMEPHONE' => $request->homephone,
-            'WORKPHONE' => $request->workphone,
-            'FINGERID' => $request->fingerid,
-            'SEX' => $request->sex,
-            'PICTURE_LINK' => $request->picture_link,
-            'EDIT_DATE' => now(),
-            'EDIT_EMPID' => auth()->id(), // Example of capturing authenticated user's ID
-            // Add other fields as needed
-        ]);
-
-        return redirect()->route('viewemployee')->with('success', 'Employee updated successfully!');
+        return redirect()->back()->with('success', 'Ажилтан амжилттай устгагдлаа.');
     }
 }

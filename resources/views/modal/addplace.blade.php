@@ -49,7 +49,7 @@
                     <input type="text" class="form-check-input" id="depName" name="depName" required>
 
                     <label for="status" class="form-check-label">Төлөв</label>
-                    <select id="status" name="status" class="form-check-input" required>
+                    <select id="status" name="status" class="form-control" required>
                         <option value="A">Идэвхитэй</option>
                         <option value="N">Идэвхгүй</option>
                     </select>
@@ -59,7 +59,6 @@
 
                     <label for="parentDepId" class="form-check-label">Эцэг газар нэгж</label>
                     <select id="parentDepId" name="parentDepId" class="form-control" required>
-                        <option value="">[Сонгоно уу]</option>
                         @foreach ($departments as $department)
                             <option value="{{ $department->DEP_ID }}">{{ $department->DEP_NAME }}</option>
                         @endforeach
@@ -67,7 +66,6 @@
 
                     <label for="directorEmpId" class="form-check-label">Захирал</label>
                     <select id="directorEmpId" name="directorEmpId" required>
-                        <option value="">[Сонгоно уу]</option>
                         @foreach ($employees as $employee)
                             <option value="{{ $employee->EMP_ID }}">{{ $employee->EMPNAME }} ({{ $employee->DEP_NAME }} -
                                 {{ $employee->POS_NAME }})
@@ -110,6 +108,7 @@
 
                     <label for="status" class="form-check-label">Төлөв</label>
                     <select id="status" name="status" required>
+                        <option value="">[Сонгоно уу]</option>
                         <option value="A">Идэвхитэй</option>
                         <option value="N">Идэвхгүй</option>
                     </select>
