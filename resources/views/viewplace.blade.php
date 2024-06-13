@@ -23,28 +23,28 @@
                                 </thead>
                                 <tbody>
                                     @foreach($departments as $department)
-                                    <tr>
-                                        <td><span class='co-name'>{{ $department->DEP_NAME }}</span></td>
-                                        <td>{{ $department->DIRECTOR_EMPID }}</td>
-                                        <td>{{ $department->STATUS }}</td>
-                                        <td>{{ $department->SORT_ORDER }}</td>
-                                        <td>{{ $department->EDIT_DATE }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-primary"
-                                            data-bs-toggle="modal" data-bs-target="#UpdatePlaceForm"
-                                            data-id="{{ $department->DEP_ID }}"
-                                            data-name="{{ $department->DEP_NAME }}"
-                                            data-status="{{ $department->STATUS }}"
-                                            data-sort="{{ $department->SORT_ORDER }}"
-                                            data-parent="{{ $department->PARENT_DEPID }}"
-                                            data-director="{{ $department->DIRECTOR_EMPID }}">Update</button>
-                                            <form action="{{ route('deleteplace', $department->DEP_ID) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type='submit' class='btn btn-danger'>Устгах</button>
-                                            </form>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td><span class='co-name'>{{ $department->DEP_NAME }}</span></td>
+                                            <td>{{ $department->DIRECTOR_EMPID }}</td>
+                                            <td>{{ $department->STATUS }}</td>
+                                            <td>{{ $department->SORT_ORDER }}</td>
+                                            <td>{{ $department->EDIT_DATE }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#UpdatePlaceForm" data-id="{{ $department->DEP_ID }}"
+                                                    data-name="{{ $department->DEP_NAME }}"
+                                                    data-status="{{ $department->STATUS }}"
+                                                    data-sort="{{ $department->SORT_ORDER }}"
+                                                    data-parent="{{ $department->PARENT_DEPID }}"
+                                                    data-director="{{ $department->DIRECTOR_EMPID }}">Засах</button>
+                                                <form action="{{ route('deleteplace', $department->DEP_ID) }}" method="POST"
+                                                    style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type='submit' class='btn btn-danger'>Устгах</button>
+                                                </form>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -57,7 +57,6 @@
 </div>
 
 @include('modal.addplace')
-@include('modal.updateplace')
 @endsection
 
 @section('scripts')
@@ -65,10 +64,8 @@
     document.addEventListener('DOMContentLoaded', (event) => {
         const updatePlaceFormModal = document.getElementById('UpdatePlaceForm');
         updatePlaceFormModal.addEventListener('show.bs.modal', function (event) {
-            // Button that triggered the modal
             const button = event.relatedTarget;
 
-            // Extract info from data-* attributes
             const depId = button.getAttribute('data-id');
             const depName = button.getAttribute('data-name');
             const status = button.getAttribute('data-status');
@@ -76,13 +73,12 @@
             const parentDepId = button.getAttribute('data-parent');
             const directorEmpId = button.getAttribute('data-director');
 
-            // Update the modal's content
             const modalDepIdInput = document.getElementById('modal-dep-id');
-            const modalDepNameInput = document.getElementById('modal-dep-name');
-            const modalStatusInput = document.getElementById('modal-status');
-            const modalSortOrderInput = document.getElementById('modal-sort-order');
-            const modalParentDepIdInput = document.getElementById('modal-parent-dep-id');
-            const modalDirectorEmpIdInput = document.getElementById('modal-director-emp-id');
+            const modalDepNameInput = document.getElementById('depName');
+            const modalStatusInput = document.getElementById('status');
+            const modalSortOrderInput = document.getElementById('sortOrder');
+            const modalParentDepIdInput = document.getElementById('parentDepId');
+            const modalDirectorEmpIdInput = document.getElementById('directorEmpId');
 
             modalDepIdInput.value = depId;
             modalDepNameInput.value = depName;

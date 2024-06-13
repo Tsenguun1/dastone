@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,15 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 class OrgPosition extends Model
 {
     protected $table = 'ORG_POSITION';
+    protected $primaryKey = 'POS_ID'; // Specify the primary key
 
-    // Optionally define fillable fields if necessary
+    public $timestamps = false; // Disable timestamps if not using them
+
     protected $fillable = [
-        'pos_name',
-        'status',
-        'edit_date',
-        'edit_empid',
-        'sort_order',
+        'POS_NAME', 'STATUS', 'SORT_ORDER', 'EDIT_DATE', 'EDIT_EMPID'
     ];
-
-    // Define any relationships or additional methods here
 }

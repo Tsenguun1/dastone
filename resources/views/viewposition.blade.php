@@ -1,86 +1,84 @@
 @extends('layouts.app')
+
 @section('content')
 <div class="page-wrapper">
     <div class="topbar">
         <nav class="navbar-custom">
             <ul class="list-unstyled topbar-nav mb-0">
                 <h4 class="page-title" style="margin: 10px;">Албан тушаалын бүртгэл</h4>
-                <a class="btn btn-sm btn-soft-primary" href="#" style="margin: 10px; margin-top: 30px;"
-                    data-toggle="modal" data-target="#AddPositionForm">+ Шинээр бүртгэх</a>
-                @yield('viewpos')
-                <?php
-$sname = "localhost";
-$unmae = "root";
-$password = "";
-$db_name = "dastone";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-$sql = "SELECT * FROM ORG_POSITION";
-$result = mysqli_query($conn, $sql);
-
-if (mysqli_num_rows($result) > 0) {
-    echo "<div class='card-body'>";
-    echo "<div class='table-rep-plugin'>";
-    echo "<div class='table-responsive mb-0' data-pattern='priority-columns'>";
-    echo "<table id='tech-companies-1' class='table table-striped mb-0'>
-                            <thead>
-                            <tr>
-                                <th>Нэр</th>
-                                <th>Төлөв</th>
-                                <th>Эрэмбэ</th>
-                                <th>Зассан</th>
-                                <th>Үйлдэл</th>
-                            </tr>
-                            </thead>
-                            <tbody>";
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>
-                                <td><span class='co-name'>" . $row["POS_NAME"] . "</span></td>
-                                <td>" . $row["STATUS"] . "</td>
-                                <td>" . $row["SORT_ORDER"] . "</td>
-                                <td>" . $row["EDIT_DATE"] . "</td>
-                                <td>
-                                
-                                    <button type='button' class='btn btn-success' data-bs-toggle='modal' data-bs-target='#UpdatePositionForm' data-dep-id='" . $row['POS_ID'] . "'>Засах</button>
-                                    <a class='btn btn-danger' href='" . route('deleteposition', ['id' => $row['POS_ID']]) . "')>Устгах</a>
-                                    
-                                </td>
-                            </tr>";
-    }
-    echo "</tbody></table>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-} else {
-    echo "0 results";
-}
-
-mysqli_free_result($result);
-mysqli_close($conn);
-                ?>
+                <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 10px; margin-top: 30px;"
+                    data-bs-toggle="modal" data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
+                <div class='card-body'>
+                    <div class='table-rep-plugin'>
+                        <div class='table-responsive mb-0' data-pattern='priority-columns'>
+                            <table id='positions-table' class='table table-striped mb-0'>
+                                <thead>
+                                    <tr>
+                                        <th>Нэр</th>
+                                        <th>Төлөв</th>
+                                        <th>Эрэмбэ</th>
+                                        <th>Зассан</th>
+                                        <th>Үйлдэл</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($positions as $position)
+                                        <tr>
+                                            <td>{{ $position->POS_NAME }}</td>
+                                            <td>{{ $position->STATUS }}</td>
+                                            <td>{{ $position->SORT_ORDER }}</td>
+                                            <td>{{ $position->EDIT_DATE }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#UpdatePositionForm" data-id="{{ $position->POS_ID }}"
+                                                    data-name="{{ $position->POS_NAME }}"
+                                                    data-status="{{ $position->STATUS }}"
+                                                    data-sort="{{ $position->SORT_ORDER }}">Засах</button>
+                                                <form action="{{ route('deleteposition', $position->POS_ID) }}" method="POST"
+                                                    style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type='submit' class='btn btn-danger'>Устгах</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </ul>
         </nav>
     </div>
 </div>
+
+@include('modal.addposition')
+
+@endsection
+
+@section('scripts')
 <script>
-    // In viewplace.blade.php or a separate JS file
     document.addEventListener('DOMContentLoaded', (event) => {
-        const updatePlaceFormModal = document.getElementById('UpdatePositionForm');
-        updatePlaceFormModal.addEventListener('show.bs.modal', function (event) {
-            // Button that triggered the modal
+        const updatePositionFormModal = document.getElementById('UpdatePositionForm');
+        updatePositionFormModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-            // Extract info from data-* attributes
-            const posId = button.getAttribute('data-dep-id');
-            // Update the modal's content
-            const modalDepIdInput = document.getElementById('modal-pos-id');
-            modalDepIdInput.value = posId;
+
+            const posId = button.getAttribute('data-id');
+            const posName = button.getAttribute('data-name');
+            const status = button.getAttribute('data-status');
+            const sortOrder = button.getAttribute('data-sort');
+
+            const modalPosIdInput = document.getElementById('modal-pos-id');
+            const modalPosNameInput = document.getElementById('posName');
+            const modalStatusInput = document.getElementById('status');
+            const modalSortOrderInput = document.getElementById('sortOrder');
+
+            modalPosIdInput.value = posId;
+            modalPosNameInput.value = posName;
+            modalStatusInput.value = status;
+            modalSortOrderInput.value = sortOrder;
         });
     });
-
 </script>
-@include('modal.addposition')
 @endsection

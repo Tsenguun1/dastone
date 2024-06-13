@@ -7,32 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class OrgEmployee extends Model
 {
     protected $table = 'ORG_EMPLOYEE';
-    // Define fillable fields if necessary
-    protected $fillable = [
-        'register',
-        'firstname',
-        'lastname',
-        'pos_id',
-        'dep_id',
-        'email',
-        'pass',
-        'work_date',
-        'status',
-        'birthdate',
-        'handphone',
-        'homephone',
-        'workphone',
-        'fingerid',
-        'sex',
-        'picture_link',
-        'edit_date',
-        'edit_empid',
-        'pass_date',
-        'pass_expire_term',
-        'pass_enddate',
-        'pass_wrong',
-        'last_logindate',
-    ];
+    protected $primaryKey = 'EMP_ID';
+    public $timestamps = false; // Assuming no timestamps are needed
 
-    // Define any relationships or additional methods here
+    protected $fillable = [
+        'REGISTER', 'FIRSTNAME', 'LASTNAME', 'POS_ID', 'DEP_ID', 'EMAIL', 'PASS', 
+        'WORK_DATE', 'STATUS', 'BIRTHDATE', 'HANDPHONE', 'HOMEPHONE', 'WORKPHONE', 
+        'FINGERID', 'SEX', 'PICTURE_LINK', 'EDIT_DATE', 'EDIT_EMPID', 'PASS_DATE', 
+        'PASS_EXPIRE_TERM', 'PASS_ENDDATE', 'PASS_WRONG', 'LAST_LOGINDATE'
+    ];
 }

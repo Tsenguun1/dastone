@@ -174,7 +174,7 @@ class NewController extends Controller
 
             $department->save();
 
-            return redirect()->route('viewplace')->with('success', 'Department added successfully!');
+            return redirect()->route('viewplace');
         }
 
         // Load necessary data for the form if needed
@@ -191,14 +191,14 @@ class NewController extends Controller
         $place = OrgDepartment::findOrFail($id);
         $place->delete();
 
-        return redirect()->route('viewplace')->with('success', 'Department deleted successfully!');
+        return redirect()->route('viewplace');
     }
 
     public function updateplace(Request $request)
     {
         $id = $request->input('depId');
         $place = OrgDepartment::findOrFail($id);
-
+    
         $request->validate([
             'depName' => 'required|string|max:255',
             'status' => 'required|string|max:10',
@@ -206,7 +206,7 @@ class NewController extends Controller
             'parentDepId' => 'required|integer',
             'directorEmpId' => 'required|integer',
         ]);
-
+    
         $place->dep_name = $request->depName;
         $place->status = $request->status;
         $place->sort_order = $request->sortOrder;
@@ -215,11 +215,12 @@ class NewController extends Controller
         $place->approve_empid = '9999';
         $place->edit_empid = '6666';
         $place->edit_date = now();
-
+    
         $place->save();
-
+    
         return redirect()->route('viewplace')->with('success', 'Department updated successfully!');
     }
+    
     
 
     public function updateposition(Request $request, $id)
