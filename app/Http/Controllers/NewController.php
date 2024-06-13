@@ -1,290 +1,302 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\OrgDepartment;
+use App\Models\OrgEmployee;
+use App\Models\OrgPosition;
+use Illuminate\Support\Facades\DB;
 
 class NewController extends Controller
 {
+    public function viewPlaces()
+{
+    $departments = DB::table('ORG_DEPARTMENT')
+        ->select('DEP_ID', 'DEP_NAME', 'STATUS', 'SORT_ORDER', 'PARENT_DEPID', 'DIRECTOR_EMPID', 'APPROVE_EMPID', 'EDIT_EMPID', 'EDIT_DATE')
+        ->where('STATUS', '!=', 'D')
+        ->orderBy('SORT_ORDER')
+        ->get();
+
+    $employees = DB::table('ORG_EMPLOYEE')
+        ->select(
+            'ORG_EMPLOYEE.EMP_ID',
+            DB::raw("CONCAT(ORG_EMPLOYEE.FIRSTNAME, '.', LEFT(ORG_EMPLOYEE.LASTNAME, 1)) AS EMPNAME"),
+            'ORG_POSITION.POS_NAME',
+            'ORG_DEPARTMENT.DEP_NAME'
+        )
+        ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
+        ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
+        ->where('ORG_EMPLOYEE.STATUS', '!=', 'D')
+        ->orderBy('ORG_EMPLOYEE.DEP_ID')
+        ->orderBy('ORG_EMPLOYEE.FIRSTNAME')
+        ->get();
+
+    return view('viewplace', ['departments' => $departments, 'employees' => $employees]);
+}
+
+    public function viewAddPlaceForm()
+{
+    $departments = OrgDepartment::all();
+    $employees = OrgEmployee::where('STATUS', '!=', 'D')->orderBy('DEP_ID')->orderBy('FIRSTNAME')->get();
+
+    return view('modal.addplace', compact('departments', 'employees'));
+}   
+
     public function viewemployee()
     {
         return view('viewemployee');
     }
 
-    public function addFormemployee()
+    public function addFormemployee(Request $request)
     {
-        $conn = $this->db_conn();
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'last_name' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255',
+                'reg_number' => 'required|string|max:255',
+                'position' => 'required|integer',
+                'email' => 'required|email|max:255',
+                'phone_number' => 'required|string|max:20',
+                'gender' => 'required|string|max:10',
+                'birth_date' => 'required|date',
+                'start_date' => 'required|date',
+                'home_number' => 'nullable|string|max:20',
+                'work_number' => 'nullable|string|max:20',
+                'photo' => 'nullable|string|max:255',
+                'state' => 'required|string|max:10',
+                'place' => 'required|integer',
+            ]);
 
-        if (isset($_POST['submit'])) {
-            $Last_Name = $_POST['last_name'];
-            $First_Name = $_POST['first_name'];
-            $Register = $_POST['reg_number'];
-            $Position = $_POST['position'];
-            $Email = $_POST['email'];
-            $HandPhone = $_POST['phone_number'];
-            $Gender = $_POST['gender'];
-            $Register = $_POST['reg_number'];
-            $BirthDate = $_POST['birth_date'];
-            $StartDate = $_POST['start_date'];
-            $HomePhone = $_POST['home_number'];
-            $WorkPhone = $_POST['work_number'];
-            $Photo = $_POST['photo'];
-            $Status = $_POST['state'];
-            $editEmpId = '6666';
-            $DepId = $_POST['place'];
-            $Pass = 'pass';
-            $editDate = date('Y-m-d');
-            $finger = '12345678';
-            $Pass_Date = date('Y-m-d');
-            $PASS_EXPIRE_TERM = '3';
+            $employee = new OrgEmployee();
+            $employee->register = $request->reg_number;
+            $employee->firstname = $request->first_name;
+            $employee->lastname = $request->last_name;
+            $employee->pos_id = $request->position;
+            $employee->dep_id = $request->place;
+            $employee->email = $request->email;
+            $employee->pass = 'pass'; // Consider encrypting passwords
+            $employee->work_date = $request->start_date;
+            $employee->status = $request->state;
+            $employee->birthdate = $request->birth_date;
+            $employee->handphone = $request->phone_number;
+            $employee->homephone = $request->home_number;
+            $employee->workphone = $request->work_number;
+            $employee->fingerid = '12345678';
+            $employee->sex = $request->gender;
+            $employee->picture_link = $request->photo;
+            $employee->edit_date = now();
+            $employee->edit_empid = '6666';
+            $employee->pass_date = now();
+            $employee->pass_expire_term = '3';
+            $employee->pass_enddate = now();
+            $employee->last_logindate = now();
 
-            $sql = "INSERT INTO ORG_EMPLOYEE (REGISTER,	FIRSTNAME,	LASTNAME,	POS_ID,	DEP_ID,	EMAIL,	PASS,	WORK_DATE,	STATUS,	BIRTHDATE,	HANDPHONE,	HOMEPHONE,	WORKPHONE,	FINGERID,	SEX,	PICTURE_LINK,	EDIT_DATE,	EDIT_EMPID,	PASS_DATE,	PASS_EXPIRE_TERM,	PASS_ENDDATE,	PASS_WRONG,	LAST_LOGINDATE	) 
-                    VALUES ('$Register', '$First_Name', '$Last_Name','$Position','$DepId','$Email','$Pass','$StartDate','$Status','$BirthDate','$HandPhone','$HomePhone','$WorkPhone','$finger','$Gender','$Photo','$editDate','$editEmpId','$Pass_Date','$PASS_EXPIRE_TERM','$editDate','$PASS_EXPIRE_TERM','$editDate')";
+            $employee->save();
 
-            if (mysqli_query($conn, $sql)) {
-                return view('viewemployee');
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-            }
+            return redirect()->route('viewemployee');
         }
+
+        return view('addFormemployee');
     }
+
     public function deleteemployee($id)
     {
-        $conn = $this->db_conn();
+        $employee = OrgEmployee::findOrFail($id);
+        $employee->delete();
 
-        $sql = "DELETE FROM ORG_EMPLOYEE WHERE EMP_ID='$id'";
-
-        if (mysqli_query($conn, $sql)) {
-            mysqli_close($conn);
-            return redirect()->route('viewemployee');
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }
+        return redirect()->route('viewemployee');
     }
+
     public function viewposition()
     {
         return view('viewposition');
     }
-    public function addFormpos()
+
+    public function addFormpos(Request $request)
     {
-        $conn = $this->db_conn();
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'posName' => 'required|string|max:255',
+                'status' => 'required|string|max:10',
+                'sortOrder' => 'required|integer',
+            ]);
 
-        if (isset($_POST['submit'])) {
-            $posName = $_POST['posName'];
-            $status = $_POST['status'];
-            $sortOrder = $_POST['sortOrder'];
-            $editEmpId = '6666';
-            $editDate = date('Y-m-d');
+            $position = new OrgPosition();
+            $position->pos_name = $request->posName;
+            $position->status = $request->status;
+            $position->edit_date = now();
+            $position->edit_empid = '6666';
+            $position->sort_order = $request->sortOrder;
 
-            $sql = "INSERT INTO ORG_POSITION (POS_NAME, STATUS, EDIT_DATE, EDIT_EMPID, SORT_ORDER) 
-                    VALUES ('$posName', '$status', '$editDate', '$editEmpId','$sortOrder')";
+            $position->save();
 
-            if (mysqli_query($conn, $sql)) {
-                header("Location: " . route('viewposition'));
-                exit();
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-                header("Location: " . route('viewposition'));
-                exit();
-            }
+            return redirect()->route('viewposition');
         }
+
+        return view('addFormpos');
     }
+
     public function deleteposition($id)
     {
-        $conn = $this->db_conn();
+        $position = OrgPosition::findOrFail($id);
+        $position->delete();
 
-        $sql = "DELETE FROM ORG_POSITION WHERE POS_ID='$id'";
-
-        if (mysqli_query($conn, $sql)) {
-            mysqli_close($conn);
-            return redirect()->route('viewposition');
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }
+        return redirect()->route('viewposition');
     }
+
     public function viewplace()
     {
         return view('viewplace');
     }
 
-    private function db_conn()
+
+ public function addForm(Request $request)
     {
-        $sname = "localhost";
-        $uname = "root";
-        $password = "";
-        $db_name = "dastone";
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'depName' => 'required|string|max:255',
+                'status' => 'required|string|max:10',
+                'sortOrder' => 'nullable|integer', // Make sure 'sortOrder' can be nullable if not required
+                'parentDepId' => 'required|integer',
+                'directorEmpId' => 'required|integer',
+            ]);
 
-        $conn = mysqli_connect($sname, $uname, $password, $db_name);
+            $department = new OrgDepartment();
+            $department->dep_name = $request->depName;
+            $department->status = $request->status;
+            $department->sort_order = $request->sortOrder ?? 0; // Default to 0 if not provided
+            $department->parent_depid = $request->parentDepId;
+            $department->director_empid = $request->directorEmpId;
+            $department->approve_empid = '9999';
+            $department->edit_empid = '6666';
+            $department->edit_date = now();
 
-        if (!$conn) {
-            echo "Connection failed!";
-        } else {
-            return $conn;
+            $department->save();
+
+            return redirect()->route('viewplace')->with('success', 'Department added successfully!');
         }
+
+        // Load necessary data for the form if needed
+        $departments = OrgDepartment::all();
+        $employees = OrgEmployee::all();
+        
+        return view('addForm', compact('departments', 'employees'));
     }
-    public function addForm()
-    {
-        $conn = $this->db_conn();
 
-        if (isset($_POST['submit'])) {
-            $depName = $_POST['depName'];
-            $status = $_POST['status'];
-            $sortOrder = $_POST['sortOrder'];
-            $parentDepId = $_POST['parentDepId'];
-            $directorEmpId = $_POST['directorEmpId'];
-            $approveEmpId = '9999';
-            $editEmpId = '6666';
-            $editDate = date('Y-m-d');
 
-            $sql = "INSERT INTO ORG_DEPARTMENT (DEP_NAME, STATUS, SORT_ORDER, PARENT_DEPID, DIRECTOR_EMPID, APPROVE_EMPID, EDIT_EMPID, EDIT_DATE) 
-                    VALUES ('$depName', '$status', '$sortOrder', '$parentDepId', '$directorEmpId', '$approveEmpId', '$editEmpId', '$editDate')";
 
-            if (mysqli_query($conn, $sql)) {
-                header("Location: " . route('viewplace'));
-                exit();
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-                header("Location: " . route('viewplace'));
-                exit();
-            }
-        }
-    }
     public function deleteplace($id)
     {
-        $conn = $this->db_conn();
+        $place = OrgDepartment::findOrFail($id);
+        $place->delete();
 
-        $sql = "DELETE FROM ORG_DEPARTMENT WHERE DEP_ID='$id'";
-
-        if (mysqli_query($conn, $sql)) {
-            mysqli_close($conn);
-            return redirect()->route('viewplace');
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        }
+        return redirect()->route('viewplace')->with('success', 'Department deleted successfully!');
     }
+
     public function updateplace(Request $request)
     {
-        $conn = $this->db_conn();
+        $id = $request->input('depId');
+        $place = OrgDepartment::findOrFail($id);
 
-        if ($request->isMethod('post')) {
-            $depId = $request->input('DEP_ID');
-            $depName = $request->input('depName');
-            $status = $request->input('status');
-            $sortOrder = $request->input('sortOrder');
-            $parentDepId = $request->input('parentDepId');
-            $directorEmpId = $request->input('directorEmpId');
-            $approveEmpId = '9999';
-            $editEmpId = '6666';
-            $editDate = date('Y-m-d');
+        $request->validate([
+            'depName' => 'required|string|max:255',
+            'status' => 'required|string|max:10',
+            'sortOrder' => 'required|integer',
+            'parentDepId' => 'required|integer',
+            'directorEmpId' => 'required|integer',
+        ]);
 
-            $sql = "UPDATE ORG_DEPARTMENT SET 
-                    DEP_NAME='$depName', 
-                    STATUS='$status', 
-                    SORT_ORDER='$sortOrder', 
-                    PARENT_DEPID='$parentDepId', 
-                    DIRECTOR_EMPID='$directorEmpId', 
-                    APPROVE_EMPID='$approveEmpId', 
-                    EDIT_EMPID='$editEmpId', 
-                    EDIT_DATE='$editDate' 
-                WHERE DEP_ID='$depId'";
+        $place->dep_name = $request->depName;
+        $place->status = $request->status;
+        $place->sort_order = $request->sortOrder;
+        $place->parent_depid = $request->parentDepId;
+        $place->director_empid = $request->directorEmpId;
+        $place->approve_empid = '9999';
+        $place->edit_empid = '6666';
+        $place->edit_date = now();
 
-            if (mysqli_query($conn, $sql)) {
-                mysqli_close($conn);
-                return redirect()->route('viewplace');
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-            }
-        }
+        $place->save();
+
+        return redirect()->route('viewplace')->with('success', 'Department updated successfully!');
     }
-    public function updateposition(Request $request)
+    
+
+    public function updateposition(Request $request, $id)
     {
-        $conn = $this->db_conn();
+        $position = OrgPosition::findOrFail($id);
 
         if ($request->isMethod('post')) {
-            $posId = $request->input('POS_ID');
-            $posName = $request->input('posName');
-            $status = $request->input('status');
-            $sortOrder = $request->input('sortOrder');
-            $editEmpId = '6666';
-            $editDate = date('Y-m-d');
+            $request->validate([
+                'posName' => 'required|string|max:255',
+                'status' => 'required|string|max:10',
+                'sortOrder' => 'required|integer',
+            ]);
 
-            $sql = "UPDATE ORG_POSITION SET 
-                    POS_NAME='$posName', 
-                    STATUS='$status', 
-                    EDIT_DATE='$editDate', 
-                    EDIT_EMPID='$editEmpId', 
-                    SORT_ORDER='$sortOrder'
-                WHERE POS_ID='$posId'";
+            $position->pos_name = $request->posName;
+            $position->status = $request->status;
+            $position->edit_date = now();
+            $position->edit_empid = '6666';
+            $position->sort_order = $request->sortOrder;
 
-            if (mysqli_query($conn, $sql)) {
-                mysqli_close($conn);
-                return redirect()->route('viewposition');
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-            }
+            $position->save();
+
+            return redirect()->route('viewposition');
         }
+
+        return view('updateposition', compact('position'));
     }
 
-    public function updateemployee(Request $request)
+    public function updateemployee(Request $request, $id)
     {
-        $conn = $this->db_conn();
+        $employee = OrgEmployee::findOrFail($id);
 
         if ($request->isMethod('post')) {
-            $empId = $request->input('EMP_ID');
-            $Last_Name = $request->input('last_name');
-            $First_Name = $request->input('first_name');
-            $Register = $request->input('reg_number');
-            $Position = $request->input('position');
-            $Email = $request->input('email');
-            $HandPhone = $request->input('phone_number');
-            $Gender = $request->input('gender');
-            $BirthDate = $request->input('birth_date');
-            $StartDate = $request->input('start_date');
-            $HomePhone = $request->input('home_number');
-            $WorkPhone = $request->input('work_number');
-            $Photo = $request->input('photo');  // Handle file uploads separately if applicable
-            $Status = $request->input('state');
-            $editEmpId = '6666';
-            $DepId = $_POST['place'];
-            $Pass = 'pass';
-            $editDate = date('Y-m-d');
-            $finger = '12345678';
-            $Pass_Date = date('Y-m-d');
-            $PASS_EXPIRE_TERM = '3';
+            $request->validate([
+                'last_name' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255',
+                'reg_number' => 'required|string|max:255',
+                'position' => 'required|integer',
+                'email' => 'required|email|max:255',
+                'phone_number' => 'required|string|max:20',
+                'gender' => 'required|string|max:10',
+                'birth_date' => 'required|date',
+                'start_date' => 'required|date',
+                'home_number' => 'nullable|string|max:20',
+                'work_number' => 'nullable|string|max:20',
+                'photo' => 'nullable|string|max:255',
+                'state' => 'required|string|max:10',
+                'place' => 'required|integer',
+            ]);
 
-            $sql = "UPDATE ORG_EMPLOYEE SET 
-                REGISTER='$Register', 
-                FIRSTNAME='$First_Name', 
-                LASTNAME='$Last_Name', 
-                POS_ID='$Position', 
-                DEP_ID='$DepId', 
-                EMAIL='$Email', 
-                PASS='$Pass', 
-                WORK_DATE='$StartDate', 
-                STATUS='$Status', 
-                BIRTHDATE='$BirthDate', 
-                HANDPHONE='$HandPhone', 
-                HOMEPHONE='$HomePhone', 
-                WORKPHONE='$WorkPhone', 
-                FINGERID='$finger', 
-                SEX='$Gender', 
-                PICTURE_LINK='$Photo', 
-                EDIT_DATE='$editDate', 
-                EDIT_EMPID='$editEmpId', 
-                PASS_DATE='$Pass_Date', 
-                PASS_EXPIRE_TERM='$PASS_EXPIRE_TERM', 
-                PASS_ENDDATE='$editDate', 
-                PASS_WRONG='$PASS_EXPIRE_TERM', 
-                LAST_LOGINDATE='$editDate'
-                WHERE EMP_ID='$empId'";
+            $employee->register = $request->reg_number;
+            $employee->firstname = $request->first_name;
+            $employee->lastname = $request->last_name;
+            $employee->pos_id = $request->position;
+            $employee->dep_id = $request->place;
+            $employee->email = $request->email;
+            $employee->pass = 'pass'; // Consider encrypting passwords
+            $employee->work_date = $request->start_date;
+            $employee->status = $request->state;
+            $employee->birthdate = $request->birth_date;
+            $employee->handphone = $request->phone_number;
+            $employee->homephone = $request->home_number;
+            $employee->workphone = $request->work_number;
+            $employee->fingerid = '12345678';
+            $employee->sex = $request->gender;
+            $employee->picture_link = $request->photo;
+            $employee->edit_date = now();
+            $employee->edit_empid = '6666';
+            $employee->pass_date = now();
+            $employee->pass_expire_term = '3';
+            $employee->pass_enddate = now();
+            $employee->last_logindate = now();
 
-            if (mysqli_query($conn, $sql)) {
-                mysqli_close($conn);
-                return redirect()->route('viewemployee');
-            } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-            }
+            $employee->save();
+
+            return redirect()->route('viewemployee');
         }
+
+        return view('updateemployee', compact('employee'));
     }
 }

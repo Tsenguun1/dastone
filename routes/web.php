@@ -7,10 +7,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/place', [NewController::class, 'viewPlaces'])->name('viewplace');
 Route::post('/addform', [NewController::class, 'addForm'])->name('addform');
-Route::get('/delete-place/{id}', [NewController::class, 'deleteplace'])->name('deleteplace');
-Route::get('/place', [NewController::class, 'viewplace'])->name('viewplace');
+Route::delete('/delete-place/{id}', [NewController::class, 'deleteplace'])->name('deleteplace');
 Route::post('/updateplace', [NewController::class, 'updateplace'])->name('updateplace');
+
 
 Route::post('/addformpos', [NewController::class, 'addFormpos'])->name('addformpos');
 Route::get('/position', [NewController::class, 'viewposition'])->name('viewposition');

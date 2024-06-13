@@ -1,4 +1,4 @@
-<div class="modal fade" id="AddPlaceForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+<div class="modal fade" id="UpdatePlaceForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <div class="form-container" id="formContainer">
@@ -16,8 +16,9 @@
                         </ul>
                     </div>
                 @endif
-                <form id="registrationForm" method="POST" action="{{ route('addform') }}">
+                <form id="registrationForm" method="POST" action="{{ route('updateplace') }}">
                     @csrf
+                    <input type="hidden" id="modal-dep-id" name="depId">
                     <label for="depName" class="form-check-label">Газар нэгжийн нэршил</label>
                     <input type="text" class="form-check-input" id="depName" name="depName" required>
 
@@ -45,7 +46,7 @@
                             <option value="{{ $employee->EMP_ID }}">{{ $employee->EMPNAME }} ({{ $employee->DEP_NAME }} - {{ $employee->POS_NAME }})</option>
                         @endforeach
                     </select>
-                    <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
+                    <button class="btn btn-primary" type="submit" name="submit">Update</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
                 </form>
             </div> 
