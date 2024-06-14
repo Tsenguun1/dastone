@@ -128,7 +128,7 @@
                         <div class="row mt-3">
                             <div class="col-12 text-right">
                                 <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Хаах</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
                             </div>
                         </div>
                     </form>
@@ -225,7 +225,7 @@
                         <div class="row mt-3">
                             <div class="col-12 text-right">
                                 <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Хаах</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
                             </div>
                         </div>
                     </form>
