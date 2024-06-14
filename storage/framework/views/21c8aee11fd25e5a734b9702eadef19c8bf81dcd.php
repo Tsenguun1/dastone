@@ -48,24 +48,25 @@
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <div class="form-container" id="formContainer">
-                @if(session('success'))
+                <?php if(session('success')): ?>
                     <div class="alert alert-success">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
-                @endif
-                @if($errors->any())
+                <?php endif; ?>
+                <?php if($errors->any()): ?>
                     <div class="alert alert-danger">
                         <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
                 <div class="container mt-5">
-                    <form id="registrationForm" method="POST" action="{{ route('updateemployee') }}"
+                    <form id="registrationForm" method="POST" action="<?php echo e(route('updateemployee')); ?>"
                         enctype="multipart/form-data">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <input type="hidden" id="modal-emp-id" name="EMP_ID">
                         <div class="row">
                             <div class="col-md-6">
@@ -78,9 +79,9 @@
                                 <label class="form-label" for="position">Албан тушаал:</label>
                                 <select class="form-control" id="position" name="POS_ID" required>
                                     <option value="">[Сонгоно уу]</option>
-                                    @foreach($positions as $position)
-                                        <option value="{{ $position->POS_ID }}">{{ $position->POS_NAME }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $positions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($position->POS_ID); ?>"><?php echo e($position->POS_NAME); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
 
                                 <label class="form-label" for="phone_number">Гар утасны дугаар:</label>
@@ -105,9 +106,9 @@
                                 <label class="form-label" for="place">Газар нэгж:</label>
                                 <select class="form-control" id="place" name="DEP_ID" required>
                                     <option value="">[Сонгоно уу]</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->DEP_ID }}">{{ $department->DEP_NAME }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($department->DEP_ID); ?>"><?php echo e($department->DEP_NAME); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
 
                                 <label class="form-label" for="email">И-мэйл:</label>
@@ -148,24 +149,25 @@
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <div class="form-container" id="formContainer">
-                @if(session('success'))
+                <?php if(session('success')): ?>
                     <div class="alert alert-success">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
-                @endif
-                @if($errors->any())
+                <?php endif; ?>
+                <?php if($errors->any()): ?>
                     <div class="alert alert-danger">
                         <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
                 <div class="container mt-5">
-                    <form id="registrationForm" method="POST" action="{{ route('addformemployee') }}"
+                    <form id="registrationForm" method="POST" action="<?php echo e(route('addformemployee')); ?>"
                         enctype="multipart/form-data">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="form-label" for="last_name">Эцэг/эхийн нэр:</label>
@@ -177,9 +179,9 @@
                                 <label class="form-label" for="position">Албан тушаал:</label>
                                 <select class="form-control" id="position" name="POS_ID" required>
                                     <option value="">[Сонгоно уу]</option>
-                                    @foreach($positions as $position)
-                                        <option value="{{ $position->POS_ID }}">{{ $position->POS_NAME }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $positions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($position->POS_ID); ?>"><?php echo e($position->POS_NAME); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
 
                                 <label class="form-label" for="phone_number">Гар утасны дугаар:</label>
@@ -204,9 +206,9 @@
                                 <label class="form-label" for="place">Газар нэгж:</label>
                                 <select class="form-control" id="place" name="DEP_ID" required>
                                     <option value="">[Сонгоно уу]</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->DEP_ID }}">{{ $department->DEP_NAME }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($department->DEP_ID); ?>"><?php echo e($department->DEP_NAME); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
 
                                 <label class="form-label" for="email">И-мэйл:</label>
@@ -239,4 +241,4 @@
             </div>
         </div>
     </div>
-</div>
+</div><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/modal/addemployee.blade.php ENDPATH**/ ?>

@@ -8,17 +8,26 @@ use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\OrgPosition;
 use App\Models\Department;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
+    
     public function viewemployee()
     {
-        $employees = OrgEmployee::all();
+        $employees = DB::table('ORG_EMPLOYEE')
+            ->select('EMP_ID', 'FIRSTNAME', 'LASTNAME', 'DEP_ID', 'POS_ID', 'REGISTER', 'SEX', 'EMAIL', 'BIRTHDATE', 'HANDPHONE','HOMEPHONE', 'WORKPHONE', 'STATUS', 'PICTURE_LINK', 'WORK_DATE')
+            ->where('STATUS', '!=', 'D')
+            ->get();
+    
         $positions = OrgPosition::all();
         $departments = OrgDepartment::all();
+    
         return view('viewemployee', compact('employees', 'positions', 'departments'));
     }
+    
 
+    
     public function addFormemployee(Request $request)
     {
         $validatedData = $request->validate([
@@ -57,14 +66,14 @@ class EmployeeController extends Controller
 
         if ($request->hasFile('PICTURE_LINK')) {
             $file = $request->file('PICTURE_LINK');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = $file->getClientOriginalName();
             $path = $file->storeAs('pictures', $filename, 'public');
             $employee->PICTURE_LINK = '/storage/' . $path;
         }
 
         $employee->save();
 
-        return redirect()->back()->with('success', 'Ажилтан амжилттай нэмэгдлээ.');
+        return redirect()->back();
     }
 
 
@@ -89,10 +98,10 @@ class EmployeeController extends Controller
             'SEX' => 'required|string|max:255',
             'PICTURE_LINK' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
+    
         // Find the employee by ID
         $employee = OrgEmployee::findOrFail($validatedData['EMP_ID']);
-
+    
         // Update the employee's details
         $employee->REGISTER = $validatedData['REGISTER'];
         $employee->FIRSTNAME = $validatedData['FIRSTNAME'];
@@ -108,27 +117,29 @@ class EmployeeController extends Controller
         $employee->WORKPHONE = $validatedData['WORKPHONE'];
         $employee->SEX = $validatedData['SEX'];
         $employee->FINGERID = $request->input('FINGERID'); // Assuming FINGERID is part of the request
-
+    
         // Handle the picture upload if provided
         if ($request->hasFile('PICTURE_LINK')) {
             $file = $request->file('PICTURE_LINK');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = $file->getClientOriginalName();
             $path = $file->storeAs('pictures', $filename, 'public');
             $employee->PICTURE_LINK = '/storage/' . $path;
         }
-
+    
         // Save the updated employee details
         $employee->save();
-
+    
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Ажилтан амжилттай шинэчлэгдлээ.');
+        return redirect()->back();
     }
+    
 
     public function deleteemployee($id)
     {
-        $employee = OrgEmployee::find($id);
-        $employee->delete();
+        $employee = OrgEmployee::findOrFail($id);
+        $employee->status = 'D'; // Assuming 'D' represents deleted or deactivated status
+        $employee->save();
 
-        return redirect()->back()->with('success', 'Ажилтан амжилттай устгагдлаа.');
+        return redirect()->route('viewemployee');
     }
 }

@@ -46,7 +46,8 @@ class PositionController extends Controller
     public function deleteposition($id)
     {
         $position = OrgPosition::findOrFail($id);
-        $position->delete();
+        $position->status = 'D'; // Assuming 'D' represents deleted or deactivated status
+        $position->save();
 
         return redirect()->route('viewposition');
     }
@@ -70,6 +71,6 @@ class PositionController extends Controller
 
         $position->save();
 
-        return redirect()->route('viewposition')->with('success', 'Position updated successfully!');
+        return redirect()->route('viewposition');
     }
 }
