@@ -263,5 +263,4 @@
             </div>
         </div>
     </div>
-</div>
-<?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/modal/addemployee.blade.php ENDPATH**/ ?>
+</div><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/modal/addemployee.blade.php ENDPATH**/ ?>
