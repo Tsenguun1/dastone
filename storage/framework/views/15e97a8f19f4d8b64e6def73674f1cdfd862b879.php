@@ -66,7 +66,7 @@
                     </select>
 
                     <label for="directorEmpId" class="form-check-label">Захирал</label>
-                    <select id="directorEmpId" name="directorEmpId" required>
+                    <select id="directorEmpId" name="directorEmpId" class="form-control" required>
                         <?php $__currentLoopData = $employees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $employee): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($employee->EMP_ID); ?>"><?php echo e($employee->EMPNAME); ?> (<?php echo e($employee->DEP_NAME); ?> -
                                 <?php echo e($employee->POS_NAME); ?>)
@@ -116,7 +116,7 @@
                     </select>
 
                     <label for="sortOrder" class="form-check-label">Эрэмбэ</label>
-                    <input type="text" class="form-check-input" id="sortOrder" name="sortOrder">
+                    <input type="text" class="form-check-input" id="sortOrder" name="sortOrder" required>
 
                     <label for="parentDepId" class="form-check-label">Эцэг газар нэгж</label>
                     <select id="parentDepId" name="parentDepId" required>
@@ -130,10 +130,7 @@
                     <select id="directorEmpId" name="directorEmpId" required>
                         <option value="">[Сонгоно уу]</option>
                         <?php $__currentLoopData = $employees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $employee): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($employee->EMP_ID); ?>"><?php echo e($employee->EMPNAME); ?> (<?php echo e($employee->DEP_NAME); ?>
-
-                                -
-                                <?php echo e($employee->POS_NAME); ?>)
+                            <option value="<?php echo e($employee->EMP_ID); ?>"><?php echo e($employee->EMPNAME); ?> (<?php echo e($employee->DEP_NAME); ?>-<?php echo e($employee->POS_NAME); ?>)
                             </option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>

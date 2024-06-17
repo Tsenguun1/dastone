@@ -18,7 +18,7 @@ Route::post('/updateplace', [PlaceController::class, 'updateplace'])->name('upda
 
 
 Route::get('/employee', [EmployeeController::class, 'viewemployee'])->name('viewemployee');
-Route::post('/addformemployee', [EmployeeController::class, 'addFormemployee'])->name('addformemployee');
+Route::post('/addemployee', [EmployeeController::class, 'addemployee'])->name('addemployee');
 Route::delete('/delete-employee/{id}', [EmployeeController::class, 'deleteemployee'])->name('deleteemployee');
 Route::post('/updateemployee', [EmployeeController::class, 'updateemployee'])->name('updateemployee');
 

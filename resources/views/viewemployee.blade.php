@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
 <div class="topbar">
     <nav class="navbar-custom">
@@ -39,12 +40,12 @@
                                 @foreach($employees as $employee)
                                     <tr>
                                         <td><img src="{{$employee->PICTURE_LINK}}"
-                                                style=" border-radius: 50%; width: 50px; height: 50px; object-fit: cover;"
+                                                style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover;"
                                                 alt="Employee Picture" width="50"></td>
                                         <td>{{ $employee->FIRSTNAME }}</td>
                                         <td>{{ $employee->LASTNAME }}</td>
-                                        <td>{{ $employee->DEP_ID }}</td>
-                                        <td>{{ $employee->POS_ID }}</td>
+                                        <td>{{ $employee->DEP_NAME }}</td> <!-- Displaying Department Name -->
+                                        <td>{{ $employee->POS_NAME }}</td> <!-- Displaying Position Name -->
                                         <td>{{ $employee->REGISTER }}</td>
                                         <td>{{ $employee->SEX }}</td>
                                         <td>{{ $employee->EMAIL }}</td>
@@ -60,9 +61,10 @@
                                                 data-homephone='{{ $employee->HOMEPHONE }}'
                                                 data-firstname='{{ $employee->FIRSTNAME }}'
                                                 data-lastname='{{ $employee->LASTNAME }}'
-                                                data-depid='{{ $employee->DEP_ID }}' data-posid='{{ $employee->POS_ID }}'
-                                                data-register='{{ $employee->REGISTER }}' data-sex='{{ $employee->SEX }}'
-                                                data-email='{{ $employee->EMAIL }}'
+                                                data-depid='{{ $employee->DEP_ID }}'
+                                                data-posid='{{ $employee->POS_ID }}'
+                                                data-register='{{ $employee->REGISTER }}'
+                                                data-sex='{{ $employee->SEX }}' data-email='{{ $employee->EMAIL }}'
                                                 data-birthdate='{{ $employee->BIRTHDATE }}'
                                                 data-handphone='{{ $employee->HANDPHONE }}'
                                                 data-workphone='{{ $employee->WORKPHONE }}'
@@ -75,7 +77,6 @@
                                                 <button type="submit" class="btn btn-danger">Устгах</button>
                                             </form>
                                         </td>
-
                                     </tr>
                                 @endforeach
                             </tbody>
