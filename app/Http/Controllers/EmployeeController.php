@@ -15,17 +15,39 @@ class EmployeeController extends Controller
     
     public function viewemployee()
     {
-        $employees = DB::table('ORG_EMPLOYEE')
-            ->select('EMP_ID', 'FIRSTNAME', 'LASTNAME', 'DEP_ID', 'POS_ID', 'REGISTER', 'SEX', 'EMAIL', 'BIRTHDATE', 'HANDPHONE','HOMEPHONE', 'WORKPHONE', 'STATUS', 'PICTURE_LINK', 'WORK_DATE')
-            ->where('STATUS', '!=', 'D')
+        $employees = DB::table('org_employee')
+            ->join('org_department', 'org_employee.DEP_ID', '=', 'org_department.DEP_ID')
+            ->join('org_position', 'org_employee.POS_ID', '=', 'org_position.POS_ID')
+            ->select(
+                'org_employee.EMP_ID',
+                'org_employee.FIRSTNAME',
+                'org_employee.LASTNAME',
+                'org_employee.DEP_ID', 
+                'org_employee.POS_ID', 
+                'org_employee.REGISTER',
+                'org_employee.SEX',
+                'org_employee.EMAIL',
+                'org_employee.BIRTHDATE',
+                'org_employee.HANDPHONE',
+                'org_employee.HOMEPHONE',
+                'org_employee.WORKPHONE',
+                'org_employee.STATUS',
+                'org_employee.PICTURE_LINK',
+                'org_employee.WORK_DATE',
+                'org_department.DEP_NAME',
+                'org_position.POS_NAME'
+            )
+            ->where('org_employee.STATUS', '!=', 'D')
+            ->orderBy('org_department.DEP_ID')
+            ->orderBy('org_employee.FIRSTNAME')
+            ->orderBy('org_employee.LASTNAME')
             ->get();
-    
+
         $positions = OrgPosition::all();
         $departments = OrgDepartment::all();
-    
+
         return view('viewemployee', compact('employees', 'positions', 'departments'));
     }
-    
 
     
     public function addFormemployee(Request $request)

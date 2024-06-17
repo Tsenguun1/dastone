@@ -35,8 +35,8 @@
                                             <td><img src="{{$employee->PICTURE_LINK}}" style=" border-radius: 50%; width: 50px; height: 50px; object-fit: cover;" alt="Employee Picture" width="50"></td>
                                             <td>{{ $employee->FIRSTNAME }}</td>
                                             <td>{{ $employee->LASTNAME }}</td>
-                                            <td>{{ $employee->DEP_ID }}</td>
-                                            <td>{{ $employee->POS_ID }}</td>
+                                            <td>{{ $employee->DEP_NAME }}</td> <!-- Displaying Department Name -->
+                                            <td>{{ $employee->POS_NAME }}</td> <!-- Displaying Position Name -->
                                             <td>{{ $employee->REGISTER }}</td>
                                             <td>{{ $employee->SEX }}</td>
                                             <td>{{ $employee->EMAIL }}</td>
