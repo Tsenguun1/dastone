@@ -9,8 +9,8 @@
 
 <div class="page-content">
 
-    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
-        data-bs-toggle="modal" data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
+    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
+        data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
     <div class="container-fluid"></div>
     <div class="row">
         <div class="col-12">
@@ -32,7 +32,15 @@
                                 <?php $__currentLoopData = $positions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <td><?php echo e($position->POS_NAME); ?></td>
-                                        <td><?php echo e($position->STATUS); ?></td>
+                                        <td>
+                                            <?php if($position->STATUS == 'A'): ?>
+                                                Идэвхитэй
+                                            <?php elseif($position->STATUS == 'N'): ?>
+                                                Идэвхгүй
+                                            <?php else: ?>
+                                                Unknown Status
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?php echo e($position->SORT_ORDER); ?></td>
                                         <td><?php echo e($position->EDIT_DATE); ?></td>
                                         <td>
