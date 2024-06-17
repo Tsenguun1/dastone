@@ -6,41 +6,37 @@
     </nav>
 </div>
 
-<div class="page-content">
-    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
-        data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
-    <div class="container-fluid"></div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class='table-rep-plugin'>
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Нэр</th>
-                                    <th>Захирал</th>
-                                    <th>Төлөв</th>
-                                    <th>Эрэмбэ</th>
-                                    <th>Зассан</th>
-                                    <th style=" text-align: center; ">Үйлдэл</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $__currentLoopData = $departmentTree; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <?php echo $__env->make('partials.department_row', ['department' => $department, 'level' => 0], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </tbody>
-                        </table>
-                    </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class='table-rep-plugin'>
+                    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
+                        data-bs-toggle="modal" data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Нэр</th>
+                                <th>Захирал</th>
+                                <th>Төлөв</th>
+                                <th>Эрэмбэ</th>
+                                <th>Зассан</th>
+                                <th style=" text-align: center; ">Үйлдэл</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $departmentTree; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php echo $__env->make('partials.department_row', ['department' => $department, 'level' => 0], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
-</div>
-</div>
+
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
 
 <?php echo $__env->make('modal.addplace', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->stopSection(); ?>

@@ -132,9 +132,10 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                                 <label class="form-label" for="phone_number">Гар утасны дугаар:</label>
-                                <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required pattern="[6-9][0-9]{7}" title="Mobile phone number must be 8 digits and cannot start with numbers 1-5">
+                                <input class="form-control" type="text" id="phone_number" name="HANDPHONE" 
+                                required pattern="[6-9][0-9]{7}" title="Mobile phone number must be 8 digits and cannot start with numbers 1-5">
                                 <label class="form-label" for="birth_date">Төрсөн өдөр:</label>
-                                <input class="form-control" type="datetime-local" id="birth_date" name="BIRTHDATE" required>
+                                <input class="form-control" type="date" id="birth_date" name="BIRTHDATE" required>
                                 <label class="form-label" for="work_number">Ажлын утасны дугаар:</label>
                                 <input class="form-control" type="text" id="work_number" name="WORKPHONE" pattern="[6-9][0-9]{7}" title="Work phone number must be 8 digits and cannot start with numbers 1-5">
                                 <label class="form-label" for="state">Төлөв:</label>
@@ -170,7 +171,8 @@
                         </div>
                         <div class="row">
                             <div class="col-12 mt-3 text-center">
-                                <button class="btn btn-primary" type="submit">Хадгалах</button>
+                                <button class="btn btn-primary" type="submit" name="submit">Засах</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
                             </div>
                         </div>
                     </form>
@@ -219,7 +221,7 @@
                                 <label class="form-label" for="phone_number">Гар утасны дугаар:</label>
                                 <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required pattern="[6-9][0-9]{7}" title="Mobile phone number must be 8 digits and cannot start with numbers 1-5">
                                 <label class="form-label" for="birth_date">Төрсөн өдөр:</label>
-                                <input class="form-control" type="datetime-local" id="birth_date" name="BIRTHDATE" required>
+                                <input class="form-control" type="date" id="birth_date" name="BIRTHDATE" required>
                                 <label class="form-label" for="work_number">Ажлын утасны дугаар:</label>
                                 <input class="form-control" type="text" id="work_number" name="WORKPHONE" pattern="[6-9][0-9]{7}" title="Work phone number must be 8 digits and cannot start with numbers 1-5">
                                 <label class="form-label" for="state">Төлөв:</label>
@@ -255,8 +257,9 @@
                         </div>
                         <div class="row">
                             <div class="col-12 mt-3 text-center">
-                                <button class="btn btn-primary" type="submit">Хадгалах</button>
-                            </div>
+                                <button class="btn btn-primary" type="submit" name="submit">Засах</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
+                                 </div>
                         </div>
                     </form>
                 </div>

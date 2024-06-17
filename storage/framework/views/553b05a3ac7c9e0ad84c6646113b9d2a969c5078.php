@@ -1,10 +1,25 @@
 <?php
-    $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $level * 4);
+    $indent = str_repeat('&nbsp;', $level * 4);
 ?>
 <tr>
     <td><?php echo $indent; ?><?php echo e($department->DEP_NAME); ?></td>
-    <td><?php echo e($department->DIRECTOR_EMPID); ?></td>
-    <td><?php echo e($department->STATUS); ?></td>
+    <td>
+        <?php if(!empty($department->DIRECTOR_FIRSTNAME) && !empty($department->DIRECTOR_LASTNAME)): ?>
+            <?php echo e($department->DIRECTOR_FIRSTNAME); ?> <?php echo e($department->DIRECTOR_LASTNAME); ?>
+
+        <?php else: ?>
+            Director Not Assigned
+        <?php endif; ?>
+    </td>
+    <td>
+        <?php if($department->STATUS == 'A'): ?>
+            Идэвхитэй
+        <?php elseif($department->STATUS == 'N'): ?>
+            Идэвхгүй
+        <?php else: ?>
+            Unknown Status
+        <?php endif; ?>
+    </td>
     <td><?php echo e($department->SORT_ORDER); ?></td>
     <td><?php echo e($department->EDIT_DATE); ?></td>
     <td>
