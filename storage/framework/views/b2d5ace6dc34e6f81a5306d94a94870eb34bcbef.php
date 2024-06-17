@@ -35,8 +35,8 @@
                                             <td><img src="<?php echo e($employee->PICTURE_LINK); ?>" style=" border-radius: 50%; width: 50px; height: 50px; object-fit: cover;" alt="Employee Picture" width="50"></td>
                                             <td><?php echo e($employee->FIRSTNAME); ?></td>
                                             <td><?php echo e($employee->LASTNAME); ?></td>
-                                            <td><?php echo e($employee->DEP_ID); ?></td>
-                                            <td><?php echo e($employee->POS_ID); ?></td>
+                                            <td><?php echo e($employee->DEP_NAME); ?></td> <!-- Displaying Department Name -->
+                                            <td><?php echo e($employee->POS_NAME); ?></td> <!-- Displaying Position Name -->
                                             <td><?php echo e($employee->REGISTER); ?></td>
                                             <td><?php echo e($employee->SEX); ?></td>
                                             <td><?php echo e($employee->EMAIL); ?></td>
