@@ -52,7 +52,15 @@
                                         <td><?php echo e($employee->BIRTHDATE); ?></td>
                                         <td><?php echo e($employee->HANDPHONE); ?></td>
                                         <td><?php echo e($employee->WORKPHONE); ?></td>
-                                        <td><?php echo e($employee->STATUS); ?></td>
+                                        <td>
+        <?php if($employee->STATUS == 'A'): ?>
+            Идэвхитэй
+        <?php elseif($employee->STATUS == 'N'): ?>
+            Идэвхгүй
+        <?php else: ?>
+            Unknown Status
+        <?php endif; ?>
+    </td>
                                         <td>
                                             <button type='button' class='btn btn-success' data-bs-toggle='modal'
                                                 data-bs-target='#UpdateEmployeeForm'

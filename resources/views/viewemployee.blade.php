@@ -52,7 +52,15 @@
                                         <td>{{ $employee->BIRTHDATE }}</td>
                                         <td>{{ $employee->HANDPHONE }}</td>
                                         <td>{{ $employee->WORKPHONE }}</td>
-                                        <td>{{ $employee->STATUS }}</td>
+                                        <td>
+        @if ($employee->STATUS == 'A')
+            Идэвхитэй
+        @elseif ($employee->STATUS == 'N')
+            Идэвхгүй
+        @else
+            Unknown Status
+        @endif
+    </td>
                                         <td>
                                             <button type='button' class='btn btn-success' data-bs-toggle='modal'
                                                 data-bs-target='#UpdateEmployeeForm'
