@@ -65,7 +65,7 @@
                     </select>
 
                     <label for="directorEmpId" class="form-check-label">Захирал</label>
-                    <select id="directorEmpId" name="directorEmpId" required>
+                    <select id="directorEmpId" name="directorEmpId" class="form-control" required>
                         @foreach ($employees as $employee)
                             <option value="{{ $employee->EMP_ID }}">{{ $employee->EMPNAME }} ({{ $employee->DEP_NAME }} -
                                 {{ $employee->POS_NAME }})
@@ -114,7 +114,7 @@
                     </select>
 
                     <label for="sortOrder" class="form-check-label">Эрэмбэ</label>
-                    <input type="text" class="form-check-input" id="sortOrder" name="sortOrder">
+                    <input type="text" class="form-check-input" id="sortOrder" name="sortOrder" required>
 
                     <label for="parentDepId" class="form-check-label">Эцэг газар нэгж</label>
                     <select id="parentDepId" name="parentDepId" required>
@@ -128,9 +128,7 @@
                     <select id="directorEmpId" name="directorEmpId" required>
                         <option value="">[Сонгоно уу]</option>
                         @foreach ($employees as $employee)
-                            <option value="{{ $employee->EMP_ID }}">{{ $employee->EMPNAME }} ({{ $employee->DEP_NAME }}
-                                -
-                                {{ $employee->POS_NAME }})
+                            <option value="{{ $employee->EMP_ID }}">{{ $employee->EMPNAME }} ({{ $employee->DEP_NAME }}-{{ $employee->POS_NAME }})
                             </option>
                         @endforeach
                     </select>

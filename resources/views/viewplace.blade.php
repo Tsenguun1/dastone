@@ -1,38 +1,45 @@
 @extends('layouts.app')
 @section('content')
-<div class="page-wrapper">
-    <div class="topbar">
-        <nav class="navbar-custom">
-            <ul class="list-unstyled topbar-nav mb-0">
-                <h4 class="page-title" style="margin: 10px;">Газар нэгжийн бүртгэл</h4>
-                <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 10px; margin-top: 30px;"
-                    data-bs-toggle="modal" data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
-                <div class='card-body'>
+<div class="topbar">
+    <nav class="navbar-custom">
+        <h4 class="page-title" style="margin: 10px;">Газар нэгжийн бүртгэл</h4>
+    </nav>
+</div>
+
+<div class="page-content">
+    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
+        data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
+    <div class="container-fluid"></div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
                     <div class='table-rep-plugin'>
-                        <div class='table-responsive mb-0' data-pattern='priority-columns'>
-                            <table id='tech-companies-1' class='table table-striped mb-0'>
-                                <thead>
-                                    <tr>
-                                        <th>Нэр</th>
-                                        <th>Захирал</th>
-                                        <th>Төлөв</th>
-                                        <th>Эрэмбэ</th>
-                                        <th>Зассан</th>
-                                        <th style=" text-align: center; ">Үйлдэл</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($departmentTree as $department)
-                                        @include('partials.department_row', ['department' => $department, 'level' => 0])
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Нэр</th>
+                                    <th>Захирал</th>
+                                    <th>Төлөв</th>
+                                    <th>Эрэмбэ</th>
+                                    <th>Зассан</th>
+                                    <th style=" text-align: center; ">Үйлдэл</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($departmentTree as $department)
+                                    @include('partials.department_row', ['department' => $department, 'level' => 0])
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </ul>
-        </nav>
-    </div>
+
+            </div>
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+</div>
 </div>
 
 @include('modal.addplace')
