@@ -40,6 +40,48 @@
             // Handle photo preview or other logic if needed
         });
     });
+    document.getElementById('addEmployeeForm').addEventListener('submit', function(event) {
+        var regNumber = document.getElementById('reg_number').value;
+        var phoneNumber = document.getElementById('phone_number').value;
+        var workNumber = document.getElementById('work_number').value;
+        var homeNumber = document.getElementById('home_number').value;
+        var firstName = document.getElementById('first_name').value;
+        var lastName = document.getElementById('last_name').value;
+
+        var regNumberPattern = /^[A-Za-z]{2}[0-9]{8}$/;
+        var phonePattern = /^[6-9][0-9]{7}$/;
+        var namePattern = /^[^0-9]*$/;
+
+        if (!regNumberPattern.test(regNumber)) {
+            alert('The registration number must start with 2 letters followed by 8 numbers.');
+            event.preventDefault();
+        }
+
+        if (!phonePattern.test(phoneNumber)) {
+            alert('Mobile phone number must be 8 digits and cannot start with numbers 1-5.');
+            event.preventDefault();
+        }
+
+        if (workNumber && !phonePattern.test(workNumber)) {
+            alert('Work phone number must be 8 digits and cannot start with numbers 1-5.');
+            event.preventDefault();
+        }
+
+        if (homeNumber && !phonePattern.test(homeNumber)) {
+            alert('Home phone number must be 8 digits and cannot start with numbers 1-5.');
+            event.preventDefault();
+        }
+
+        if (!namePattern.test(firstName)) {
+            alert('Firstname must not contain numbers.');
+            event.preventDefault();
+        }
+
+        if (!namePattern.test(lastName)) {
+            alert('Lastname must not contain numbers.');
+            event.preventDefault();
+        }
+    });
 </script>
 
 
@@ -63,18 +105,19 @@
                     </div>
                 @endif
                 <div class="container mt-5">
-                    <form id="registrationForm" method="POST" action="{{ route('updateemployee') }}"
-                        enctype="multipart/form-data">
+                    <form id="updateEmployeeForm" method="POST" action="{{ route('updateemployee') }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" id="modal-emp-id" name="EMP_ID">
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="form-label" for="last_name">Эцэг/эхийн нэр:</label>
-                                <input class="form-control" type="text" id="last_name" name="LASTNAME" required>
-
+                                <input class="form-control" type="text" id="last_name" name="LASTNAME" required
+                                       pattern="^[^0-9]*$" title="Lastname must not contain numbers">
+                    
                                 <label class="form-label" for="reg_number">Регистрийн дугаар:</label>
-                                <input class="form-control" type="text" id="reg_number" name="REGISTER" required>
-
+                                <input class="form-control" type="text" id="reg_number" name="REGISTER" required
+                                       pattern="[A-Za-z]{2}[0-9]{8}" title="The first 2 digits must be letters and the next 8 digits must be numbers">
+                    
                                 <label class="form-label" for="position">Албан тушаал:</label>
                                 <select class="form-control" id="position" name="POS_ID" required>
                                     <option value="">[Сонгоно уу]</option>
@@ -82,16 +125,18 @@
                                         <option value="{{ $position->POS_ID }}">{{ $position->POS_NAME }}</option>
                                     @endforeach
                                 </select>
-
+                    
                                 <label class="form-label" for="phone_number">Гар утасны дугаар:</label>
-                                <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required>
-
+                                <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required
+                                       pattern="[6-9][0-9]{7}" title="Mobile phone number must be 8 digits and cannot start with numbers 1-5">
+                    
                                 <label class="form-label" for="birth_date">Төрсөн өдөр:</label>
-                                <input class="form-control" type="date" id="birth_date" name="BIRTHDATE" required>
-
+                                <input class="form-control" type="datetime-local" id="birth_date" name="BIRTHDATE" required>
+                    
                                 <label class="form-label" for="work_number">Ажлын утасны дугаар:</label>
-                                <input class="form-control" type="text" id="work_number" name="WORKPHONE">
-
+                                <input class="form-control" type="text" id="work_number" name="WORKPHONE"
+                                       pattern="[6-9][0-9]{7}" title="Work phone number must be 8 digits and cannot start with numbers 1-5">
+                    
                                 <label class="form-label" for="state">Төлөв:</label>
                                 <select class="form-control" id="state" name="STATUS" required>
                                     <option value="N">Идэвхгүй</option>
@@ -100,8 +145,9 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="first_name">Өөрийн нэр:</label>
-                                <input class="form-control" type="text" id="first_name" name="FIRSTNAME" required>
-
+                                <input class="form-control" type="text" id="first_name" name="FIRSTNAME" required
+                                       pattern="^[^0-9]*$" title="Firstname must not contain numbers">
+                    
                                 <label class="form-label" for="place">Газар нэгж:</label>
                                 <select class="form-control" id="place" name="DEP_ID" required>
                                     <option value="">[Сонгоно уу]</option>
@@ -109,22 +155,23 @@
                                         <option value="{{ $department->DEP_ID }}">{{ $department->DEP_NAME }}</option>
                                     @endforeach
                                 </select>
-
+                    
                                 <label class="form-label" for="email">И-мэйл:</label>
                                 <input class="form-control" type="email" id="email" name="EMAIL" required>
-
+                    
                                 <label class="form-label" for="gender">Хүйс:</label>
                                 <select class="form-control" id="gender" name="SEX" required>
                                     <option value="male">Эрэгтэй</option>
                                     <option value="female">Эмэгтэй</option>
                                 </select>
-
+                    
                                 <label class="form-label" for="start_date">Ажилд орсон өдөр:</label>
-                                <input class="form-control" type="date" id="start_date" name="WORK_DATE" required>
-
+                                <input class="form-control" type="datetime-local" id="start_date" name="WORK_DATE" required>
+                    
                                 <label class="form-label" for="home_number">Гэрийн утасны дугаар:</label>
-                                <input class="form-control" type="text" id="home_number" name="HOMEPHONE">
-
+                                <input class="form-control" type="text" id="home_number" name="HOMEPHONE"
+                                       pattern="[6-9][0-9]{7}" title="Home phone number must be 8 digits and cannot start with numbers 1-5">
+                    
                                 <label class="form-label" for="photo">Зураг:</label>
                                 <input class="form-control" type="file" id="photo" name="PICTURE_LINK">
                             </div>
@@ -136,6 +183,7 @@
                             </div>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>
@@ -163,17 +211,18 @@
                     </div>
                 @endif
                 <div class="container mt-5">
-                    <form id="registrationForm" method="POST" action="{{ route('addformemployee') }}"
-                        enctype="multipart/form-data">
+                    <form id="addEmployeeForm" method="POST" action="{{ route('addformemployee') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="form-label" for="last_name">Эцэг/эхийн нэр:</label>
-                                <input class="form-control" type="text" id="last_name" name="LASTNAME" required>
-
+                                <input class="form-control" type="text" id="last_name" name="LASTNAME" required
+                                       pattern="^[^0-9]*$" title="Lastname must not contain numbers">
+                    
                                 <label class="form-label" for="reg_number">Регистрийн дугаар:</label>
-                                <input class="form-control" type="text" id="reg_number" name="REGISTER" required>
-
+                                <input class="form-control" type="text" id="reg_number" name="REGISTER" required
+                                       pattern="[A-Za-z]{2}[0-9]{8}" title="The first 2 digits must be letters and the next 8 digits must be numbers">
+                    
                                 <label class="form-label" for="position">Албан тушаал:</label>
                                 <select class="form-control" id="position" name="POS_ID" required>
                                     <option value="">[Сонгоно уу]</option>
@@ -181,16 +230,18 @@
                                         <option value="{{ $position->POS_ID }}">{{ $position->POS_NAME }}</option>
                                     @endforeach
                                 </select>
-
+                    
                                 <label class="form-label" for="phone_number">Гар утасны дугаар:</label>
-                                <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required>
-
+                                <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required
+                                       pattern="[6-9][0-9]{7}" title="Mobile phone number must be 8 digits and cannot start with numbers 1-5">
+                    
                                 <label class="form-label" for="birth_date">Төрсөн өдөр:</label>
-                                <input class="form-control" type="date" id="birth_date" name="BIRTHDATE" required>
-
+                                <input class="form-control" type="datetime-local" id="birth_date" name="BIRTHDATE" required>
+                    
                                 <label class="form-label" for="work_number">Ажлын утасны дугаар:</label>
-                                <input class="form-control" type="text" id="work_number" name="WORKPHONE">
-
+                                <input class="form-control" type="text" id="work_number" name="WORKPHONE"
+                                       pattern="[6-9][0-9]{7}" title="Work phone number must be 8 digits and cannot start with numbers 1-5">
+                    
                                 <label class="form-label" for="state">Төлөв:</label>
                                 <select class="form-control" id="state" name="STATUS" required>
                                     <option value="N">Идэвхгүй</option>
@@ -199,8 +250,9 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="first_name">Өөрийн нэр:</label>
-                                <input class="form-control" type="text" id="first_name" name="FIRSTNAME" required>
-
+                                <input class="form-control" type="text" id="first_name" name="FIRSTNAME" required
+                                       pattern="^[^0-9]*$" title="Firstname must not contain numbers">
+                    
                                 <label class="form-label" for="place">Газар нэгж:</label>
                                 <select class="form-control" id="place" name="DEP_ID" required>
                                     <option value="">[Сонгоно уу]</option>
@@ -208,22 +260,23 @@
                                         <option value="{{ $department->DEP_ID }}">{{ $department->DEP_NAME }}</option>
                                     @endforeach
                                 </select>
-
+                    
                                 <label class="form-label" for="email">И-мэйл:</label>
                                 <input class="form-control" type="email" id="email" name="EMAIL" required>
-
+                    
                                 <label class="form-label" for="gender">Хүйс:</label>
                                 <select class="form-control" id="gender" name="SEX" required>
                                     <option value="male">Эрэгтэй</option>
                                     <option value="female">Эмэгтэй</option>
                                 </select>
-
+                    
                                 <label class="form-label" for="start_date">Ажилд орсон өдөр:</label>
-                                <input class="form-control" type="date" id="start_date" name="WORK_DATE" required>
-
+                                <input class="form-control" type="datetime-local" id="start_date" name="WORK_DATE" required>
+                    
                                 <label class="form-label" for="home_number">Гэрийн утасны дугаар:</label>
-                                <input class="form-control" type="text" id="home_number" name="HOMEPHONE">
-
+                                <input class="form-control" type="text" id="home_number" name="HOMEPHONE"
+                                       pattern="[6-9][0-9]{7}" title="Home phone number must be 8 digits and cannot start with numbers 1-5">
+                    
                                 <label class="form-label" for="photo">Зураг:</label>
                                 <input class="form-control" type="file" id="photo" name="PICTURE_LINK">
                             </div>
@@ -235,6 +288,7 @@
                             </div>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>
