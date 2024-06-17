@@ -1,57 +1,65 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-wrapper">
-    <div class="topbar">
-        <nav class="navbar-custom">
-            <ul class="list-unstyled topbar-nav mb-0">
-                <h4 class="page-title" style="margin: 10px;">Албан тушаалын бүртгэл</h4>
-                <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 10px; margin-top: 30px;"
-                    data-bs-toggle="modal" data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
-                <div class='card-body'>
+<div class="topbar">
+    <nav class="navbar-custom">
+        <h4 class="page-title" style="margin: 10px;">Албан тушаалын бүртгэл</h4>
+    </nav>
+</div>
+
+<div class="page-content">
+
+    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
+        data-bs-toggle="modal" data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
+    <div class="container-fluid"></div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
                     <div class='table-rep-plugin'>
-                        <div class='table-responsive mb-0' data-pattern='priority-columns'>
-                            <table id='positions-table' class='table table-striped mb-0'>
-                                <thead>
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Нэр</th>
+                                    <th>Төлөв</th>
+                                    <th>Эрэмбэ</th>
+                                    <th>Зассан</th>
+                                    <th style=" text-align: center; ">Үйлдэл</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($positions as $position)
                                     <tr>
-                                        <th>Нэр</th>
-                                        <th>Төлөв</th>
-                                        <th>Эрэмбэ</th>
-                                        <th>Зассан</th>
-                                        <th style=" text-align: center; ">Үйлдэл</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($positions as $position)
-                                        <tr>
-                                            <td>{{ $position->POS_NAME }}</td>
-                                            <td>{{ $position->STATUS }}</td>
-                                            <td>{{ $position->SORT_ORDER }}</td>
-                                            <td>{{ $position->EDIT_DATE }}</td>
-                                            <td>
+                                        <td>{{ $position->POS_NAME }}</td>
+                                        <td>{{ $position->STATUS }}</td>
+                                        <td>{{ $position->SORT_ORDER }}</td>
+                                        <td>{{ $position->EDIT_DATE }}</td>
+                                        <td>
                                             <form action="{{ route('deleteposition', $position->POS_ID) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type='submit' class='btn btn-danger' style="float: right;">Устгах</button>
-                                                </form>
-                                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                                style="float: right;"
-                                                    data-bs-target="#UpdatePositionForm" data-id="{{ $position->POS_ID }}"
-                                                    data-name="{{ $position->POS_NAME }}"
-                                                    data-status="{{ $position->STATUS }}"
-                                                    data-sort="{{ $position->SORT_ORDER }}">Засах</button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                                style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type='submit' class='btn btn-danger'
+                                                    style="float: right;">Устгах</button>
+                                            </form>
+                                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                                style="float: right;" data-bs-target="#UpdatePositionForm"
+                                                data-id="{{ $position->POS_ID }}" data-name="{{ $position->POS_NAME }}"
+                                                data-status="{{ $position->STATUS }}"
+                                                data-sort="{{ $position->SORT_ORDER }}">Засах</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </ul>
-        </nav>
-    </div>
+
+            </div>
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+</div>
 </div>
 
 @include('modal.addposition')

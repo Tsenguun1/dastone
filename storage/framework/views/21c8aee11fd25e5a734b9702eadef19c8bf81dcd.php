@@ -4,11 +4,11 @@
 <script>
     $(document).ready(function () {
         $('#UpdateEmployeeForm').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
+            var button = $(event.relatedTarget);
             var empId = button.data('id');
             var lastName = button.data('lastname');
             var firstName = button.data('firstname');
-            var regNumber = button.data('register'); // Updated to match the data attribute correctly
+            var regNumber = button.data('register');
             var position = button.data('posid');
             var phoneNumber = button.data('handphone');
             var birthDate = button.data('birthdate');
@@ -21,6 +21,7 @@
             var homeNumber = button.data('homephone');
             var photo = button.data('photo');
             var wdate = button.data('workdate');
+
             var modal = $(this);
             modal.find('#modal-emp-id').val(empId);
             modal.find('#last_name').val(lastName);
@@ -36,13 +37,21 @@
             modal.find('#gender').val(gender);
             modal.find('#start_date').val(wdate);
             modal.find('#home_number').val(homeNumber);
-            modal.find('#Photo').val(photo);
-            // Handle photo preview or other logic if needed
+
+            // Handle photo preview
+            if (photo) {
+                var imgPreview = modal.find('#photo_preview');
+                imgPreview.attr('src', photo);
+                imgPreview.show();
+            } else {
+                modal.find('#photo_preview').hide();
+            }
         });
     });
+
 </script>
 
-
+<!-- UpdateEmployeeForm Modal -->
 <div class="modal fade" id="UpdateEmployeeForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
@@ -68,6 +77,7 @@
                         enctype="multipart/form-data">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" id="modal-emp-id" name="EMP_ID">
+                        <img id="photo_preview" style="display:none; width:100px; height:100px; border-radius:50%; margin:1px; margin-top : -50px;">
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="form-label" for="last_name">Эцэг/эхийн нэр:</label>
@@ -127,12 +137,13 @@
                                 <input class="form-control" type="text" id="home_number" name="HOMEPHONE">
 
                                 <label class="form-label" for="photo">Зураг:</label>
-                                <input class="form-control" type="file" id="photo" name="PICTURE_LINK">
+                                <input class="form-control" type="file" id="photo" name="PICTURE_LINK" >
+                                
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 text-right">
-                                <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
+                                <button class="btn btn-primary" type="submit" name="submit">Засах</button>
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
                             </div>
                         </div>
