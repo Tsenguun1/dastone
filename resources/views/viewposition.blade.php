@@ -9,8 +9,8 @@
 
 <div class="page-content">
 
-    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
-        data-bs-toggle="modal" data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
+    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
+        data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
     <div class="container-fluid"></div>
     <div class="row">
         <div class="col-12">
@@ -32,7 +32,15 @@
                                 @foreach($positions as $position)
                                     <tr>
                                         <td>{{ $position->POS_NAME }}</td>
-                                        <td>{{ $position->STATUS }}</td>
+                                        <td>
+                                            @if ($position->STATUS == 'A')
+                                                Идэвхитэй
+                                            @elseif ($position->STATUS == 'N')
+                                                Идэвхгүй
+                                            @else
+                                                Unknown Status
+                                            @endif
+                                        </td>
                                         <td>{{ $position->SORT_ORDER }}</td>
                                         <td>{{ $position->EDIT_DATE }}</td>
                                         <td>

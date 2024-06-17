@@ -32,7 +32,7 @@ class PositionController extends Controller
             $position->POS_NAME = $request->posName;
             $position->STATUS = $request->status;
             $position->SORT_ORDER = $request->sortOrder;
-            $position->EDIT_DATE = now();
+            $position->EDIT_DATE = now()->addHours(12);
             $position->EDIT_EMPID = '6666'; // Example editor ID
 
             $position->save();
