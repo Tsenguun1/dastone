@@ -6,41 +6,37 @@
     </nav>
 </div>
 
-<div class="page-content">
-    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
-        data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
-    <div class="container-fluid"></div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class='table-rep-plugin'>
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Нэр</th>
-                                    <th>Захирал</th>
-                                    <th>Төлөв</th>
-                                    <th>Эрэмбэ</th>
-                                    <th>Зассан</th>
-                                    <th style=" text-align: center; ">Үйлдэл</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($departmentTree as $department)
-                                    @include('partials.department_row', ['department' => $department, 'level' => 0])
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class='table-rep-plugin'>
+                    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
+                        data-bs-toggle="modal" data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Нэр</th>
+                                <th>Захирал</th>
+                                <th>Төлөв</th>
+                                <th>Эрэмбэ</th>
+                                <th>Зассан</th>
+                                <th style=" text-align: center; ">Үйлдэл</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($departmentTree as $department)
+                                @include('partials.department_row', ['department' => $department, 'level' => 0])
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
-</div>
-</div>
+
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
 
 @include('modal.addplace')
 @endsection

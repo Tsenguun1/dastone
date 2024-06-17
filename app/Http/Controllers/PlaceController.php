@@ -12,12 +12,26 @@ class PlaceController extends Controller
 {
     public function viewPlaces()
     {
+        // Retrieve departments with basic details
         $departments = DB::table('ORG_DEPARTMENT')
-            ->select('DEP_ID', 'DEP_NAME', 'STATUS', 'SORT_ORDER', 'PARENT_DEPID', 'DIRECTOR_EMPID', 'APPROVE_EMPID', 'EDIT_EMPID', 'EDIT_DATE')
-            ->where('STATUS', '!=', 'D')
-            ->orderBy('SORT_ORDER')
-            ->get();
-    
+        ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
+        ->select(
+            'ORG_DEPARTMENT.DEP_ID', 
+            'ORG_DEPARTMENT.DEP_NAME', 
+            'ORG_DEPARTMENT.STATUS', 
+            'ORG_DEPARTMENT.SORT_ORDER', 
+            'ORG_DEPARTMENT.PARENT_DEPID', 
+            'ORG_DEPARTMENT.DIRECTOR_EMPID', 
+            'ORG_DEPARTMENT.EDIT_DATE', 
+            'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME', 
+            'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
+        )
+        ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
+        ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
+        ->get()
+        ->toArray();
+
+        // Retrieve employees with concatenated name, position name, and department name
         $employees = DB::table('ORG_EMPLOYEE')
             ->select(
                 'EMP_ID',
@@ -27,17 +41,27 @@ class PlaceController extends Controller
             )
             ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
             ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
-            ->where('ORG_EMPLOYEE.STATUS', '!=', 'D')
+            ->where('ORG_EMPLOYEE.STATUS', '!=', 'D') // Exclude deleted employees
             ->orderBy('ORG_EMPLOYEE.DEP_ID')
             ->orderBy('ORG_EMPLOYEE.FIRSTNAME')
             ->get();
-    
-        $departments = $departments->toArray(); // Convert collection to array
+
+        // Retrieve departments with director's first name and last nam
+
+        // Debugging: Check the output of department names
+        // dd($departmentnames);
+
+        // Build hierarchical department tree
         $departmentTree = $this->buildTree($departments);
-    
-        return view('viewplace', ['departmentTree' => $departmentTree, 'employees' => $employees, 'departments' => $departments,]);
+
+        // Pass data to view
+        return view('viewplace', [
+            'departmentTree' => $departmentTree,
+            'employees' => $employees,
+            'departments' => $departments, // Adjusted variable name to avoid confusion
+        ]);
     }
-    
+
 
     public function buildTree(array $elements, $parentId = null)
     {
@@ -53,7 +77,7 @@ class PlaceController extends Controller
         }
         return $branch;
     }
-    
+
 
 
     public function addForm(Request $request)

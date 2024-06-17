@@ -1,10 +1,24 @@
 @php
-    $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $level * 4);
+    $indent = str_repeat('&nbsp;', $level * 4);
 @endphp
 <tr>
     <td>{!! $indent !!}{{ $department->DEP_NAME }}</td>
-    <td>{{ $department->DIRECTOR_EMPID }}</td>
-    <td>{{ $department->STATUS }}</td>
+    <td>
+        @if (!empty($department->DIRECTOR_FIRSTNAME) && !empty($department->DIRECTOR_LASTNAME))
+            {{ $department->DIRECTOR_FIRSTNAME }} {{ $department->DIRECTOR_LASTNAME }}
+        @else
+            Director Not Assigned
+        @endif
+    </td>
+    <td>
+        @if ($department->STATUS == 'A')
+            Идэвхитэй
+        @elseif ($department->STATUS == 'N')
+            Идэвхгүй
+        @else
+            Unknown Status
+        @endif
+    </td>
     <td>{{ $department->SORT_ORDER }}</td>
     <td>{{ $department->EDIT_DATE }}</td>
     <td>
