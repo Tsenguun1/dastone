@@ -1,4 +1,5 @@
 
+
 <?php $__env->startSection('content'); ?>
 <div class="topbar">
     <nav class="navbar-custom">
@@ -39,12 +40,12 @@
                                 <?php $__currentLoopData = $employees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $employee): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <td><img src="<?php echo e($employee->PICTURE_LINK); ?>"
-                                                style=" border-radius: 50%; width: 50px; height: 50px; object-fit: cover;"
+                                                style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover;"
                                                 alt="Employee Picture" width="50"></td>
                                         <td><?php echo e($employee->FIRSTNAME); ?></td>
                                         <td><?php echo e($employee->LASTNAME); ?></td>
-                                        <td><?php echo e($employee->DEP_ID); ?></td>
-                                        <td><?php echo e($employee->POS_ID); ?></td>
+                                        <td><?php echo e($employee->DEP_NAME); ?></td> <!-- Displaying Department Name -->
+                                        <td><?php echo e($employee->POS_NAME); ?></td> <!-- Displaying Position Name -->
                                         <td><?php echo e($employee->REGISTER); ?></td>
                                         <td><?php echo e($employee->SEX); ?></td>
                                         <td><?php echo e($employee->EMAIL); ?></td>
@@ -60,9 +61,10 @@
                                                 data-homephone='<?php echo e($employee->HOMEPHONE); ?>'
                                                 data-firstname='<?php echo e($employee->FIRSTNAME); ?>'
                                                 data-lastname='<?php echo e($employee->LASTNAME); ?>'
-                                                data-depid='<?php echo e($employee->DEP_ID); ?>' data-posid='<?php echo e($employee->POS_ID); ?>'
-                                                data-register='<?php echo e($employee->REGISTER); ?>' data-sex='<?php echo e($employee->SEX); ?>'
-                                                data-email='<?php echo e($employee->EMAIL); ?>'
+                                                data-depid='<?php echo e($employee->DEP_ID); ?>'
+                                                data-posid='<?php echo e($employee->POS_ID); ?>'
+                                                data-register='<?php echo e($employee->REGISTER); ?>'
+                                                data-sex='<?php echo e($employee->SEX); ?>' data-email='<?php echo e($employee->EMAIL); ?>'
                                                 data-birthdate='<?php echo e($employee->BIRTHDATE); ?>'
                                                 data-handphone='<?php echo e($employee->HANDPHONE); ?>'
                                                 data-workphone='<?php echo e($employee->WORKPHONE); ?>'
@@ -75,7 +77,6 @@
                                                 <button type="submit" class="btn btn-danger">Устгах</button>
                                             </form>
                                         </td>
-
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
@@ -129,4 +130,5 @@
     });
 </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/viewemployee.blade.php ENDPATH**/ ?>

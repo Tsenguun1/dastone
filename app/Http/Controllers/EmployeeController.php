@@ -50,7 +50,7 @@ class EmployeeController extends Controller
     }
 
     
-    public function addFormemployee(Request $request)
+    public function addemployee(Request $request)
     {
         $validatedData = $request->validate([
             'REGISTER' => 'required|string|max:255',
