@@ -226,7 +226,7 @@
                     </div>
                 <?php endif; ?>
                 <div class="container mt-5">
-                <form id="addEmployeeform" method="POST" action="<?php echo e(route('addformemployee')); ?>" enctype="multipart/form-data">
+                <form id="addEmployeeform" method="POST" action="<?php echo e(route('addFormemployee')); ?>" enctype="multipart/form-data">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" id="modal-emp-id" name="EMP_ID">
                         <img id="photo_preview" style="display:none; width:100px; height:100px; border-radius:50%; margin:1px; margin-top : -50px;">
