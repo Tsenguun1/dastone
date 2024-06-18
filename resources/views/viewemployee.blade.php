@@ -78,6 +78,7 @@
                                                 data-workphone='{{ $employee->WORKPHONE }}'
                                                 data-status='{{ $employee->STATUS }}'
                                                 data-workdate='{{ $employee->WORK_DATE }}'>Засах</button>
+                                                
                                             <form action="{{ route('deleteemployee', ['id' => $employee->EMP_ID]) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf

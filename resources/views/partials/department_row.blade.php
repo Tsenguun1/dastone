@@ -1,5 +1,5 @@
 @php
-    $indent = str_repeat('&nbsp;', $level * 4);
+    $indent = str_repeat('&nbsp;', $level * 15);
 @endphp
 <tr>
     <td>{!! $indent !!}{{ $department->DEP_NAME }}</td>

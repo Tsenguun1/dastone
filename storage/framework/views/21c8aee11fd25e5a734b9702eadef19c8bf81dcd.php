@@ -226,8 +226,10 @@
                     </div>
                 <?php endif; ?>
                 <div class="container mt-5">
-                    <form id="addEmployeeForm" method="POST" action="<?php echo e(route('addformemployee')); ?>" enctype="multipart/form-data">
+                <form id="addEmployeeform" method="POST" action="<?php echo e(route('addformemployee')); ?>" enctype="multipart/form-data">
                         <?php echo csrf_field(); ?>
+                        <input type="hidden" id="modal-emp-id" name="EMP_ID">
+                        <img id="photo_preview" style="display:none; width:100px; height:100px; border-radius:50%; margin:1px; margin-top : -50px;">
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="form-label" for="last_name">Эцэг/эхийн нэр:</label>
@@ -250,6 +252,7 @@
                                 <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required
                                        pattern="[6-9][0-9]{7}" title="Mobile phone number must be 8 digits and cannot start with numbers 1-5">
                     
+
                                 <label class="form-label" for="birth_date">Төрсөн өдөр:</label>
                                 <input class="form-control" type="date" id="birth_date" name="BIRTHDATE" required>
                     
@@ -293,12 +296,13 @@
                                        pattern="[6-9][0-9]{7}" title="Home phone number must be 8 digits and cannot start with numbers 1-5">
                     
                                 <label class="form-label" for="photo">Зураг:</label>
-                                <input class="form-control" type="file" id="photo" name="PICTURE_LINK">
+                                <input class="form-control" type="file" id="photo" name="PICTURE_LINK" >
+                                
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 text-right">
-                                <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
+                                <button class="btn btn-primary" type="submit" name="submit">Засах</button>
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
                             </div>
                         </div>
