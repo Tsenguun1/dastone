@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
 <div class="topbar">
     <nav class="navbar-custom">
@@ -17,12 +18,12 @@
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                             <tr>
-                                <th>Нэр</th>
-                                <th>Захирал</th>
-                                <th>Төлөв</th>
-                                <th>Эрэмбэ</th>
-                                <th>Зассан</th>
-                                <th style=" text-align: center; ">Үйлдэл</th>
+                                <th data-sortable="false">Нэр</th> <!-- Name -->
+                                <th data-sortable="true">Захирал</th> <!-- Director -->
+                                <th data-sortable="true">Төлөв</th> <!-- Status -->
+                                <th data-sortable="true">Эрэмбэ</th> <!-- Order -->
+                                <th data-sortable="true">Зассан</th> <!-- Edited -->
+                                <th data-sortable="false" style="text-align: center;">Үйлдэл</th> <!-- Action -->
                             </tr>
                         </thead>
                         <tbody>
@@ -33,42 +34,78 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div> <!-- end col -->
 </div> <!-- end row -->
 
-@include('modal.addplace')
-@endsection
+<!-- Edit Place Modal -->
+<div class="modal fade" id="editPlaceModal" tabindex="-1" role="dialog" aria-labelledby="editPlaceModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
+        <div class="modal-content">
 
-@section('scripts')
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const updatePlaceFormModal = document.getElementById('UpdatePlaceForm');
-        updatePlaceFormModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
+    $(document).ready(function () {
+        $('#editPlaceModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var depId = button.data('id'); // Extract info from data-* attributes
+            var modal = $(this);
 
-            const depId = button.getAttribute('data-id');
-            const depName = button.getAttribute('data-name');
-            const status = button.getAttribute('data-status');
-            const sortOrder = button.getAttribute('data-sort');
-            const parentDepId = button.getAttribute('data-parent');
-            const directorEmpId = button.getAttribute('data-director');
+            // Load the form via AJAX
+            $.ajax({
+                url: '/editplace/' + depId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
 
-            const modalDepIdInput = document.getElementById('modal-dep-id');
-            const modalDepNameInput = document.getElementById('depName');
-            const modalStatusInput = document.getElementById('status');
-            const modalSortOrderInput = document.getElementById('sortOrder');
-            const modalParentDepIdInput = document.getElementById('parentDepId');
-            const modalDirectorEmpIdInput = document.getElementById('directorEmpId');
+        $('#saveChanges').click(function () {
+            var form = $('#editPlaceModal').find('form');
+            var formData = form.serialize();
 
-            modalDepIdInput.value = depId;
-            modalDepNameInput.value = depName;
-            modalStatusInput.value = status;
-            modalSortOrderInput.value = sortOrder;
-            modalParentDepIdInput.value = parentDepId;
-            modalDirectorEmpIdInput.value = directorEmpId;
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: formData,
+                success: function (response) {
+                    $('#editPlaceModal').modal('hide');
+                    location.reload(); // Reload the page to see the changes
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
         });
     });
+
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": 5 }  // Disable sorting on the 'Action' column
+            ],
+            "order": [],  // Disable initial sorting
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+            }
+        });
+    });
+
 </script>
+
+
 @endsection
+@include('modal.addplace')

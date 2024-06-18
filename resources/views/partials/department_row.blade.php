@@ -10,15 +10,7 @@
             Director Not Assigned
         @endif
     </td>
-    <td>
-        @if ($department->STATUS == 'A')
-            Идэвхитэй
-        @elseif ($department->STATUS == 'N')
-            Идэвхгүй
-        @else
-            Unknown Status
-        @endif
-    </td>
+    <td>{{ $department->STATUSVALUE }}</td>
     <td>{{ $department->SORT_ORDER }}</td>
     <td>{{ $department->EDIT_DATE }}</td>
     <td>
@@ -27,11 +19,10 @@
             @method('DELETE')
             <button type='submit' class='btn btn-danger' style="float: right;">Устгах</button>
         </form>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#UpdatePlaceForm"
-            style="float: right;" data-id="{{ $department->DEP_ID }}" data-name="{{ $department->DEP_NAME }}"
-            data-status="{{ $department->STATUS }}" data-sort="{{ $department->SORT_ORDER }}"
-            data-parent="{{ $department->PARENT_DEPID }}"
-            data-director="{{ $department->DIRECTOR_EMPID }}">Засах</button>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" style="float: right;"
+            data-bs-target="#editPlaceModal" data-id="{{ $department->DEP_ID }}">
+            Засах
+        </button>
     </td>
 </tr>
 

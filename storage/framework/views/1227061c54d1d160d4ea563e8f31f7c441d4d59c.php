@@ -11,15 +11,7 @@
             Director Not Assigned
         <?php endif; ?>
     </td>
-    <td>
-        <?php if($department->STATUS == 'A'): ?>
-            Идэвхитэй
-        <?php elseif($department->STATUS == 'N'): ?>
-            Идэвхгүй
-        <?php else: ?>
-            Unknown Status
-        <?php endif; ?>
-    </td>
+    <td><?php echo e($department->STATUSVALUE); ?></td>
     <td><?php echo e($department->SORT_ORDER); ?></td>
     <td><?php echo e($department->EDIT_DATE); ?></td>
     <td>
@@ -28,11 +20,10 @@
             <?php echo method_field('DELETE'); ?>
             <button type='submit' class='btn btn-danger' style="float: right;">Устгах</button>
         </form>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#UpdatePlaceForm"
-            style="float: right;" data-id="<?php echo e($department->DEP_ID); ?>" data-name="<?php echo e($department->DEP_NAME); ?>"
-            data-status="<?php echo e($department->STATUS); ?>" data-sort="<?php echo e($department->SORT_ORDER); ?>"
-            data-parent="<?php echo e($department->PARENT_DEPID); ?>"
-            data-director="<?php echo e($department->DIRECTOR_EMPID); ?>">Засах</button>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" style="float: right;"
+            data-bs-target="#editPlaceModal" data-id="<?php echo e($department->DEP_ID); ?>">
+            Засах
+        </button>
     </td>
 </tr>
 

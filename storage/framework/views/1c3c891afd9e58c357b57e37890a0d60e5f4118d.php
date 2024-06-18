@@ -270,7 +270,7 @@
     <!-- Responsive examples -->
     <script src="/plugins/datatables/dataTables.responsive.min.js"></script>
     <script src="/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
+    <script src="/assets/pages/jquery.datatable.init.js"></script>
     <!-- App js -->
     <script src="/assets/js/app.js"></script>
 

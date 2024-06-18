@@ -10,26 +10,93 @@ use Illuminate\Support\Facades\DB;
 
 class PlaceController extends Controller
 {
+    public function editplace($id)
+    {
+        $place = OrgDepartment::findOrFail($id);
+    
+        if (request()->ajax()) {
+            $departments = DB::table('ORG_DEPARTMENT')
+                ->select('DEP_ID', 'DEP_NAME')
+                ->where('STATUS', '!=', 'D')
+                ->get();
+    
+            $employees = DB::table('ORG_EMPLOYEE')
+                ->select(
+                    'EMP_ID',
+                    DB::raw("CONCAT(FIRSTNAME, '.', LEFT(LASTNAME, 1)) AS EMPNAME"),
+                    'ORG_POSITION.POS_NAME',
+                    'ORG_DEPARTMENT.DEP_NAME'
+                )
+                ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
+                ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
+                ->where('ORG_EMPLOYEE.STATUS', '!=', 'D')
+                ->get();
+    
+            return view('partials.editplaceform', compact('place', 'departments', 'employees'));
+        }
+    
+        return redirect()->route('viewplace')->with('error', 'Invalid request.');
+    }
+    
+    
+    
+
+    public function updateplace(Request $request, $id)
+    {
+        $place = OrgDepartment::findOrFail($id);
+
+        $request->validate([
+            'depName' => 'required|string|max:255',
+            'status' => 'required|string|max:10',
+            'sortOrder' => 'required|integer',
+            'parentDepId' => 'required|integer',
+            'directorEmpId' => 'required|integer',
+        ]);
+
+        $place->DEP_NAME = $request->depName;
+        $place->STATUS = $request->status;
+        $place->SORT_ORDER = $request->sortOrder;
+        $place->PARENT_DEPID = $request->parentDepId;
+        $place->DIRECTOR_EMPID = $request->directorEmpId;
+        $place->APPROVE_EMPID = '9999';
+        $place->EDIT_EMPID = '6666';
+        $place->EDIT_DATE = now();
+
+        $place->save();
+
+        return redirect()->route('viewplace')->with('success', 'Department updated successfully!');
+    }
+
     public function viewPlaces()
     {
         // Retrieve departments with basic details
         $departments = DB::table('ORG_DEPARTMENT')
-        ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
-        ->select(
-            'ORG_DEPARTMENT.DEP_ID', 
-            'ORG_DEPARTMENT.DEP_NAME', 
-            'ORG_DEPARTMENT.STATUS', 
-            'ORG_DEPARTMENT.SORT_ORDER', 
-            'ORG_DEPARTMENT.PARENT_DEPID', 
-            'ORG_DEPARTMENT.DIRECTOR_EMPID', 
-            'ORG_DEPARTMENT.EDIT_DATE', 
-            'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME', 
-            'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
-        )
-        ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
-        ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
-        ->get()
-        ->toArray();
+            ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
+            ->select(
+                'ORG_DEPARTMENT.DEP_ID',
+                'ORG_DEPARTMENT.DEP_NAME',
+                'ORG_DEPARTMENT.STATUS',
+                'ORG_DEPARTMENT.SORT_ORDER',
+                'ORG_DEPARTMENT.PARENT_DEPID',
+                'ORG_DEPARTMENT.DIRECTOR_EMPID',
+                'ORG_DEPARTMENT.EDIT_DATE',
+                'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME',
+                'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
+            )
+            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
+            ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
+            ->get()
+            ->toArray();
+
+        foreach ($departments as $department) {
+            if ($department->STATUS == 'A') {
+                $department->STATUSVALUE = 'Идэвхитэй';
+            } elseif ($department->STATUS == 'N') {
+                $department->STATUSVALUE = 'Идэвхгүй';
+            } else {
+                $department->STATUSVALUE = 'Unknown Status';
+            }
+        }
 
         // Retrieve employees with concatenated name, position name, and department name
         $employees = DB::table('ORG_EMPLOYEE')
@@ -122,30 +189,5 @@ class PlaceController extends Controller
         return redirect()->route('viewplace');
     }
 
-    public function updateplace(Request $request)
-    {
-        $id = $request->input('depId');
-        $place = OrgDepartment::findOrFail($id);
 
-        $request->validate([
-            'depName' => 'required|string|max:255',
-            'status' => 'required|string|max:10',
-            'sortOrder' => 'required|integer',
-            'parentDepId' => 'required|integer',
-            'directorEmpId' => 'required|integer',
-        ]);
-
-        $place->dep_name = $request->depName;
-        $place->status = $request->status;
-        $place->sort_order = $request->sortOrder;
-        $place->parent_depid = $request->parentDepId;
-        $place->director_empid = $request->directorEmpId;
-        $place->approve_empid = '9999';
-        $place->edit_empid = '6666';
-        $place->edit_date = now();
-
-        $place->save();
-
-        return redirect()->route('viewplace');
-    }
 }
