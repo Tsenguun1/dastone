@@ -128,8 +128,6 @@ class PlaceController extends Controller
             'departments' => $departments, // Adjusted variable name to avoid confusion
         ]);
     }
-
-
     public function buildTree(array $elements, $parentId = null)
     {
         $branch = [];
@@ -144,9 +142,6 @@ class PlaceController extends Controller
         }
         return $branch;
     }
-
-
-
     public function addForm(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -188,6 +183,4 @@ class PlaceController extends Controller
 
         return redirect()->route('viewplace');
     }
-
-
 }

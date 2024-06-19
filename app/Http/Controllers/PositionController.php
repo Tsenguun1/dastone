@@ -77,10 +77,8 @@ class PositionController extends Controller
                 'positions' => $positions
             ]);
         }
-
         return redirect()->route('viewposition')->with('error', 'Invalid request.');
     }
-
 
     public function updateposition(Request $request, $id)
     {
@@ -102,5 +100,4 @@ class PositionController extends Controller
 
         return redirect()->route('viewposition')->with('success', 'Position updated successfully!');
     }
-
 }

@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <div class='table-rep-plugin'>
                         <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            style="border-collapse: collapse; border-spacing: 0; width: 100%; font-size: 10px;">
                             <thead>
                                 <tr>
                                     <th>Зураг</th>

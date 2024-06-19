@@ -55,6 +55,9 @@
                                     class="ti-control-record"></i>Албан тушаал</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('viewemployee') }}"><i
                                     class="ti-control-record"></i>Ажилтны бүртгэл</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="{{ route('viewfees') }}"><i
+                                    class="ti-control-record"></i>Шимтгэл</a></li>
                     </ul>
                 </li>
                 <hr class="hr-dashed hr-menu">

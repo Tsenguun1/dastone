@@ -5,6 +5,7 @@ use App\Http\Controllers\NewController;
 use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FeeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,5 +28,11 @@ Route::delete('/deleteemployee/{id}', [EmployeeController::class, 'destroy'])->n
 Route::post('/storeemployee', [EmployeeController::class, 'store'])->name('storeemployee');
 Route::get('/editemployee/{id}', [EmployeeController::class, 'edit'])->name('editemployee');
 Route::put('/updateemployee/{id}', [EmployeeController::class, 'update'])->name('updateemployee');
+
+Route::get('/fees', [FeeController::class, 'viewFees'])->name('viewfees');
+Route::post('/addfee', [FeeController::class, 'addFee'])->name('addfee');
+Route::delete('/deletefee/{id}', [FeeController::class, 'deleteFee'])->name('deletefee');
+Route::get('/editfee/{id}', [FeeController::class, 'editFee'])->name('editfee');
+Route::put('/updatefee/{id}', [FeeController::class, 'updateFee'])->name('updatefee');
 
 
