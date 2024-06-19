@@ -37,7 +37,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($employees as $employee)
+                                {{-- @foreach($employees as $employee)
                                     <tr>
                                         <td><img src="{{$employee->PICTURE_LINK}}"
                                                 style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover;"
@@ -65,7 +65,7 @@
                                             </form>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endforeach --}}
                             </tbody>
                         </table>
                     </div>

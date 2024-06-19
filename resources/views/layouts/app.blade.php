@@ -24,7 +24,7 @@
     <link href="/plugins/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/form.place.css" rel="stylesheet" type="text/css" />
-
+    <link href="/assets/dastone/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" /> 
     @stack('styles')
 </head>
 
