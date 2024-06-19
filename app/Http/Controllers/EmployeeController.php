@@ -15,6 +15,7 @@ class EmployeeController extends Controller
     
     public function viewemployee()
     {
+        // Retrieve employees with full details
         $employees = DB::table('org_employee')
             ->join('org_department', 'org_employee.DEP_ID', '=', 'org_department.DEP_ID')
             ->join('org_position', 'org_employee.POS_ID', '=', 'org_position.POS_ID')
@@ -22,8 +23,8 @@ class EmployeeController extends Controller
                 'org_employee.EMP_ID',
                 'org_employee.FIRSTNAME',
                 'org_employee.LASTNAME',
-                'org_employee.DEP_ID', 
-                'org_employee.POS_ID', 
+                'org_employee.DEP_ID',
+                'org_employee.POS_ID',
                 'org_employee.REGISTER',
                 'org_employee.SEX',
                 'org_employee.EMAIL',
@@ -37,17 +38,35 @@ class EmployeeController extends Controller
                 'org_department.DEP_NAME',
                 'org_position.POS_NAME'
             )
-            ->where('org_employee.STATUS', '!=', 'D')
+            ->where('org_employee.STATUS', '!=', 'D') // Exclude deleted employees
             ->orderBy('org_department.DEP_ID')
             ->orderBy('org_employee.FIRSTNAME')
             ->orderBy('org_employee.LASTNAME')
-            ->get();
-
-        $positions = OrgPosition::all();
-        $departments = OrgDepartment::all();
-
-        return view('viewemployee', compact('employees', 'positions', 'departments'));
+            ->get()
+            ->toArray();
+    
+        // Retrieve positions
+        $positions = DB::table('org_position')
+            ->select('POS_ID', 'POS_NAME')
+            ->get()
+            ->toArray();
+    
+        // Retrieve departments with basic details
+        $departments = DB::table('org_department')
+            ->select('DEP_ID', 'DEP_NAME')
+            ->where('STATUS', '!=', 'D') // Exclude deleted departments
+            ->orderBy('SORT_ORDER')
+            ->get()
+            ->toArray();
+    
+        return view('viewemployee', [
+            'employees' => $employees,
+            'positions' => $positions,  // Pass positions to the view
+            'departments' => $departments // Pass departments to the view
+        ]);
     }
+    
+
 
     
     public function addFormemployee(Request $request)
