@@ -6,7 +6,6 @@
         <h4 class="page-title" style="margin: 10px;">Газар нэгжийн бүртгэл</h4>
     </nav>
 </div>
-
 <div class="row">
     <div class="col-12">
         <div class="card">

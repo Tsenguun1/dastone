@@ -142,7 +142,11 @@
         <!-- Top Bar End -->
 
         <!-- Page Content-->
+        <div class="page-content">
+            <div class="container-fluid">
                 <?php echo $__env->yieldContent('content'); ?>
+            </div><!-- container -->
+        </div>
         <!-- end page content -->
     </div>
     <!-- end page-wrapper -->
