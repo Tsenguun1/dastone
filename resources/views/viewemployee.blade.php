@@ -52,25 +52,17 @@
                                         <td>{{ $employee->BIRTHDATE }}</td>
                                         <td>{{ $employee->HANDPHONE }}</td>
                                         <td>{{ $employee->WORKPHONE }}</td>
+                                        <td>{{ $employee->STATUSVALUE }}</td>
                                         <td>
-                                            @if ($employee->STATUS == 'A')
-                                                Идэвхитэй
-                                            @elseif ($employee->STATUS == 'N')
-                                                Идэвхгүй
-                                            @else
-                                                Unknown Status
-                                            @endif
-                                        </td>
-                                        <td>
+                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
+                                                data-bs-target='#editEmployeeModal'
+                                                data-id='{{ $employee->EMP_ID }}'>Засах</button>
                                             <form action="{{ route('deleteemployee', ['id' => $employee->EMP_ID]) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger">Устгах</button>
                                             </form>
-                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
-                                                data-bs-target='#editEmployeeModal'
-                                                data-id='{{ $employee->EMP_ID }}'>Засах</button>
                                         </td>
                                     </tr>
                                 @endforeach

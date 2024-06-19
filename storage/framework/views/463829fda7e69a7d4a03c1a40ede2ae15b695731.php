@@ -52,25 +52,17 @@
                                         <td><?php echo e($employee->BIRTHDATE); ?></td>
                                         <td><?php echo e($employee->HANDPHONE); ?></td>
                                         <td><?php echo e($employee->WORKPHONE); ?></td>
+                                        <td><?php echo e($employee->STATUSVALUE); ?></td>
                                         <td>
-                                            <?php if($employee->STATUS == 'A'): ?>
-                                                Идэвхитэй
-                                            <?php elseif($employee->STATUS == 'N'): ?>
-                                                Идэвхгүй
-                                            <?php else: ?>
-                                                Unknown Status
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
+                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
+                                                data-bs-target='#editEmployeeModal'
+                                                data-id='<?php echo e($employee->EMP_ID); ?>'>Засах</button>
                                             <form action="<?php echo e(route('deleteemployee', ['id' => $employee->EMP_ID])); ?>"
                                                 method="POST" style="display:inline;">
                                                 <?php echo csrf_field(); ?>
                                                 <?php echo method_field('DELETE'); ?>
                                                 <button type="submit" class="btn btn-danger">Устгах</button>
                                             </form>
-                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
-                                                data-bs-target='#editEmployeeModal'
-                                                data-id='<?php echo e($employee->EMP_ID); ?>'>Засах</button>
                                         </td>
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

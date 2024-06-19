@@ -16,10 +16,24 @@ class EmployeeController extends Controller
             ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
             ->select('ORG_EMPLOYEE.*', 'ORG_POSITION.POS_NAME', 'ORG_DEPARTMENT.DEP_NAME')
             ->get();
+    
         $departments = DB::table('ORG_DEPARTMENT')->get();
         $positions = DB::table('ORG_POSITION')->get();
+    
+        // Assuming STATUS is relevant for employees, not positions
+        foreach ($employees as $employee) {
+            if ($employee->STATUS == 'A') {
+                $employee->STATUSVALUE = 'Идэвхитэй';
+            } elseif ($employee->STATUS == 'N') {
+                $employee->STATUSVALUE = 'Идэвхгүй';
+            } else {
+                $employee->STATUSVALUE = 'Unknown Status';
+            }
+        }
+    
         return view('viewemployee', compact('employees', 'departments', 'positions'));
     }
+    
     public function store(Request $request)
     {
         $validatedData = $request->validate([
