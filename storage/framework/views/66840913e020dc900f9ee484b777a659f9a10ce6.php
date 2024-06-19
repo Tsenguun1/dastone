@@ -8,7 +8,6 @@
 </div>
 
 <div class="page-content">
-
     <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
         data-bs-target="#AddPositionForm">+ Шинээр бүртгэх</button>
     <div class="container-fluid"></div>
@@ -32,15 +31,7 @@
                                 <?php $__currentLoopData = $positions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <td><?php echo e($position->POS_NAME); ?></td>
-                                        <td>
-                                            <?php if($position->STATUS == 'A'): ?>
-                                                Идэвхитэй
-                                            <?php elseif($position->STATUS == 'N'): ?>
-                                                Идэвхгүй
-                                            <?php else: ?>
-                                                Unknown Status
-                                            <?php endif; ?>
-                                        </td>
+                                        <td><?php echo e($position->STATUSVALUE); ?></td>
                                         <td><?php echo e($position->SORT_ORDER); ?></td>
                                         <td><?php echo e($position->EDIT_DATE); ?></td>
                                         <td>
@@ -52,10 +43,8 @@
                                                     style="float: right;">Устгах</button>
                                             </form>
                                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                                style="float: right;" data-bs-target="#UpdatePositionForm"
-                                                data-id="<?php echo e($position->POS_ID); ?>" data-name="<?php echo e($position->POS_NAME); ?>"
-                                                data-status="<?php echo e($position->STATUS); ?>"
-                                                data-sort="<?php echo e($position->SORT_ORDER); ?>">Засах</button>
+                                                style="float: right;" data-bs-target="#editPositionModal"
+                                                data-id="<?php echo e($position->POS_ID); ?>">Засах</button>
                                         </td>
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -70,33 +59,71 @@
 </div>
 </div>
 
-<?php echo $__env->make('modal.addposition', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<!-- Update Position Modal -->
+<div class="modal fade" id="editPositionModal" tabindex="-1" role="dialog" aria-labelledby="editPositionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
+        <div class="modal-content">
 
-<?php $__env->stopSection(); ?>
+        </div>
+    </div>
+</div>
 
-<?php $__env->startSection('scripts'); ?>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const updatePositionFormModal = document.getElementById('UpdatePositionForm');
-        updatePositionFormModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
+    $(document).ready(function () {
+        // Function to handle opening the edit position modal and loading content via AJAX
+        $('#editPositionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var posId = button.data('id'); // Extract info from data-* attributes
+            var modal = $(this);
 
-            const posId = button.getAttribute('data-id');
-            const posName = button.getAttribute('data-name');
-            const status = button.getAttribute('data-status');
-            const sortOrder = button.getAttribute('data-sort');
+            // Load the form via AJAX
+            $.ajax({
+                url: '/editposition/' + posId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
 
-            const modalPosIdInput = document.getElementById('modal-pos-id');
-            const modalPosNameInput = document.getElementById('posName');
-            const modalStatusInput = document.getElementById('status');
-            const modalSortOrderInput = document.getElementById('sortOrder');
+        // Function to handle saving changes made in the edit position modal
+        $('#savePositionChanges').click(function () {
+            var form = $('#editPositionModal').find('form');
+            var formData = form.serialize();
 
-            modalPosIdInput.value = posId;
-            modalPosNameInput.value = posName;
-            modalStatusInput.value = status;
-            modalSortOrderInput.value = sortOrder;
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: formData,
+                success: function (response) {
+                    $('#editPositionModal').modal('hide');
+                    location.reload(); // Reload the page to see the changes
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Initialize DataTable with specific configurations
+        $('#datatable').DataTable({
+            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
+            "order": [], // Disable initial sorting
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+            }
         });
     });
 </script>
 <?php $__env->stopSection(); ?>
+<?php echo $__env->make('modal.addposition', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/viewposition.blade.php ENDPATH**/ ?>

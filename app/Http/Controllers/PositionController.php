@@ -16,6 +16,16 @@ class PositionController extends Controller
             ->orderBy('SORT_ORDER')
             ->get();
 
+            foreach ($positions as $position) {
+                if ($position->STATUS == 'A') {
+                    $position->STATUSVALUE = 'Идэвхитэй';
+                } elseif ($position->STATUS == 'N') {
+                    $position->STATUSVALUE = 'Идэвхгүй';
+                } else {
+                    $position->STATUSVALUE = 'Unknown Status';
+                }
+            }
+
         return view('viewposition', ['positions' => $positions]);
     }
 
@@ -52,9 +62,28 @@ class PositionController extends Controller
         return redirect()->route('viewposition');
     }
 
-    public function updateposition(Request $request)
+    public function editposition($id)
     {
-        $id = $request->input('posId');
+        $position = OrgPosition::findOrFail($id);
+
+        if (request()->ajax()) {
+            $positions = DB::table('ORG_POSITION')
+                ->select('POS_ID', 'POS_NAME')
+                ->where('STATUS', '!=', 'D')
+                ->get();
+
+            return view('partials.editpositionform', [
+                'position' => $position,
+                'positions' => $positions
+            ]);
+        }
+
+        return redirect()->route('viewposition')->with('error', 'Invalid request.');
+    }
+
+
+    public function updateposition(Request $request, $id)
+    {
         $position = OrgPosition::findOrFail($id);
 
         $request->validate([
@@ -67,10 +96,11 @@ class PositionController extends Controller
         $position->STATUS = $request->status;
         $position->SORT_ORDER = $request->sortOrder;
         $position->EDIT_DATE = now();
-        $position->EDIT_EMPID = '6666'; // Example editor ID
+        $position->EDIT_EMPID = '6666';
 
         $position->save();
 
-        return redirect()->route('viewposition');
+        return redirect()->route('viewposition')->with('success', 'Position updated successfully!');
     }
+
 }

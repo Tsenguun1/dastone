@@ -53,38 +53,24 @@
                                         <td>{{ $employee->HANDPHONE }}</td>
                                         <td>{{ $employee->WORKPHONE }}</td>
                                         <td>
-        @if ($employee->STATUS == 'A')
-            Идэвхитэй
-        @elseif ($employee->STATUS == 'N')
-            Идэвхгүй
-        @else
-            Unknown Status
-        @endif
-    </td>
+                                            @if ($employee->STATUS == 'A')
+                                                Идэвхитэй
+                                            @elseif ($employee->STATUS == 'N')
+                                                Идэвхгүй
+                                            @else
+                                                Unknown Status
+                                            @endif
+                                        </td>
                                         <td>
-                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
-                                                data-bs-target='#UpdateEmployeeForm'
-                                                data-photo='{{ $employee->PICTURE_LINK }}'
-                                                data-state='{{ $employee->STATUS }}' data-id='{{ $employee->EMP_ID }}'
-                                                data-homephone='{{ $employee->HOMEPHONE }}'
-                                                data-firstname='{{ $employee->FIRSTNAME }}'
-                                                data-lastname='{{ $employee->LASTNAME }}'
-                                                data-depid='{{ $employee->DEP_ID }}'
-                                                data-posid='{{ $employee->POS_ID }}'
-                                                data-register='{{ $employee->REGISTER }}'
-                                                data-sex='{{ $employee->SEX }}' data-email='{{ $employee->EMAIL }}'
-                                                data-birthdate='{{ $employee->BIRTHDATE }}'
-                                                data-handphone='{{ $employee->HANDPHONE }}'
-                                                data-workphone='{{ $employee->WORKPHONE }}'
-                                                data-status='{{ $employee->STATUS }}'
-                                                data-workdate='{{ $employee->WORK_DATE }}'>Засах</button>
-                                                
                                             <form action="{{ route('deleteemployee', ['id' => $employee->EMP_ID]) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger">Устгах</button>
                                             </form>
+                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
+                                                data-bs-target='#editEmployeeModal'
+                                                data-id='{{ $employee->EMP_ID }}'>Засах</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -99,43 +85,72 @@
 </div>
 </div>
 
-@include('modal.addemployee')
+<!-- Update Position Modal -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
+        <div class="modal-content">
 
-@endsection
+        </div>
+    </div>
+</div>
 
-@section('scripts')
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const updateEmployeeFormModal = document.getElementById('UpdateEmployeeForm');
-        updateEmployeeFormModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
+    $(document).ready(function () {
+        // Function to handle opening the edit position modal and loading content via AJAX
+        $('#editEmployeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var empId = button.data('id'); // Extract info from data-* attributes
+            var modal = $(this);
 
-            const empId = button.getAttribute('data-id');
-            const firstName = button.getAttribute('data-firstname');
-            const lastName = button.getAttribute('data-lastname');
-            const depId = button.getAttribute('data-depid');
-            const posId = button.getAttribute('data-posid');
-            const register = button.getAttribute('data-register');
-            const sex = button.getAttribute('data-sex');
-            const email = button.getAttribute('data-email');
-            const birthDate = button.getAttribute('data-birthdate');
-            const handPhone = button.getAttribute('data-handphone');
-            const workPhone = button.getAttribute('data-workphone');
-            const status = button.getAttribute('data-status');
+            // Load the form via AJAX
+            $.ajax({
+                url: '/editemployee/' + empId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
 
-            document.getElementById('modal-emp-id').value = empId;
-            document.getElementById('first_name').value = firstName;
-            document.getElementById('last_name').value = lastName;
-            document.getElementById('place').value = depId;
-            document.getElementById('position').value = posId;
-            document.getElementById('reg_number').value = register;
-            document.getElementById('gender').value = sex;
-            document.getElementById('email').value = email;
-            document.getElementById('birth_date').value = birthDate;
-            document.getElementById('phone_number').value = handPhone;
-            document.getElementById('work_number').value = workPhone;
-            document.getElementById('state').value = status;
+        // Function to handle saving changes made in the edit position modal
+        $(document).on('click', '#saveEmployeeChanges', function () {
+            var form = $('#editEmployeeModal').find('form');
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#editEmployeeModal').modal('hide');
+                    location.reload(); // Reload the page to see the changes
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Initialize DataTable with specific configurations
+        $('#datatable').DataTable({
+            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
+            "order": [], // Disable initial sorting
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+            }
         });
     });
+
 </script>
 @endsection
+@include('modal.addemployee')

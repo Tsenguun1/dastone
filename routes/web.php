@@ -16,14 +16,16 @@ Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->na
 Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
 Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
 
-
-
-Route::get('/employee', [EmployeeController::class, 'viewemployee'])->name('viewemployee');
-Route::post('/addemployee', [EmployeeController::class, 'addFormemployee'])->name('addemployee');
-Route::delete('/delete-employee/{id}', [EmployeeController::class, 'deleteemployee'])->name('deleteemployee');
-Route::post('/updateemployee', [EmployeeController::class, 'updateemployee'])->name('updateemployee');
-
 Route::get('/viewpositions', [PositionController::class, 'viewpositions'])->name('viewposition');
 Route::post('/addposition', [PositionController::class, 'addFormpos'])->name('addformpos');
 Route::delete('/deleteposition/{id}', [PositionController::class, 'deleteposition'])->name('deleteposition');
-Route::post('/updateposition', [PositionController::class, 'updateposition'])->name('updateposition');
+Route::get('/editposition/{id}', [PositionController::class, 'editposition'])->name('editposition');
+Route::put('/updateposition/{id}', [PositionController::class, 'updateposition'])->name('updateposition');
+
+Route::get('/viewemployee', [EmployeeController::class, 'index'])->name('viewemployee');
+Route::delete('/deleteemployee/{id}', [EmployeeController::class, 'destroy'])->name('deleteemployee');
+Route::post('/storeemployee', [EmployeeController::class, 'store'])->name('storeemployee');
+Route::get('/editemployee/{id}', [EmployeeController::class, 'edit'])->name('editemployee');
+Route::put('/updateemployee/{id}', [EmployeeController::class, 'update'])->name('updateemployee');
+
+

@@ -1,106 +1,77 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\OrgDepartment;
-use App\Models\OrgEmployee;
 use Illuminate\Http\Request;
-use App\Models\Employee;
+use App\Models\OrgEmployee;
+use App\Models\OrgDepartment;
 use App\Models\OrgPosition;
-use App\Models\Department;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
-    
-    public function viewemployee()
+    public function index()
     {
-        $employees = DB::table('org_employee')
-            ->join('org_department', 'org_employee.DEP_ID', '=', 'org_department.DEP_ID')
-            ->join('org_position', 'org_employee.POS_ID', '=', 'org_position.POS_ID')
-            ->select(
-                'org_employee.EMP_ID',
-                'org_employee.FIRSTNAME',
-                'org_employee.LASTNAME',
-                'org_employee.DEP_ID', 
-                'org_employee.POS_ID', 
-                'org_employee.REGISTER',
-                'org_employee.SEX',
-                'org_employee.EMAIL',
-                'org_employee.BIRTHDATE',
-                'org_employee.HANDPHONE',
-                'org_employee.HOMEPHONE',
-                'org_employee.WORKPHONE',
-                'org_employee.STATUS',
-                'org_employee.PICTURE_LINK',
-                'org_employee.WORK_DATE',
-                'org_department.DEP_NAME',
-                'org_position.POS_NAME'
-            )
-            ->where('org_employee.STATUS', '!=', 'D')
-            ->orderBy('org_department.DEP_ID')
-            ->orderBy('org_employee.FIRSTNAME')
-            ->orderBy('org_employee.LASTNAME')
+        $employees = DB::table('ORG_EMPLOYEE')
+            ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
+            ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
+            ->select('ORG_EMPLOYEE.*', 'ORG_POSITION.POS_NAME', 'ORG_DEPARTMENT.DEP_NAME')
             ->get();
-
-        $positions = OrgPosition::all();
-        $departments = OrgDepartment::all();
-
-        return view('viewemployee', compact('employees', 'positions', 'departments'));
+        $departments = DB::table('ORG_DEPARTMENT')->get();
+        $positions = DB::table('ORG_POSITION')->get();
+        return view('viewemployee', compact('employees', 'departments', 'positions'));
     }
-
-    
-    public function addFormemployee(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'REGISTER' => 'required|string|max:255',
-            'FIRSTNAME' => 'required|string|max:255',
-            'LASTNAME' => 'required|string|max:255',
+            'REGISTER' => 'required|string|regex:/^[A-Za-z]{2}[0-9]{8}$/|max:10',
+            'FIRSTNAME' => 'required|string|regex:/^[^0-9]*$/|max:255',
+            'LASTNAME' => 'required|string|regex:/^[^0-9]*$/|max:255',
             'POS_ID' => 'required|integer',
             'DEP_ID' => 'required|integer',
             'EMAIL' => 'required|string|email|max:255',
             'WORK_DATE' => 'required|date',
-            'STATUS' => 'required|string|max:255',
+            'STATUS' => 'required|string|max:1',
             'BIRTHDATE' => 'required|date',
-            'HANDPHONE' => 'required|string|max:255',
-            'HOMEPHONE' => 'nullable|string|max:255',
-            'WORKPHONE' => 'nullable|string|max:255',
-            'SEX' => 'required|string|max:255',
+            'HANDPHONE' => 'required|string|regex:/^[6-9][0-9]{7}$/|max:8',
+            'HOMEPHONE' => 'nullable|string|regex:/^[6-9][0-9]{7}$/|max:8',
+            'WORKPHONE' => 'nullable|string|regex:/^[6-9][0-9]{7}$/|max:8',
+            'SEX' => 'required|string|in:male,female',
             'PICTURE_LINK' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
+    
         $employee = new OrgEmployee();
-        $employee->REGISTER = $validatedData['REGISTER'];
-        $employee->FIRSTNAME = $validatedData['FIRSTNAME'];
-        $employee->LASTNAME = $validatedData['LASTNAME'];
-        $employee->POS_ID = $validatedData['POS_ID'];
-        $employee->DEP_ID = $validatedData['DEP_ID'];
-        $employee->EMAIL = $validatedData['EMAIL'];
-        $employee->PASS = bcrypt('default_password'); // Ensure to hash the password
-        $employee->WORK_DATE = $validatedData['WORK_DATE'];
-        $employee->STATUS = $validatedData['STATUS'];
-        $employee->BIRTHDATE = $validatedData['BIRTHDATE'];
-        $employee->HANDPHONE = $validatedData['HANDPHONE'];
-        $employee->HOMEPHONE = $validatedData['HOMEPHONE'];
-        $employee->WORKPHONE = $validatedData['WORKPHONE'];
-        $employee->SEX = $validatedData['SEX'];
-        $employee->FINGERID = 0; // Set a default value for FINGERID
-
+        $employee->fill($validatedData);
+        $employee->PASS = bcrypt('default_password');
+        $employee->FINGERID = 0;
+    
         if ($request->hasFile('PICTURE_LINK')) {
             $file = $request->file('PICTURE_LINK');
-            $filename = $file->getClientOriginalName();
+            $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('pictures', $filename, 'public');
             $employee->PICTURE_LINK = '/storage/' . $path;
         }
-
+    
         $employee->save();
-
-        return redirect()->back();
+    
+        return redirect()->back()->with('success', 'Employee added successfully');
     }
-
-
-
-    public function updateemployee(Request $request)
+    
+    public function edit($id)
+    {
+        $employee = OrgEmployee::findOrFail($id);
+    
+        if (request()->ajax()) {
+            $departments = OrgDepartment::all();
+            $positions = OrgPosition::all();
+    
+            return view('partials.editemployeeform', compact('employee', 'departments', 'positions'));
+        }
+    
+        return redirect()->route('viewemployee')->with('error', 'Invalid request.');
+    }
+    
+    
+    public function update(Request $request)
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
@@ -156,12 +127,9 @@ class EmployeeController extends Controller
     }
     
 
-    public function deleteemployee($id)
+    public function destroy($id)
     {
-        $employee = OrgEmployee::findOrFail($id);
-        $employee->status = 'D'; // Assuming 'D' represents deleted or deactivated status
-        $employee->save();
-
-        return redirect()->route('viewemployee');
+        DB::table('ORG_EMPLOYEE')->where('EMP_ID', $id)->delete();
+        return redirect()->route('viewemployee')->with('success', 'Employee deleted successfully.');
     }
 }
