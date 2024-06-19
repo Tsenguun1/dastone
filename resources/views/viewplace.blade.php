@@ -105,7 +105,5 @@
     });
 
 </script>
-
-
 @endsection
 @include('modal.addplace')

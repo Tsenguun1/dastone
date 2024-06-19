@@ -16,10 +16,10 @@ class EmployeeController extends Controller
             ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
             ->select('ORG_EMPLOYEE.*', 'ORG_POSITION.POS_NAME', 'ORG_DEPARTMENT.DEP_NAME')
             ->get();
-    
+
         $departments = DB::table('ORG_DEPARTMENT')->get();
         $positions = DB::table('ORG_POSITION')->get();
-    
+
         // Assuming STATUS is relevant for employees, not positions
         foreach ($employees as $employee) {
             if ($employee->STATUS == 'A') {
@@ -30,10 +30,10 @@ class EmployeeController extends Controller
                 $employee->STATUSVALUE = 'Unknown Status';
             }
         }
-    
+
         return view('viewemployee', compact('employees', 'departments', 'positions'));
     }
-    
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -52,39 +52,38 @@ class EmployeeController extends Controller
             'SEX' => 'required|string|in:male,female',
             'PICTURE_LINK' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
         $employee = new OrgEmployee();
         $employee->fill($validatedData);
         $employee->PASS = bcrypt('default_password');
         $employee->FINGERID = 0;
-    
+
         if ($request->hasFile('PICTURE_LINK')) {
             $file = $request->file('PICTURE_LINK');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('pictures', $filename, 'public');
             $employee->PICTURE_LINK = '/storage/' . $path;
         }
-    
+
         $employee->save();
-    
+
         return redirect()->back()->with('success', 'Employee added successfully');
     }
-    
+
     public function edit($id)
     {
         $employee = OrgEmployee::findOrFail($id);
-    
+
         if (request()->ajax()) {
             $departments = OrgDepartment::all();
             $positions = OrgPosition::all();
-    
+
             return view('partials.editemployeeform', compact('employee', 'departments', 'positions'));
         }
-    
+
         return redirect()->route('viewemployee')->with('error', 'Invalid request.');
     }
-    
-    
+
     public function update(Request $request)
     {
         // Validate the incoming request data
@@ -105,10 +104,10 @@ class EmployeeController extends Controller
             'SEX' => 'required|string|max:255',
             'PICTURE_LINK' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
         // Find the employee by ID
         $employee = OrgEmployee::findOrFail($validatedData['EMP_ID']);
-    
+
         // Update the employee's details
         $employee->REGISTER = $validatedData['REGISTER'];
         $employee->FIRSTNAME = $validatedData['FIRSTNAME'];
@@ -124,7 +123,7 @@ class EmployeeController extends Controller
         $employee->WORKPHONE = $validatedData['WORKPHONE'];
         $employee->SEX = $validatedData['SEX'];
         $employee->FINGERID = $request->input('FINGERID'); // Assuming FINGERID is part of the request
-    
+
         // Handle the picture upload if provided
         if ($request->hasFile('PICTURE_LINK')) {
             $file = $request->file('PICTURE_LINK');
@@ -132,14 +131,13 @@ class EmployeeController extends Controller
             $path = $file->storeAs('pictures', $filename, 'public');
             $employee->PICTURE_LINK = '/storage/' . $path;
         }
-    
+
         // Save the updated employee details
         $employee->save();
-    
+
         // Redirect back with a success message
         return redirect()->back();
     }
-    
 
     public function destroy($id)
     {

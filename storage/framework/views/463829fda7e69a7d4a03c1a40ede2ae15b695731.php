@@ -44,8 +44,8 @@
                                                 alt="Employee Picture" width="50"></td>
                                         <td><?php echo e($employee->FIRSTNAME); ?></td>
                                         <td><?php echo e($employee->LASTNAME); ?></td>
-                                        <td><?php echo e($employee->DEP_NAME); ?></td> <!-- Displaying Department Name -->
-                                        <td><?php echo e($employee->POS_NAME); ?></td> <!-- Displaying Position Name -->
+                                        <td><?php echo e($employee->DEP_NAME); ?></td>
+                                        <td><?php echo e($employee->POS_NAME); ?></td>
                                         <td><?php echo e($employee->REGISTER); ?></td>
                                         <td><?php echo e($employee->SEX); ?></td>
                                         <td><?php echo e($employee->EMAIL); ?></td>
@@ -69,11 +69,14 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
 
             </div>
         </div> <!-- end col -->
     </div> <!-- end row -->
+
+
 </div>
 </div>
 
