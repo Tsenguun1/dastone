@@ -13,6 +13,14 @@
                 <div class='table-rep-plugin'>
                     <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
                         data-bs-toggle="modal" data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
+                    <div class="mb-3">
+                        <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">Бүх</option>
+                            <option value="Идэвхитэй">Идэвхитэй</option>
+                            <option value="Идэвхгүй">Идэвхгүй</option>
+                        </select>
+                    </div>
                     <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
@@ -47,13 +55,34 @@
     </div>
 </div>
 
+<!-- Add Place Modal -->
+<?php echo $__env->make('modal.addplace', ['departments' => $departments], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 <!-- Include jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
 <script>
     $(document).ready(function () {
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
+
+        function filterTable(status) {
+            $('#datatable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(3)').text(); // Updated to match the correct column for status
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+
         $('#editPlaceModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var depId = button.data('id'); // Extract info from data-* attributes
@@ -89,22 +118,18 @@
                 }
             });
         });
-    });
 
-    $(document).ready(function () {
         $('#datatable').DataTable({
             "columnDefs": [
                 { "orderable": false, "targets": 5 }  // Disable sorting on the 'Action' column
             ],
             "order": [],  // Disable initial sorting
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/mn.json" // Example for Mongolian translation
             }
         });
     });
-
 </script>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('modal.addplace', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\pc\Documents\GitHub\dastone\resources\views/viewplace.blade.php ENDPATH**/ ?>

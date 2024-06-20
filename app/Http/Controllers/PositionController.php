@@ -2,32 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\OrgPosition;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class PositionController extends Controller
 {
     public function viewpositions()
-    {
-        $positions = DB::table('ORG_POSITION')
-            ->select('POS_ID', 'POS_NAME', 'STATUS', 'SORT_ORDER', 'EDIT_DATE')
-            ->where('STATUS', '!=', 'D')
-            ->orderBy('SORT_ORDER')
-            ->get();
+{
+    return view('viewposition');
+}
 
-            foreach ($positions as $position) {
-                if ($position->STATUS == 'A') {
-                    $position->STATUSVALUE = 'Идэвхитэй';
-                } elseif ($position->STATUS == 'N') {
-                    $position->STATUSVALUE = 'Идэвхгүй';
-                } else {
-                    $position->STATUSVALUE = 'Unknown Status';
-                }
-            }
+// Method to get positions for DataTables
+public function positionListTable(Request $request)
+{
+    $columns = [
+        'POS_ID', // Include POS_ID in the columns to select
+        'POS_NAME',
+        'STATUS',
+        'SORT_ORDER',
+        'EDIT_DATE'
+    ];
 
-        return view('viewposition', ['positions' => $positions]);
+    $query = DB::table('ORG_POSITION')
+        ->where('STATUS', '!=', 'D')
+        ->select($columns);
+
+    // Handle sorting
+    if ($request->has('order') && $request->has('columns')) {
+        $orderByColumn = $columns[$request->input('order.0.column')];
+        $orderByDirection = $request->input('order.0.dir');
+        $query->orderBy($orderByColumn, $orderByDirection);
     }
+
+    return DataTables::of($query)
+        ->addColumn('action', function ($row) {
+            return '
+                <form action="' . route('deleteposition', $row->POS_ID) . '" method="POST" style="display:inline;">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
+                </form>
+                <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPositionModal" data-id="' . $row->POS_ID . '">Засах</button>';
+        })
+        ->rawColumns(['action'])
+        ->addIndexColumn()
+        ->make(true);
+}
 
     public function addFormpos(Request $request)
     {

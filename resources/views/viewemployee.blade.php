@@ -72,75 +72,101 @@
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.5/js/responsive.bootstrap4.min.js"></script>
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $('#statusFilter').on('change', function () {
-            var selectedStatus = $(this).val();
-            filterTable(selectedStatus);
-        });
+   $(document).ready(function () {
+    // Initialize DataTable
+    var table = $('#datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('employeeListTable') }}',
+            type: 'GET'
+        },
+        columns: [
+            { data: 'picture', name: 'picture', render: function(data) {
+                return '<img src="' + data + '" alt="Employee Picture" width="50" height="50">';
+            }},
+            { data: 'lastname', name: 'lastname' },
+            { data: 'firstname', name: 'firstname' },
+            { data: 'department', name: 'department' },
+            { data: 'position', name: 'position' },
+            { data: 'register', name: 'register' },
+            { data: 'sex', name: 'sex' },
+            { data: 'email', name: 'email' },
+            { data: 'birthdate', name: 'birthdate' },
+            { data: 'handphone', name: 'handphone' },
+            { data: 'workphone', name: 'workphone' },
+            { data: 'status', name: 'status' },
+            { data: 'action', name: 'action', orderable: false, searchable: false, render: function(data, type, row) {
+                return '<button type="button" class="btn btn-primary btn-xs edit-button" data-id="' + row.id + '" data-bs-toggle="modal" data-bs-target="#editEmployeeModal">Засах</button>' + 
+                       '<form action="/deleteemployee/' + row.id + '" method="POST" style="display:inline;">' +
+                       '@csrf' +
+                       '@method("DELETE")' +
+                       '<button type="submit" class="btn btn-danger btn-xs">Устгах</button>' +
+                       '</form>';
+            }}
+        ],
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All'],
+        ]
+    });
 
-        function filterTable(status) {
-            $('#datatable tbody tr').each(function () {
-                var row = $(this);
-                var rowStatus = row.find('td:nth-child(12)').text(); // Correct column index for status
-                if (status === "" || rowStatus === status) {
-                    row.show();
-                } else {
-                    row.hide();
-                }
-            });
-        }
+    // Status filter functionality
+    $('#statusFilter').on('change', function () {
+        var selectedStatus = $(this).val();
+        table.column(11).search(selectedStatus).draw();
+    });
 
-        // Function to handle opening the edit employee modal and loading content via AJAX
-        $('#editEmployeeModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var empId = button.data('id'); // Extract info from data-* attributes
-            var modal = $(this);
+    // Edit employee modal
+    $('#editEmployeeModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var empId = button.data('id');
+        var modal = $(this);
 
-            // Load the form via AJAX
-            $.ajax({
-                url: '/editemployee/' + empId,
-                method: 'GET',
-                success: function (response) {
-                    modal.find('.modal-content').html(response);
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        // Function to handle saving changes made in the edit employee modal
-        $(document).on('click', '#saveEmployeeChanges', function () {
-            var form = $('#editEmployeeModal').find('form');
-            var formData = new FormData(form[0]);
-
-            $.ajax({
-                url: form.attr('action'),
-                method: form.attr('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    $('#editEmployeeModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        // Initialize DataTable with specific configurations
-        $('#datatable').DataTable({
-            "columnDefs": [{ "orderable": false, "targets": 12 }], // Disable sorting on the 'Action' column
-            "order": [], // Disable initial sorting
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+        $.ajax({
+            url: '/editemployee/' + empId,
+            method: 'GET',
+            success: function (response) {
+                modal.find('.modal-content').html(response);
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
             }
         });
     });
+
+    // Save changes in the edit employee modal
+    $(document).on('click', '#saveEmployeeChanges', function () {
+        var form = $('#editEmployeeModal').find('form');
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            url: form.attr('action'),
+            method: form.attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#editEmployeeModal').modal('hide');
+                table.ajax.reload(); // Reload the DataTable to see the changes
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+});
+
 </script>
 @endsection
 

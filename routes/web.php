@@ -16,13 +16,15 @@ Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
 Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
 Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
 Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
-Route::get('/placeListTable', [PlaceController::class, 'placeListTable'])->name('placeListTable');
+Route::get('/placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
 
 Route::get('/viewpositions', [PositionController::class, 'viewpositions'])->name('viewposition');
 Route::post('/addposition', [PositionController::class, 'addFormpos'])->name('addformpos');
 Route::delete('/deleteposition/{id}', [PositionController::class, 'deleteposition'])->name('deleteposition');
 Route::get('/editposition/{id}', [PositionController::class, 'editposition'])->name('editposition');
 Route::put('/updateposition/{id}', [PositionController::class, 'updateposition'])->name('updateposition');
+Route::get('/positions/list', [PositionController::class, 'positionListTable'])->name('positionlisttable');
+
 
 Route::get('/viewemployee', [EmployeeController::class, 'index'])->name('viewemployee');
 Route::delete('/deleteemployee/{id}', [EmployeeController::class, 'destroy'])->name('deleteemployee');
@@ -36,5 +38,4 @@ Route::post('/addfee', [FeeController::class, 'addFee'])->name('addfee');
 Route::delete('/deletefee/{id}', [FeeController::class, 'deleteFee'])->name('deletefee');
 Route::get('/editfee/{id}', [FeeController::class, 'editFee'])->name('editfee');
 Route::put('/updatefee/{id}', [FeeController::class, 'updateFee'])->name('updatefee');
-Route::get('/fee-list-table', [FeeController::class, 'feeListTable'])->name('feeListTable');
-
+Route::get('/feelisttable', [FeeController::class, 'feeListTable'])->name('feelisttable');

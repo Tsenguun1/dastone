@@ -32,30 +32,10 @@
                                     <th>Төлөв</th>
                                     <th>Эрэмбэ</th>
                                     <th>Зассан</th>
-                                    <th style=" text-align: center; ">Үйлдэл</th>
+                                    <th style="text-align: center;">Үйлдэл</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @foreach($positions as $position)
-                                    <tr>
-                                        <td>{{ $position->POS_NAME }}</td>
-                                        <td>{{ $position->STATUSVALUE }}</td>
-                                        <td>{{ $position->SORT_ORDER }}</td>
-                                        <td>{{ $position->EDIT_DATE }}</td>
-                                        <td>
-                                            <form action="{{ route('deleteposition', $position->POS_ID) }}" method="POST"
-                                                style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type='submit' class='btn btn-danger'
-                                                    style="float: right;">Устгах</button>
-                                            </form>
-                                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                                style="float: right;" data-bs-target="#editPositionModal"
-                                                data-id="{{ $position->POS_ID }}">Засах</button>
-                                        </td>
-                                    </tr>
-                                @endforeach --}}
                             </tbody>
                         </table>
                     </div>
@@ -80,75 +60,81 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    
     $(document).ready(function () {
-
-        $('#statusFilter').on('change', function () {
-            var selectedStatus = $(this).val();
-            filterTable(selectedStatus);
-        });
-
-        function filterTable(status) {
-            $('#datatable tbody tr').each(function () {
-                var row = $(this);
-                var rowStatus = row.find('td:nth-child(2)').text();
-                if (status === "" || rowStatus === status) {
-                    row.show();
-                } else {
-                    row.hide();
-                }
-            });
+    // Initialize DataTable with AJAX
+    var table = $('#datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('positionlisttable') }}',
+            type: 'GET'
+        },
+        columns: [
+            { data: 'POS_NAME', name: 'POS_NAME' },
+            { data: 'STATUS', name: 'STATUS' },
+            { data: 'SORT_ORDER', name: 'SORT_ORDER' },
+            { data: 'EDIT_DATE', name: 'EDIT_DATE' },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All'],
+        ],
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Mongolian translation
         }
-        
-        // Function to handle opening the edit position modal and loading content via AJAX
-        $('#editPositionModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var posId = button.data('id'); // Extract info from data-* attributes
-            var modal = $(this);
+    });
 
-            // Load the form via AJAX
-            $.ajax({
-                url: '/editposition/' + posId,
-                method: 'GET',
-                success: function (response) {
-                    modal.find('.modal-content').html(response);
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
+    // Status filter functionality
+    $('#statusFilter').on('change', function () {
+        var selectedStatus = $(this).val();
+        table.column(1).search(selectedStatus).draw();
+    });
 
-        // Function to handle saving changes made in the edit position modal
-        $('#savePositionChanges').click(function () {
-            var form = $('#editPositionModal').find('form');
-            var formData = form.serialize();
+    // Edit position modal
+    $('#editPositionModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var posId = button.data('id'); // Extract info from data-* attributes
+        var modal = $(this);
 
-            $.ajax({
-                url: form.attr('action'),
-                method: form.attr('method'),
-                data: formData,
-                success: function (response) {
-                    $('#editPositionModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        // Initialize DataTable with specific configurations
-        $('#datatable').DataTable({
-            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
-            "order": [], // Disable initial sorting
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+        // Load the form via AJAX
+        $.ajax({
+            url: '/editposition/' + posId,
+            method: 'GET',
+            success: function (response) {
+                modal.find('.modal-content').html(response);
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
             }
         });
     });
+
+    // Save changes in the edit position modal
+    $(document).on('click', '#savePositionChanges', function () {
+        var form = $('#editPositionModal').find('form');
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            url: form.attr('action'),
+            method: form.attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#editPositionModal').modal('hide');
+                table.ajax.reload(); // Reload the DataTable to see the changes
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+});
 </script>
 @endsection
 @include('modal.addposition')

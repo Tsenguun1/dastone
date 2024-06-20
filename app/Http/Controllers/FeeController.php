@@ -10,16 +10,14 @@ use Yajra\DataTables\Facades\DataTables;
 class FeeController extends Controller
 {
     public function viewFees()
-{
-    return view('viewFee');
-}
-
-// Method to get fees for DataTables
-public function feeListTable(Request $request)
-{
-    $query = DB::table('MERCH_FEES')
-        ->where('STATUS', '!=', 'D')
-        ->select([
+    {
+        return view('viewFee');
+    }
+    
+    // Method to get fees for DataTables
+    public function feeListTable(Request $request)
+    {
+        $columns = [
             'FEE_ID',
             'FEE_TYPE',
             'FEE_NAME',
@@ -27,21 +25,33 @@ public function feeListTable(Request $request)
             'ORDER_NO',
             'FEE_STARTDATE',
             'STATUS'
-        ]);
-
-    return DataTables::of($query)
-        ->addColumn('action', function ($row) {
-            return '
-                <form action="' . route('deletefee', $row->FEE_ID) . '" method="POST" style="display:inline;">
-                    ' . csrf_field() . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger" style="float: right;">Устгах</button>
-                </form>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" style="float: right;" data-bs-target="#editFeeModal" data-id="' . $row->FEE_ID . '">Засах</button>';
-        })
-        ->rawColumns(['action'])
-        ->addIndexColumn()
-        ->make(true);
-}
+        ];
+    
+        $query = DB::table('MERCH_FEES')
+            ->where('STATUS', '!=', 'D')
+            ->select($columns);
+    
+        // Handle sorting
+        if ($request->has('order') && $request->has('columns')) {
+            $orderByColumn = $columns[$request->input('order.0.column')];
+            $orderByDirection = $request->input('order.0.dir');
+            $query->orderBy($orderByColumn, $orderByDirection);
+        }
+    
+        return DataTables::of($query)
+            ->addColumn('action', function ($row) {
+                return '
+                    <form action="' . route('deletefee', $row->FEE_ID) . '" method="POST" style="display:inline;">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
+                    </form>
+                    <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editFeeModal" data-id="' . $row->FEE_ID . '">Засах</button>';
+            })
+            ->rawColumns(['action'])
+            ->addIndexColumn()
+            ->make(true);
+    }
+    
     public function showFeeDetails($id)
     {
         $fee = MerchFee::findOrFail($id);
