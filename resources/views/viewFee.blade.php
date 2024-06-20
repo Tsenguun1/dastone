@@ -7,25 +7,63 @@
     </nav>
 </div>
 
-<div class="page-content">
-    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class='table-rep-plugin'>
-                        <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class='table-rep-plugin'>
+                    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
+                        data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
+                    <div class="mb-3">
+                        <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">Бүх</option>
+                            <option value="Идэвхитэй">Идэвхитэй</option>
+                            <option value="Идэвхгүй">Идэвхгүй</option>
+                        </select>
+                    </div>
+                    <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th data-sortable="false">№</th>
+                                <th data-sortable="true">ID</th>
+                                <th data-sortable="true">Төрөл</th>
+                                <th data-sortable="true">Нэр</th>
+                                <th data-sortable="true">Тайлбар</th>
+                                <th data-sortable="false" style="text-align: center;">Эрэмбэ</th>
+                                <th data-sortable="false">Эхлэх огноо</th>
+                                <th data-sortable="true">Төлөв</th>
+                                <th data-sortable="true">Үйлдэл</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($fees as $index => $fee)
                                 <tr>
-                                    <th data-sortable="false">№</th>
-                                    <th data-sortable="true">ID</th>
-                                    <th data-sortable="true">Төрөл</th>
-                                    <th data-sortable="true">Нэр</th>
-                                    <th data-sortable="true">Тайлбар</th>
-                                    <th data-sortable="false" style="text-align: center;">Эрэмбэ</th>
-                                    <th data-sortable="false">Эхлэх огноо</th>
-                                    <th data-sortable="true">Төлөв</th>
-                                    <th data-sortable="false">Үйлдэл</th>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $fee->FEE_ID }}</td>
+                                    <td>{{ $fee->FEE_TYPE }}</td>
+                                    <td>{{ $fee->FEE_NAME }}</td>
+                                    <td>{{ $fee->FEE_DESCR }}</td>
+                                    <td>{{ $fee->ORDER_NO }}</td>
+                                    <td>{{ $fee->FEE_STARTDATE }}</td>
+                                    <td>{{ $fee->STATUSVALUE }}</td>
+                                    <td style="text-align: center;">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#detailsFeeModal"
+                                            data-id="{{ $fee->FEE_ID }}">Дэлгэрэнгүй</button>
+
+
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#editFeeModal" data-id="{{ $fee->FEE_ID }}">Засах</button>
+
+                                        <form action="{{ route('deletefee', $fee->FEE_ID) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type='submit' class='btn btn-danger'>Устгах</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -46,26 +84,57 @@
     </div>
 </div>
 
-<!-- Add Fee Modal -->
-@include('modal.addfee')
+<div class="modal fade" id="detailsFeeModal" tabindex="-1" role="dialog" aria-labelledby="detailsFeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
+        <div class="modal-content">
+            <!-- Content will be loaded here via AJAX -->
+        </div>
+    </div>
+</div>
 
-<!-- Include jQuery and Bootstrap JS -->
+<!-- Include jQuery, Bootstrap, and DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-<!-- Include DataTables JS -->
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
     $(document).ready(function () {
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
+
+        function filterTable(status) {
+            $('#feeTable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(8)').text(); // Match the correct column for status
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+        
+        $('#detailsFeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var feeId = button.data('id');
+            var modal = $(this);
+
+            $.ajax({
+                url: '/detailsfee/' + feeId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
         $('#editFeeModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var feeId = button.data('id');
@@ -102,30 +171,13 @@
         });
 
         $('#feeTable').DataTable({
-            lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, 'All'],
+            "columnDefs": [
+                { "orderable": false, "targets": 8 }
             ],
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: '{{ route('feeListTable') }}',
-            },
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-                { data: 'FEE_ID', name: 'FEE_ID' },
-                { data: 'FEE_TYPE', name: 'FEE_TYPE' },
-                { data: 'FEE_NAME', name: 'FEE_NAME' },
-                { data: 'FEE_DESCR', name: 'FEE_DESCR' },
-                { data: 'ORDER_NO', name: 'ORDER_NO' },
-                { data: 'FEE_STARTDATE', name: 'FEE_STARTDATE' },
-                { data: 'STATUS', name: 'STATUS', render: function(data, type, row) {
-                        return data === 'A' ? 'Идэвхитэй' : (data === 'N' ? 'Идэвхгүй' : 'Unknown Status');
-                    }
-                },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
-            ],
-            "bDestroy": true
+            "order": [],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json"
+            }
         });
     });
 </script>

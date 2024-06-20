@@ -17,6 +17,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class='table-rep-plugin'>
+                        <div class="mb-3">
+                            <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                            <select id="statusFilter" class="form-control">
+                                <option value="">Бүх</option>
+                                <option value="Идэвхитэй">Идэвхитэй</option>
+                                <option value="Идэвхгүй">Идэвхгүй</option>
+                            </select>
+                        </div>
                         <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
                             style="border-collapse: collapse; border-spacing: 0; width: 100%; font-size: 10px;">
                             <thead>
@@ -75,7 +83,6 @@
         </div> <!-- end col -->
     </div> <!-- end row -->
 </div>
-</div>
 
 <!-- Update Position Modal -->
 <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel"
@@ -90,10 +97,31 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.5/js/responsive.bootstrap4.min.js"></script>
 
 <script>
     $(document).ready(function () {
-        // Function to handle opening the edit position modal and loading content via AJAX
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
+
+        function filterTable(status) {
+            $('#datatable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(12)').text(); // Correct column index for status
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+
+        // Function to handle opening the edit employee modal and loading content via AJAX
         $('#editEmployeeModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var empId = button.data('id'); // Extract info from data-* attributes
@@ -112,7 +140,7 @@
             });
         });
 
-        // Function to handle saving changes made in the edit position modal
+        // Function to handle saving changes made in the edit employee modal
         $(document).on('click', '#saveEmployeeChanges', function () {
             var form = $('#editEmployeeModal').find('form');
             var formData = new FormData(form[0]);
@@ -135,15 +163,16 @@
 
         // Initialize DataTable with specific configurations
         $('#datatable').DataTable({
-            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
+            "columnDefs": [{ "orderable": false, "targets": 12 }], // Disable sorting on the 'Action' column
             "order": [], // Disable initial sorting
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
             }
         });
     });
-
 </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('modal.addemployee', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/viewemployee.blade.php ENDPATH**/ ?>

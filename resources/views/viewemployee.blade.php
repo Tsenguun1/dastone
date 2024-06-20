@@ -17,8 +17,16 @@
             <div class="card">
                 <div class="card-body">
                     <div class='table-rep-plugin'>
-                        <table id="employeeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <div class="mb-3">
+                            <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                            <select id="statusFilter" class="form-control">
+                                <option value="">Бүх</option>
+                                <option value="Идэвхитэй">Идэвхитэй</option>
+                                <option value="Идэвхгүй">Идэвхгүй</option>
+                            </select>
+                        </div>
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                            style="border-collapse: collapse; border-spacing: 0; width: 100%; font-size: 10px;">
                             <thead>
                                 <tr>
                                     <th>Зураг</th>
@@ -46,7 +54,6 @@
         </div> <!-- end col -->
     </div> <!-- end row -->
 </div>
-</div>
 
 <!-- Edit Employee Modal -->
 <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel"
@@ -61,106 +68,80 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.5/js/responsive.bootstrap4.min.js"></script>
 
 <script>
-$(document).ready(function () {
-    load_employee_data();
+    $(document).ready(function () {
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
 
-    function load_employee_data(from_date = '', to_date = '') {
-        var table = $('#employeeTable').DataTable({
-            lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, 'All'],
-            ],
-           
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: '{{ route('employeeListTable') }}',
-                data: function (d) {
-                    d.status = $('#status').val(),
-                    d.department = $('#department').val(),
-                    d.position = $('#position').val()
+        function filterTable(status) {
+            $('#datatable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(12)').text(); // Correct column index for status
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
                 }
-            },
-            columns: [
-                { data: 'picture', name: 'picture', render: function(data, type, row) {
-                        return '<img src="' + data + '" style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover;" alt="Employee Picture">';
-                    }
-                },
-                { data: 'lastname', name: 'lastname' },
-                { data: 'firstname', name: 'firstname' },
-                { data: 'department', name: 'department' },
-                { data: 'position', name: 'position' },
-                { data: 'register', name: 'register' },
-                { data: 'sex', name: 'sex' },
-                { data: 'email', name: 'email' },
-                { data: 'birthdate', name: 'birthdate' },
-                { data: 'handphone', name: 'handphone' },
-                { data: 'workphone', name: 'workphone' },
-                { data: 'status', name: 'status', render: function(data, type, row) {
-                        return data === 'A' ? 'Идэвхитэй' : 'Идэвхгүй';
-                    }
-                },
-                {
-                    data: 'action', name: 'action', orderable: false, searchable: false,
-                    render: function(data, type, row) {
-                        return '<a class="btn btn-primary btn-xs" onclick="getEditEmployeeModal(' + row.id + ')" data-bs-toggle="modal" data-bs-target="#editEmployeeModal">Засах</a>' +
-                            ' <button class="btn btn-danger btn-xs" onclick="deleteEmployee(' + row.id + ')">Устгах</button>';
-                    }
-                },
-            ],
-            "bDestroy": true
-        });
-
-        $('#status').change(function() {
-            table.draw();
-        });
-        $('#department').change(function() {
-            table.draw();
-        });
-        $('#position').change(function() {
-            table.draw();
-        });
-    }
-});
-
-function getEditEmployeeModal(id) {
-    $.ajax({
-        url: '/editemployee/' + id,
-        method: 'GET',
-        success: function(response) {
-            $('#editEmployeeModal .modal-content').html(response);
-        },
-        error: function(xhr) {
-            console.log(xhr.responseText);
+            });
         }
-    });
-}
 
-function deleteEmployee(id) {
-    if (confirm('Та энэ ажилтныг устгахдаа итгэлтэй байна уу?')) {
-        $.ajax({
-            url: '/deleteemployee/' + id,
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                location.reload();
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
+        // Function to handle opening the edit employee modal and loading content via AJAX
+        $('#editEmployeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var empId = button.data('id'); // Extract info from data-* attributes
+            var modal = $(this);
+
+            // Load the form via AJAX
+            $.ajax({
+                url: '/editemployee/' + empId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Function to handle saving changes made in the edit employee modal
+        $(document).on('click', '#saveEmployeeChanges', function () {
+            var form = $('#editEmployeeModal').find('form');
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#editEmployeeModal').modal('hide');
+                    location.reload(); // Reload the page to see the changes
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Initialize DataTable with specific configurations
+        $('#datatable').DataTable({
+            "columnDefs": [{ "orderable": false, "targets": 12 }], // Disable sorting on the 'Action' column
+            "order": [], // Disable initial sorting
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
             }
         });
-    }
-}
+    });
 </script>
 @endsection
+
 @include('modal.addemployee')

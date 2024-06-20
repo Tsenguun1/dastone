@@ -16,6 +16,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class='table-rep-plugin'>
+                        <div class="mb-3">
+                            <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                            <select id="statusFilter" class="form-control">
+                                <option value="">Бүх</option>
+                                <option value="Идэвхитэй">Идэвхитэй</option>
+                                <option value="Идэвхгүй">Идэвхгүй</option>
+                            </select>
+                        </div>
                         <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
                             style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead>
@@ -75,6 +83,72 @@
 
 <script>
     
+    $(document).ready(function () {
+
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
+
+        function filterTable(status) {
+            $('#datatable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(2)').text();
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+        
+        // Function to handle opening the edit position modal and loading content via AJAX
+        $('#editPositionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var posId = button.data('id'); // Extract info from data-* attributes
+            var modal = $(this);
+
+            // Load the form via AJAX
+            $.ajax({
+                url: '/editposition/' + posId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Function to handle saving changes made in the edit position modal
+        $('#savePositionChanges').click(function () {
+            var form = $('#editPositionModal').find('form');
+            var formData = form.serialize();
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: formData,
+                success: function (response) {
+                    $('#editPositionModal').modal('hide');
+                    location.reload(); // Reload the page to see the changes
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Initialize DataTable with specific configurations
+        $('#datatable').DataTable({
+            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
+            "order": [], // Disable initial sorting
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+            }
+        });
+    });
 </script>
 @endsection
 @include('modal.addposition')
