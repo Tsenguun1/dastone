@@ -39,19 +39,22 @@
                                     <td>{{ $fee->FEE_DESCR }}</td>
                                     <td>{{ $fee->ORDER_NO }}</td>
                                     <td>{{ $fee->FEE_STARTDATE }}</td>
-                                    <td>{{ $fee->STATUS == 'Active' ? 'Идэвхитэй' : 'Идэвхгүй' }}</td>
+                                    <td>{{ $fee->STATUSVALUE }}</td>
                                     <td style="text-align: center;">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#detailsFeeModal"
+                                            data-id="{{ $fee->FEE_ID }}">Дэлгэрэнгүй</button>
+
+
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#editFeeModal" data-id="{{ $fee->FEE_ID }}">Засах</button>
+
                                         <form action="{{ route('deletefee', $fee->FEE_ID) }}" method="POST"
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type='submit' class='btn btn-danger'
-                                                style="float: right;">Устгах</button>
+                                            <button type='submit' class='btn btn-danger'>Устгах</button>
                                         </form>
-
-                                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                            style="float: right;" data-bs-target="#editFeeModal"
-                                            data-id="{{ $fee->FEE_ID }}">Засах</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -64,11 +67,19 @@
 </div> <!-- end row -->
 
 <!-- Edit Fee Modal -->
-<div class="modal fade" id="editFeeModal" tabindex="-1" role="dialog" aria-labelledby="editFeeModalLabel"
-    aria-hidden="true">
+<!-- Modal Containers -->
+<div class="modal fade" id="editFeeModal" tabindex="-1" role="dialog" aria-labelledby="editFeeModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <!-- Content will be loaded via AJAX -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailsFeeModal" tabindex="-1" role="dialog" aria-labelledby="detailsFeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
+        <div class="modal-content">
+            <!-- Content will be loaded here via AJAX -->
         </div>
     </div>
 </div>
@@ -80,12 +91,28 @@
 
 <script>
     $(document).ready(function () {
-        $('#editFeeModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var feeId = button.data('id'); // Extract info from data-* attributes
+        $('#detailsFeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var feeId = button.data('id');
             var modal = $(this);
 
-            // Load the form via AJAX
+            $.ajax({
+                url: '/detailsfee/' + feeId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        $('#editFeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var feeId = button.data('id');
+            var modal = $(this);
+
             $.ajax({
                 url: '/editfee/' + feeId,
                 method: 'GET',
@@ -108,7 +135,7 @@
                 data: formData,
                 success: function (response) {
                     $('#editFeeModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
+                    location.reload();
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText);
@@ -120,11 +147,11 @@
     $(document).ready(function () {
         $('#feeTable').DataTable({
             "columnDefs": [
-                { "orderable": false, "targets": 5 }  // Disable sorting on the 'Action' column
+                { "orderable": false, "targets": 5 }
             ],
-            "order": [],  // Disable initial sorting
+            "order": [],
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json"
             }
         });
     });
