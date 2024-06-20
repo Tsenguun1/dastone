@@ -9,6 +9,39 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FeeController extends Controller
 {
+    public function viewFees()
+{
+    return view('viewFee');
+}
+
+// Method to get fees for DataTables
+public function feeListTable(Request $request)
+{
+    $query = DB::table('MERCH_FEES')
+        ->where('STATUS', '!=', 'D')
+        ->select([
+            'FEE_ID',
+            'FEE_TYPE',
+            'FEE_NAME',
+            'FEE_DESCR',
+            'ORDER_NO',
+            'FEE_STARTDATE',
+            'STATUS'
+        ]);
+
+    return DataTables::of($query)
+        ->addColumn('action', function ($row) {
+            return '
+                <form action="' . route('deletefee', $row->FEE_ID) . '" method="POST" style="display:inline;">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger" style="float: right;">Устгах</button>
+                </form>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" style="float: right;" data-bs-target="#editFeeModal" data-id="' . $row->FEE_ID . '">Засах</button>';
+        })
+        ->rawColumns(['action'])
+        ->addIndexColumn()
+        ->make(true);
+}
     public function showFeeDetails($id)
     {
         $fee = MerchFee::findOrFail($id);
@@ -29,54 +62,6 @@ class FeeController extends Controller
     }
     
 
-    // Method to view the list of fees
-    public function viewFees()
-    {
-        // Retrieve all fees where STATUS is not 'D'
-        $fees = MerchFee::where('STATUS', '!=', 'D')
-            ->orderBy('FEE_ID')
-            ->get();
-        foreach ($fees as $fee) {
-            if ($fee->STATUS == 'A') {
-                $fee->STATUSVALUE = 'Идэвхитэй';
-            } elseif ($fee->STATUS == 'N') {
-                $fee->STATUSVALUE = 'Идэвхгүй';
-            } else {
-                $fee->STATUSVALUE = 'Unknown Status';
-            }
-        }
-
-        // Return the view with the fees data
-        return view('viewFee', compact('fees'));
-    }
-
-    public function feeListTable(Request $request)
-{
-    $query = DB::table('MERCH_FEES')
-        ->where('STATUS', '!=', 'D')
-        ->select([
-            'FEE_ID',
-            'FEE_TYPE',
-            'FEE_NAME',
-            'FEE_DESCR',
-            'ORDER_NO',
-            'FEE_STARTDATE',
-            'STATUS'
-        ]);
-
-    return DataTables::of($query)
-        ->addColumn('action', function($row) {
-            return '<form action="/deletefee/' . $row->FEE_ID . '" method="POST" style="display:inline;">' .
-                csrf_field() .
-                method_field('DELETE') .
-                '<button type="submit" class="btn btn-danger" style="float: right;">Устгах</button>' .
-                '</form>' .
-                '<button type="button" class="btn btn-success" data-bs-toggle="modal" style="float: right;" data-bs-target="#editFeeModal" data-id="' . $row->FEE_ID . '">Засах</button>';
-        })
-        ->rawColumns(['action'])
-        ->addIndexColumn()
-        ->make(true);
-}
     // Method to load the edit form for a specific fee
     public function editFee($id)
     {

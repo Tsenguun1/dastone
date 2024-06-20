@@ -57,7 +57,7 @@
                                     class="ti-control-record"></i>Ажилтны бүртгэл</a></li>
 
                         <li class="nav-item"><a class="nav-link" href="<?php echo e(route('viewfees')); ?>"><i
-                                    class="ti-control-record"></i>Шимтгэл</a></li>
+                                    class="ti-control-record"></i>Картын оффлайн шимтгэл</a></li>
                     </ul>
                 </li>
                 <hr class="hr-dashed hr-menu">

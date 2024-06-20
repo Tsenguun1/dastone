@@ -28,7 +28,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($positions as $position)
+                                {{-- @foreach($positions as $position)
                                     <tr>
                                         <td>{{ $position->POS_NAME }}</td>
                                         <td>{{ $position->STATUSVALUE }}</td>
@@ -47,7 +47,7 @@
                                                 data-id="{{ $position->POS_ID }}">Засах</button>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endforeach --}}
                             </tbody>
                         </table>
                     </div>
@@ -74,54 +74,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        // Function to handle opening the edit position modal and loading content via AJAX
-        $('#editPositionModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var posId = button.data('id'); // Extract info from data-* attributes
-            var modal = $(this);
-
-            // Load the form via AJAX
-            $.ajax({
-                url: '/editposition/' + posId,
-                method: 'GET',
-                success: function (response) {
-                    modal.find('.modal-content').html(response);
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        // Function to handle saving changes made in the edit position modal
-        $('#savePositionChanges').click(function () {
-            var form = $('#editPositionModal').find('form');
-            var formData = form.serialize();
-
-            $.ajax({
-                url: form.attr('action'),
-                method: form.attr('method'),
-                data: formData,
-                success: function (response) {
-                    $('#editPositionModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        // Initialize DataTable with specific configurations
-        $('#datatable').DataTable({
-            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
-            "order": [], // Disable initial sorting
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
-            }
-        });
-    });
+    
 </script>
 @endsection
 @include('modal.addposition')

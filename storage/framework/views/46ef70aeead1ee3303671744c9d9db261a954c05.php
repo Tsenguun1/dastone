@@ -28,26 +28,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $__currentLoopData = $positions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <tr>
-                                        <td><?php echo e($position->POS_NAME); ?></td>
-                                        <td><?php echo e($position->STATUSVALUE); ?></td>
-                                        <td><?php echo e($position->SORT_ORDER); ?></td>
-                                        <td><?php echo e($position->EDIT_DATE); ?></td>
-                                        <td>
-                                            <form action="<?php echo e(route('deleteposition', $position->POS_ID)); ?>" method="POST"
-                                                style="display:inline;">
-                                                <?php echo csrf_field(); ?>
-                                                <?php echo method_field('DELETE'); ?>
-                                                <button type='submit' class='btn btn-danger'
-                                                    style="float: right;">Устгах</button>
-                                            </form>
-                                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                                style="float: right;" data-bs-target="#editPositionModal"
-                                                data-id="<?php echo e($position->POS_ID); ?>">Засах</button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                
                             </tbody>
                         </table>
                     </div>
