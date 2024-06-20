@@ -3,7 +3,7 @@
 @section('content')
 <div class="topbar">
     <nav class="navbar-custom">
-        <h4 class="page-title" style="margin: 10px;">Хураамжийн бүртгэл</h4>
+        <h4 class="page-title" style="margin: 10px;">Шимтгэлийн бүртгэл</h4>
     </nav>
 </div>
 

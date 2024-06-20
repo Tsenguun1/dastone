@@ -1,12 +1,8 @@
-<div class="modal-header">
-    <h5 class="modal-title" id="detailsFeeModalLabel">Дэлгэрэнгүй</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body">
+<div class="form-container" id="formContainer">
     <form id="feeDetailsForm">
         <?php echo csrf_field(); ?>
         <div class="mb-3">
-            <label for="feeName" class="form-check-label">Шимтгэлийн ID : <?php echo e($fee->FEE_ID); ?></label>
+            <label for="feeName" class="form-check-label">Шимтгэлийн : <?php echo e($fee->FEE_ID); ?></label>
         </div>
 
         <div class="mb-3">
@@ -34,7 +30,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="start_date" class="form-check-label">Гүйлгээ хийж эхлэх огноо: <?php echo e($fee->FEE_STARTDATE); ?></label>
+            <label for="start_date" class="form-check-label">Гүйлгээ хийж эхлэх огноо:
+                <?php echo e($fee->FEE_STARTDATE); ?></label>
         </div>
 
         <div class="mb-3">
@@ -43,5 +40,4 @@
 
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
     </form>
-</div>
-<?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/partials/detailsFee.blade.php ENDPATH**/ ?>
+</div><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/partials/detailsFee.blade.php ENDPATH**/ ?>
