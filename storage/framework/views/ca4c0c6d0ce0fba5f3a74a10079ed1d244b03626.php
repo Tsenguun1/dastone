@@ -7,68 +7,38 @@
     </nav>
 </div>
 
-
 <div class="page-content">
-<button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
-data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class='table-rep-plugin'>
-                    
-                    <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                        <thead>
-                            <tr>
-                                <th data-sortable="false">№</th>
-                                <th data-sortable="true">ID</th>
-                                <th data-sortable="true">Төрөл</th>
-                                <th data-sortable="true">Нэр</th>
-                                <th data-sortable="true">Тайлбар</th>
-                                <th data-sortable="false" style="text-align: center;">Эрэмбэ</th>
-                                <th data-sortable="false">Эхлэх огноо</th>
-                                <th data-sortable="true">Төлөв</th>
-                                <th data-sortable="true">Үйлдэл</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $__currentLoopData = $fees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $fee): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class='table-rep-plugin'>
+                        <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
                                 <tr>
-                                    <td><?php echo e($index + 1); ?></td>
-                                    <td><?php echo e($fee->FEE_ID); ?></td>
-                                    <td><?php echo e($fee->FEE_TYPE); ?></td>
-                                    <td><?php echo e($fee->FEE_NAME); ?></td>
-                                    <td><?php echo e($fee->FEE_DESCR); ?></td>
-                                    <td><?php echo e($fee->ORDER_NO); ?></td>
-                                    <td><?php echo e($fee->FEE_STARTDATE); ?></td>
-                                    <td><?php echo e($fee->STATUS == 'Active' ? 'Идэвхитэй' : 'Идэвхгүй'); ?></td>
-                                    <td style="text-align: center;">
-                                        <form action="<?php echo e(route('deletefee', $fee->FEE_ID)); ?>" method="POST"
-                                            style="display:inline;">
-                                            <?php echo csrf_field(); ?>
-                                            <?php echo method_field('DELETE'); ?>
-                                            <button type='submit' class='btn btn-danger'
-                                                style="float: right;">Устгах</button>
-                                        </form>
-
-                                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                            style="float: right;" data-bs-target="#editFeeModal"
-                                            data-id="<?php echo e($fee->FEE_ID); ?>">Засах</button>
-                                    </td>
+                                    <th data-sortable="false">№</th>
+                                    <th data-sortable="true">ID</th>
+                                    <th data-sortable="true">Төрөл</th>
+                                    <th data-sortable="true">Нэр</th>
+                                    <th data-sortable="true">Тайлбар</th>
+                                    <th data-sortable="false" style="text-align: center;">Эрэмбэ</th>
+                                    <th data-sortable="false">Эхлэх огноо</th>
+                                    <th data-sortable="true">Төлөв</th>
+                                    <th data-sortable="false">Үйлдэл</th>
                                 </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
+    </div>
 </div>
+
 <!-- Edit Fee Modal -->
-<div class="modal fade" id="editFeeModal" tabindex="-1" role="dialog" aria-labelledby="editFeeModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="editFeeModal" tabindex="-1" role="dialog" aria-labelledby="editFeeModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <!-- Content will be loaded via AJAX -->
@@ -76,19 +46,31 @@ data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэ�
     </div>
 </div>
 
+<!-- Add Fee Modal -->
+<?php echo $__env->make('modal.addfee', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 <!-- Include jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
+
 <script>
     $(document).ready(function () {
         $('#editFeeModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var feeId = button.data('id'); // Extract info from data-* attributes
+            var button = $(event.relatedTarget);
+            var feeId = button.data('id');
             var modal = $(this);
 
-            // Load the form via AJAX
             $.ajax({
                 url: '/editfee/' + feeId,
                 method: 'GET',
@@ -111,29 +93,43 @@ data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэ�
                 data: formData,
                 success: function (response) {
                     $('#editFeeModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
+                    location.reload();
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText);
                 }
             });
         });
-    });
 
-    $(document).ready(function () {
         $('#feeTable').DataTable({
-            "columnDefs": [
-                { "orderable": false, "targets": 5 }  // Disable sorting on the 'Action' column
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, 'All'],
             ],
-            "order": [],  // Disable initial sorting
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
-            }
+            dom: 'fBrltip',
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?php echo e(route('feeListTable')); ?>',
+            },
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                { data: 'FEE_ID', name: 'FEE_ID' },
+                { data: 'FEE_TYPE', name: 'FEE_TYPE' },
+                { data: 'FEE_NAME', name: 'FEE_NAME' },
+                { data: 'FEE_DESCR', name: 'FEE_DESCR' },
+                { data: 'ORDER_NO', name: 'ORDER_NO' },
+                { data: 'FEE_STARTDATE', name: 'FEE_STARTDATE' },
+                { data: 'STATUS', name: 'STATUS', render: function(data, type, row) {
+                        return data === 'A' ? 'Идэвхитэй' : (data === 'N' ? 'Идэвхгүй' : 'Unknown Status');
+                    }
+                },
+                { data: 'action', name: 'action', orderable: false, searchable: false },
+            ],
+            "bDestroy": true
         });
     });
 </script>
 <?php $__env->stopSection(); ?>
-
-<?php echo $__env->make('modal.addfee', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\pc\Documents\GitHub\dastone\resources\views/viewFee.blade.php ENDPATH**/ ?>

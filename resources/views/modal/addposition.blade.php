@@ -2,7 +2,6 @@
     aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
-
             <div class="form-container" id="formContainer">
                 @csrf
                 <form id="registrationForm" method="POST" action="{{ route('addformpos') }}">
