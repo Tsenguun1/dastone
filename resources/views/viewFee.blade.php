@@ -14,6 +14,14 @@
                 <div class='table-rep-plugin'>
                     <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
                         data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
+                    <div class="mb-3">
+                        <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">Бүх</option>
+                            <option value="Идэвхитэй">Идэвхитэй</option>
+                            <option value="Идэвхгүй">Идэвхгүй</option>
+                        </select>
+                    </div>
                     <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
@@ -84,13 +92,32 @@
     </div>
 </div>
 
-<!-- Include jQuery and Bootstrap JS -->
+<!-- Include jQuery, Bootstrap, and DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
     $(document).ready(function () {
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
+
+        function filterTable(status) {
+            $('#feeTable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(8)').text(); // Match the correct column for status
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+        
         $('#detailsFeeModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var feeId = button.data('id');
@@ -142,12 +169,10 @@
                 }
             });
         });
-    });
 
-    $(document).ready(function () {
         $('#feeTable').DataTable({
             "columnDefs": [
-                { "orderable": false, "targets": 5 }
+                { "orderable": false, "targets": 8 }
             ],
             "order": [],
             "language": {

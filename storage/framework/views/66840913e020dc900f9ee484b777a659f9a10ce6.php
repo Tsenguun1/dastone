@@ -16,6 +16,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class='table-rep-plugin'>
+                        <div class="mb-3">
+                            <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                            <select id="statusFilter" class="form-control">
+                                <option value="">Бүх</option>
+                                <option value="Идэвхитэй">Идэвхитэй</option>
+                                <option value="Идэвхгүй">Идэвхгүй</option>
+                            </select>
+                        </div>
                         <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
                             style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead>
@@ -75,6 +83,24 @@
 
 <script>
     $(document).ready(function () {
+
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            filterTable(selectedStatus);
+        });
+
+        function filterTable(status) {
+            $('#datatable tbody tr').each(function () {
+                var row = $(this);
+                var rowStatus = row.find('td:nth-child(2)').text();
+                if (status === "" || rowStatus === status) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+        
         // Function to handle opening the edit position modal and loading content via AJAX
         $('#editPositionModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
