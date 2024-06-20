@@ -17,8 +17,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class='table-rep-plugin'>
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                            style="border-collapse: collapse; border-spacing: 0; width: 100%; font-size: 10px;">
+                        <table id="employeeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead>
                                 <tr>
                                     <th>Зураг</th>
@@ -37,35 +37,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @foreach($employees as $employee)
-                                    <tr>
-                                        <td><img src="{{$employee->PICTURE_LINK}}"
-                                                style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover;"
-                                                alt="Employee Picture" width="50"></td>
-                                        <td>{{ $employee->FIRSTNAME }}</td>
-                                        <td>{{ $employee->LASTNAME }}</td>
-                                        <td>{{ $employee->DEP_NAME }}</td> <!-- Displaying Department Name -->
-                                        <td>{{ $employee->POS_NAME }}</td> <!-- Displaying Position Name -->
-                                        <td>{{ $employee->REGISTER }}</td>
-                                        <td>{{ $employee->SEX }}</td>
-                                        <td>{{ $employee->EMAIL }}</td>
-                                        <td>{{ $employee->BIRTHDATE }}</td>
-                                        <td>{{ $employee->HANDPHONE }}</td>
-                                        <td>{{ $employee->WORKPHONE }}</td>
-                                        <td>{{ $employee->STATUSVALUE }}</td>
-                                        <td>
-                                            <button type='button' class='btn btn-success' data-bs-toggle='modal'
-                                                data-bs-target='#editEmployeeModal'
-                                                data-id='{{ $employee->EMP_ID }}'>Засах</button>
-                                            <form action="{{ route('deleteemployee', ['id' => $employee->EMP_ID]) }}"
-                                                method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Устгах</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach --}}
                             </tbody>
                         </table>
                     </div>
@@ -77,12 +48,12 @@
 </div>
 </div>
 
-<!-- Update Position Modal -->
+<!-- Edit Employee Modal -->
 <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
-
+            <!-- Modal content will be loaded here via AJAX -->
         </div>
     </div>
 </div>
@@ -90,59 +61,106 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        // Function to handle opening the edit position modal and loading content via AJAX
-        $('#editEmployeeModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var empId = button.data('id'); // Extract info from data-* attributes
-            var modal = $(this);
+$(document).ready(function () {
+    load_employee_data();
 
-            // Load the form via AJAX
-            $.ajax({
-                url: '/editemployee/' + empId,
-                method: 'GET',
-                success: function (response) {
-                    modal.find('.modal-content').html(response);
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
+    function load_employee_data(from_date = '', to_date = '') {
+        var table = $('#employeeTable').DataTable({
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, 'All'],
+            ],
+           
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route('employeeListTable') }}',
+                data: function (d) {
+                    d.status = $('#status').val(),
+                    d.department = $('#department').val(),
+                    d.position = $('#position').val()
                 }
-            });
+            },
+            columns: [
+                { data: 'picture', name: 'picture', render: function(data, type, row) {
+                        return '<img src="' + data + '" style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover;" alt="Employee Picture">';
+                    }
+                },
+                { data: 'lastname', name: 'lastname' },
+                { data: 'firstname', name: 'firstname' },
+                { data: 'department', name: 'department' },
+                { data: 'position', name: 'position' },
+                { data: 'register', name: 'register' },
+                { data: 'sex', name: 'sex' },
+                { data: 'email', name: 'email' },
+                { data: 'birthdate', name: 'birthdate' },
+                { data: 'handphone', name: 'handphone' },
+                { data: 'workphone', name: 'workphone' },
+                { data: 'status', name: 'status', render: function(data, type, row) {
+                        return data === 'A' ? 'Идэвхитэй' : 'Идэвхгүй';
+                    }
+                },
+                {
+                    data: 'action', name: 'action', orderable: false, searchable: false,
+                    render: function(data, type, row) {
+                        return '<a class="btn btn-primary btn-xs" onclick="getEditEmployeeModal(' + row.id + ')" data-bs-toggle="modal" data-bs-target="#editEmployeeModal">Засах</a>' +
+                            ' <button class="btn btn-danger btn-xs" onclick="deleteEmployee(' + row.id + ')">Устгах</button>';
+                    }
+                },
+            ],
+            "bDestroy": true
         });
 
-        // Function to handle saving changes made in the edit position modal
-        $(document).on('click', '#saveEmployeeChanges', function () {
-            var form = $('#editEmployeeModal').find('form');
-            var formData = new FormData(form[0]);
-
-            $.ajax({
-                url: form.attr('action'),
-                method: form.attr('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    $('#editEmployeeModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
+        $('#status').change(function() {
+            table.draw();
         });
+        $('#department').change(function() {
+            table.draw();
+        });
+        $('#position').change(function() {
+            table.draw();
+        });
+    }
+});
 
-        // Initialize DataTable with specific configurations
-        $('#datatable').DataTable({
-            "columnDefs": [{ "orderable": false, "targets": 4 }], // Disable sorting on the 'Action' column
-            "order": [], // Disable initial sorting
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Example for Mongolian translation
+function getEditEmployeeModal(id) {
+    $.ajax({
+        url: '/editemployee/' + id,
+        method: 'GET',
+        success: function(response) {
+            $('#editEmployeeModal .modal-content').html(response);
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
+        }
+    });
+}
+
+function deleteEmployee(id) {
+    if (confirm('Та энэ ажилтныг устгахдаа итгэлтэй байна уу?')) {
+        $.ajax({
+            url: '/deleteemployee/' + id,
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                location.reload();
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
             }
         });
-    });
-
+    }
+}
 </script>
 @endsection
 @include('modal.addemployee')

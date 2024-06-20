@@ -7,13 +7,16 @@
     </nav>
 </div>
 
+
+
+<button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
+                        data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <div class='table-rep-plugin'>
-                    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
-                        data-bs-toggle="modal" data-bs-target="#AddFeeForm">+ Шинээр бүртгэх</button>
+                    
                     <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>

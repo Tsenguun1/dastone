@@ -28,6 +28,8 @@ Route::delete('/deleteemployee/{id}', [EmployeeController::class, 'destroy'])->n
 Route::post('/storeemployee', [EmployeeController::class, 'store'])->name('storeemployee');
 Route::get('/editemployee/{id}', [EmployeeController::class, 'edit'])->name('editemployee');
 Route::put('/updateemployee/{id}', [EmployeeController::class, 'update'])->name('updateemployee');
+Route::get('/employeeListTable', [EmployeeController::class, 'employeeListTable'])->name('employeeListTable');
+
 
 Route::get('/fees', [FeeController::class, 'viewFees'])->name('viewfees');
 Route::post('/addfee', [FeeController::class, 'addFee'])->name('addfee');
