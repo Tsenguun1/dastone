@@ -2,14 +2,126 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\OrgDepartment;
 use App\Models\OrgEmployee;
 use App\Models\OrgPosition;
+use Illuminate\Http\Request;
+use App\Models\OrgDepartment;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class PlaceController extends Controller
 {
+
+
+    public function viewPlaces()
+    {
+        // Retrieve departments with basic details
+        $departments = DB::table('ORG_DEPARTMENT')
+            ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
+            ->select(
+                'ORG_DEPARTMENT.DEP_ID',
+                'ORG_DEPARTMENT.DEP_NAME',
+                'ORG_DEPARTMENT.STATUS',
+                'ORG_DEPARTMENT.SORT_ORDER',
+                'ORG_DEPARTMENT.PARENT_DEPID',
+                'ORG_DEPARTMENT.DIRECTOR_EMPID',
+                'ORG_DEPARTMENT.EDIT_DATE',
+                'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME',
+                'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
+            )
+            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
+            ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
+            ->get()
+            ->toArray();
+    
+        foreach ($departments as $department) {
+            if ($department->STATUS == 'A') {
+                $department->STATUSVALUE = 'Идэвхитэй';
+            } elseif ($department->STATUS == 'N') {
+                $department->STATUSVALUE = 'Идэвхгүй';
+            } else {
+                $department->STATUSVALUE = 'Unknown Status';
+            }
+        }
+    
+        // Retrieve employees with concatenated name, position name, and department name
+        $employees = DB::table('ORG_EMPLOYEE')
+            ->select(
+                'EMP_ID',
+                DB::raw("CONCAT(FIRSTNAME, '.', LEFT(LASTNAME, 1)) AS EMPNAME"),
+                'ORG_POSITION.POS_NAME',
+                'ORG_DEPARTMENT.DEP_NAME'
+            )
+            ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
+            ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
+            ->where('ORG_EMPLOYEE.STATUS', '!=', 'D') // Exclude deleted employees
+            ->orderBy('ORG_EMPLOYEE.DEP_ID')
+            ->orderBy('ORG_EMPLOYEE.FIRSTNAME')
+            ->get();
+    
+        // Build hierarchical department tree
+        $departmentTree = $this->buildTree($departments);
+    
+        // Pass data to view
+        return view('viewplace', [
+            'departmentTree' => $departmentTree,
+            'employees' => $employees,
+            'departments' => $departments, // Adjusted variable name to avoid confusion
+        ]);
+    }
+    
+
+// Method to get places for DataTables
+public function placeListTable(Request $request)
+{
+    $columns = [
+        'DEP_NAME',
+        'DIRECTOR',
+        'STATUSVALUE',
+        'SORT_ORDER',
+        'EDIT_DATE'
+    ];
+
+    $query = DB::table('ORG_DEPARTMENT')
+        ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
+        ->select(
+            'ORG_DEPARTMENT.DEP_ID',
+            'ORG_DEPARTMENT.DEP_NAME',
+            DB::raw("CONCAT(ORG_EMPLOYEE.FIRSTNAME, ' ', ORG_EMPLOYEE.LASTNAME) AS DIRECTOR"),
+            'ORG_DEPARTMENT.STATUS',
+            'ORG_DEPARTMENT.SORT_ORDER',
+            'ORG_DEPARTMENT.EDIT_DATE',
+            DB::raw("CASE 
+                        WHEN ORG_DEPARTMENT.STATUS = 'A' THEN 'Идэвхитэй' 
+                        WHEN ORG_DEPARTMENT.STATUS = 'N' THEN 'Идэвхгүй' 
+                        ELSE 'Unknown Status' 
+                     END AS STATUSVALUE")
+        )
+        ->where('ORG_DEPARTMENT.STATUS', '!=', 'D')
+        ->orderBy('ORG_DEPARTMENT.SORT_ORDER');
+
+    // Handle sorting
+    if ($request->has('order') && $request->has('columns')) {
+        $orderByColumn = $columns[$request->input('order.0.column')];
+        $orderByDirection = $request->input('order.0.dir');
+        $query->orderBy($orderByColumn, $orderByDirection);
+    }
+
+    return DataTables::of($query)
+        ->addColumn('action', function ($row) {
+            return '
+                <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPlaceModal" data-id="' . $row->DEP_ID . '">Засах</button>
+                
+                <form action="' . route('deleteplace', $row->DEP_ID) . '" method="POST" style="display:inline;">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
+                </form>';
+        })
+        ->rawColumns(['action'])
+        ->addIndexColumn()
+        ->make(true);
+}
+
     public function editplace($id)
     {
         $place = OrgDepartment::findOrFail($id);
@@ -67,67 +179,7 @@ class PlaceController extends Controller
         return redirect()->route('viewplace')->with('success', 'Department updated successfully!');
     }
 
-    public function viewPlaces()
-    {
-        // Retrieve departments with basic details
-        $departments = DB::table('ORG_DEPARTMENT')
-            ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
-            ->select(
-                'ORG_DEPARTMENT.DEP_ID',
-                'ORG_DEPARTMENT.DEP_NAME',
-                'ORG_DEPARTMENT.STATUS',
-                'ORG_DEPARTMENT.SORT_ORDER',
-                'ORG_DEPARTMENT.PARENT_DEPID',
-                'ORG_DEPARTMENT.DIRECTOR_EMPID',
-                'ORG_DEPARTMENT.EDIT_DATE',
-                'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME',
-                'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
-            )
-            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
-            ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
-            ->get()
-            ->toArray();
-
-        foreach ($departments as $department) {
-            if ($department->STATUS == 'A') {
-                $department->STATUSVALUE = 'Идэвхитэй';
-            } elseif ($department->STATUS == 'N') {
-                $department->STATUSVALUE = 'Идэвхгүй';
-            } else {
-                $department->STATUSVALUE = 'Unknown Status';
-            }
-        }
-
-        // Retrieve employees with concatenated name, position name, and department name
-        $employees = DB::table('ORG_EMPLOYEE')
-            ->select(
-                'EMP_ID',
-                DB::raw("CONCAT(FIRSTNAME, '.', LEFT(LASTNAME, 1)) AS EMPNAME"),
-                'ORG_POSITION.POS_NAME',
-                'ORG_DEPARTMENT.DEP_NAME'
-            )
-            ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
-            ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
-            ->where('ORG_EMPLOYEE.STATUS', '!=', 'D') // Exclude deleted employees
-            ->orderBy('ORG_EMPLOYEE.DEP_ID')
-            ->orderBy('ORG_EMPLOYEE.FIRSTNAME')
-            ->get();
-
-        // Retrieve departments with director's first name and last nam
-
-        // Debugging: Check the output of department names
-        // dd($departmentnames);
-
-        // Build hierarchical department tree
-        $departmentTree = $this->buildTree($departments);
-
-        // Pass data to view
-        return view('viewplace', [
-            'departmentTree' => $departmentTree,
-            'employees' => $employees,
-            'departments' => $departments, // Adjusted variable name to avoid confusion
-        ]);
-    }
+  
     public function buildTree(array $elements, $parentId = null)
     {
         $branch = [];
