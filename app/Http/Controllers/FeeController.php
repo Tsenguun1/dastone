@@ -41,11 +41,12 @@ class FeeController extends Controller
         return DataTables::of($query)
             ->addColumn('action', function ($row) {
                 return '
+                    <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editFeeModal" data-id="' . $row->FEE_ID . '">Засах</button>
+                    
                     <form action="' . route('deletefee', $row->FEE_ID) . '" method="POST" style="display:inline;">
                         ' . csrf_field() . method_field('DELETE') . '
                         <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
-                    </form>
-                    <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editFeeModal" data-id="' . $row->FEE_ID . '">Засах</button>';
+                    </form>';
             })
             ->rawColumns(['action'])
             ->addIndexColumn()

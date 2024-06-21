@@ -40,19 +40,20 @@ class EmployeeController extends Controller
                 'ORG_EMPLOYEE.STATUS as status'
             ]);
 
-        return DataTables::of($query)
-            ->addColumn('action', function($row) {
-                $editBtn = '<a href="/editemployee/'.$row->id.'" class="btn btn-primary btn-xs">Засах</a>';
-                $deleteBtn = '<form action="/deleteemployee/'.$row->id.'" method="POST" style="display:inline;">'.
-                             csrf_field().
-                             method_field('DELETE').
-                             '<button type="submit" class="btn btn-danger btn-xs">Устгах</button>'.
-                             '</form>';
-                return $editBtn . ' ' . $deleteBtn;
+            return DataTables::of($query)
+            ->addColumn('action', function ($row) {
+                return '
+                    <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editEmployeeModal" data-id="' . $row->id . '">Засах</button>
+                    
+                    <form action="' . route('deleteemployee', $row->id) . '" method="POST" style="display:inline;">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
+                    </form>';
             })
             ->rawColumns(['action'])
             ->addIndexColumn()
             ->make(true);
+            
     }
 
     public function store(Request $request)

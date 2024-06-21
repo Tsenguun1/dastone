@@ -1,0 +1,59 @@
+/* Ensure the table cells wrap text properly */
+#datatable th, #datatable td {
+    word-wrap: break-word; /* Wrap long words onto the next line */
+    word-break: break-all; /* Break words at any character to prevent overflow */
+    white-space: normal; /* Allow text to wrap onto the next line */
+}
+
+/* Specify width for each column */
+#datatable th:nth-child(1), #datatable td:nth-child(1) {
+    width: 50px; /* Зураг */
+}
+
+#datatable th:nth-child(2), #datatable td:nth-child(2) {
+    width: 100px; /* Эцэг/эхийн нэр */
+}
+
+#datatable th:nth-child(3), #datatable td:nth-child(3) {
+    width: 100px; /* Өөрийн нэр */
+}
+
+#datatable th:nth-child(4), #datatable td:nth-child(4) {
+    width: 150px; /* Газар нэгж */
+}
+
+#datatable th:nth-child(5), #datatable td:nth-child(5) {
+    width: 150px; /* Албан тушаал */
+}
+
+#datatable th:nth-child(6), #datatable td:nth-child(6) {
+    width: 100px; /* Регистр */
+}
+
+#datatable th:nth-child(7), #datatable td:nth-child(7) {
+    width: 50px; /* Хүйс */
+}
+
+#datatable th:nth-child(8), #datatable td:nth-child(8) {
+    width: 150px; /* Цахим шуудан */
+}
+
+#datatable th:nth-child(9), #datatable td:nth-child(9) {
+    width: 100px; /* Төрсөн огноо */
+}
+
+#datatable th:nth-child(10), #datatable td:nth-child(10) {
+    width: 100px; /* Гар утас */
+}
+
+#datatable th:nth-child(11), #datatable td:nth-child(11) {
+    width: 100px; /* Ажлын утас */
+}
+
+#datatable th:nth-child(12), #datatable td:nth-child(12) {
+    width: 100px; /* Төлөв */
+}
+
+#datatable th:nth-child(13), #datatable td:nth-child(13) {
+    width: 100px; /* Үйлдэл */
+}

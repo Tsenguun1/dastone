@@ -39,11 +39,12 @@ public function positionListTable(Request $request)
     return DataTables::of($query)
         ->addColumn('action', function ($row) {
             return '
+                <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPositionModal" data-id="' . $row->POS_ID . '">Засах</button>
+                
                 <form action="' . route('deleteposition', $row->POS_ID) . '" method="POST" style="display:inline;">
                     ' . csrf_field() . method_field('DELETE') . '
                     <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
-                </form>
-                <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPositionModal" data-id="' . $row->POS_ID . '">Засах</button>';
+                </form>';
         })
         ->rawColumns(['action'])
         ->addIndexColumn()

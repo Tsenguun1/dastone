@@ -11,48 +11,50 @@
 <div class="page-content">
     <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
         data-bs-target="#AddEmployeeForm">+ Шинээр бүртгэх</button>
-    <div class="container-fluid"></div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class='table-rep-plugin'>
-                        <div class="mb-3">
-                            <label for="statusFilter" class="form-check-label">Төлөв:</label>
-                            <select id="statusFilter" class="form-control">
-                                <option value="">Бүх</option>
-                                <option value="Идэвхитэй">Идэвхитэй</option>
-                                <option value="Идэвхгүй">Идэвхгүй</option>
-                            </select>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class='table-rep-plugin'>
+                            <div class="mb-3">
+                                <label for="statusFilter" class="form-check-label">Төлөв:</label>
+                                <select id="statusFilter" class="form-control">
+                                    <option value="">Бүх</option>
+                                    <option value="Идэвхитэй">Идэвхитэй</option>
+                                    <option value="Идэвхгүй">Идэвхгүй</option>
+                                </select>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
+                                    style="border-collapse: collapse; width: 100%; font-size: 10px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Зураг</th>
+                                            <th>Эцэг/эхийн нэр</th>
+                                            <th>Өөрийн нэр</th>
+                                            <th>Газар нэгж</th>
+                                            <th>Албан тушаал</th>
+                                            <th>Регистр</th>
+                                            <th>Хүйс</th>
+                                            <th>Цахим шуудан</th>
+                                            <th>Төрсөн огноо</th>
+                                            <th>Гар утас</th>
+                                            <th>Ажлын утас</th>
+                                            <th>Төлөв</th>
+                                            <th>Үйлдэл</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                            style="border-collapse: collapse; border-spacing: 0; width: 100%; font-size: 10px;">
-                            <thead>
-                                <tr>
-                                    <th>Зураг</th>
-                                    <th>Эцэг/эхийн нэр</th>
-                                    <th>Өөрийн нэр</th>
-                                    <th>Газар нэгж</th>
-                                    <th>Албан тушаал</th>
-                                    <th>Регистр</th>
-                                    <th>Хүйс</th>
-                                    <th>Цахим шуудан</th>
-                                    <th>Төрсөн огноо</th>
-                                    <th>Гар утас</th>
-                                    <th>Ажлын утас</th>
-                                    <th>Төлөв</th>
-                                    <th>Үйлдэл</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
-
-            </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+    </div>
 </div>
 
 <!-- Edit Employee Modal -->
@@ -72,7 +74,6 @@
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.5/js/responsive.bootstrap4.min.js"></script>
-<!-- Include DataTables JS -->
 <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -82,18 +83,19 @@
 <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
 
 <script>
-   $(document).ready(function () {
+$(document).ready(function () {
     // Initialize DataTable
     var table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
+        responsive: true,
         ajax: {
             url: '<?php echo e(route('employeeListTable')); ?>',
             type: 'GET'
         },
         columns: [
             { data: 'picture', name: 'picture', render: function(data) {
-                return '<img src="' + data + '" alt="Employee Picture" width="50" height="50">';
+                return '<img src="' + data + '" alt="Employee Picture" width="30" height="30">';
             }},
             { data: 'lastname', name: 'lastname' },
             { data: 'firstname', name: 'firstname' },
@@ -106,14 +108,7 @@
             { data: 'handphone', name: 'handphone' },
             { data: 'workphone', name: 'workphone' },
             { data: 'status', name: 'status' },
-            { data: 'action', name: 'action', orderable: false, searchable: false, render: function(data, type, row) {
-                return '<button type="button" class="btn btn-primary btn-xs edit-button" data-id="' + row.id + '" data-bs-toggle="modal" data-bs-target="#editEmployeeModal">Засах</button>' + 
-                       '<form action="/deleteemployee/' + row.id + '" method="POST" style="display:inline;">' +
-                       '<?php echo csrf_field(); ?>' +
-                       '<?php echo method_field("DELETE"); ?>' +
-                       '<button type="submit" class="btn btn-danger btn-xs">Устгах</button>' +
-                       '</form>';
-            }}
+            { data: 'action', name: 'action', orderable: false, searchable: false}
         ],
         lengthMenu: [
             [10, 25, 50, -1],
@@ -166,7 +161,6 @@
         });
     });
 });
-
 </script>
 <?php $__env->stopSection(); ?>
 

@@ -65,69 +65,79 @@
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $('#statusFilter').on('change', function () {
-            var selectedStatus = $(this).val();
-            filterTable(selectedStatus);
-        });
+   $(document).ready(function () {
+    // Initialize DataTable with AJAX
+    var table = $('#datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('placelisttable') }}',
+            type: 'GET'
+        },
+        columns: [
+            { data: 'DEP_NAME', name: 'DEP_NAME' },
+            { data: 'DIRECTOR', name: 'DIRECTOR' },
+            { data: 'STATUSVALUE', name: 'STATUSVALUE' },
+            { data: 'SORT_ORDER', name: 'SORT_ORDER' },
+            { data: 'EDIT_DATE', name: 'EDIT_DATE' },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All']
+        ],
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Mongolian translation
+        },
+        columnDefs: [
+            { orderable: false, targets: 5 }  // Disable sorting on the 'Action' column
+        ],
+        order: []  // Disable initial sorting
+    });
 
-        function filterTable(status) {
-            $('#datatable tbody tr').each(function () {
-                var row = $(this);
-                var rowStatus = row.find('td:nth-child(3)').text(); // Updated to match the correct column for status
-                if (status === "" || rowStatus === status) {
-                    row.show();
-                } else {
-                    row.hide();
-                }
-            });
-        }
+    // Status filter functionality
+    $('#statusFilter').on('change', function () {
+        var selectedStatus = $(this).val();
+        table.column(2).search(selectedStatus).draw();
+    });
 
-        $('#editPlaceModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var depId = button.data('id'); // Extract info from data-* attributes
-            var modal = $(this);
+    // Edit place modal
+    $('#editPlaceModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var depId = button.data('id'); // Extract info from data-* attributes
+        var modal = $(this);
 
-            // Load the form via AJAX
-            $.ajax({
-                url: '/editplace/' + depId,
-                method: 'GET',
-                success: function (response) {
-                    modal.find('.modal-content').html(response);
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        $('#saveChanges').click(function () {
-            var form = $('#editPlaceModal').find('form');
-            var formData = form.serialize();
-
-            $.ajax({
-                url: form.attr('action'),
-                method: form.attr('method'),
-                data: formData,
-                success: function (response) {
-                    $('#editPlaceModal').modal('hide');
-                    location.reload(); // Reload the page to see the changes
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-
-        $('#datatable').DataTable({
-            "columnDefs": [
-                { "orderable": false, "targets": 5 }  // Disable sorting on the 'Action' column
-            ],
-            "order": [],  // Disable initial sorting
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/mn.json" // Example for Mongolian translation
+        // Load the form via AJAX
+        $.ajax({
+            url: '/editplace/' + depId,
+            method: 'GET',
+            success: function (response) {
+                modal.find('.modal-content').html(response);
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
             }
         });
     });
+
+    // Save changes in the edit place modal
+    $('#saveChanges').click(function () {
+        var form = $('#editPlaceModal').find('form');
+        var formData = form.serialize();
+
+        $.ajax({
+            url: form.attr('action'),
+            method: form.attr('method'),
+            data: formData,
+            success: function (response) {
+                $('#editPlaceModal').modal('hide');
+                table.ajax.reload(); // Reload the DataTable to see the changes
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+});
 </script>
 @endsection

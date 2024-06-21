@@ -18,6 +18,8 @@
     <link href="/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 
     <!-- App css -->
+
+    <link rel="stylesheet" href="/resources/css/app.css">
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/metismenu.min.css" rel="stylesheet" type="text/css" />
