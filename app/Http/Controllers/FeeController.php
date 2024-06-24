@@ -14,7 +14,6 @@ class FeeController extends Controller
         return view('viewFee');
     }
     
-    // Method to get fees for DataTables
     public function feeListTable(Request $request)
     {
         $columns = [
@@ -31,7 +30,6 @@ class FeeController extends Controller
             ->where('STATUS', '!=', 'D')
             ->select($columns);
     
-        // Handle sorting
         if ($request->has('order') && $request->has('columns')) {
             $orderByColumn = $columns[$request->input('order.0.column')];
             $orderByDirection = $request->input('order.0.dir');
@@ -57,12 +55,15 @@ class FeeController extends Controller
     {
         $fee = MerchFee::findOrFail($id);
         
-        if ($fee->STATUS == 'A') {
-            $fee->STATUSVALUE = 'Идэвхитэй';
-        } elseif ($fee->STATUS == 'N') {
-            $fee->STATUSVALUE = 'Идэвхгүй';
-        } else {
-            $fee->STATUSVALUE = 'Unknown Status';
+        switch ($fee->STATUS) {
+            case 'A':
+                $fee->STATUSVALUE = 'Идэвхитэй';
+                break;
+            case 'N':
+                $fee->STATUSVALUE = 'Идэвхгүй';
+                break;
+            default:
+                $fee->STATUSVALUE = 'Unknown Status';
         }
     
         if (request()->ajax()) {
@@ -72,8 +73,6 @@ class FeeController extends Controller
         return redirect()->route('viewfees')->with('error', 'Invalid request.');
     }
     
-
-    // Method to load the edit form for a specific fee
     public function editFee($id)
     {
         $fee = MerchFee::findOrFail($id);
@@ -85,12 +84,10 @@ class FeeController extends Controller
         return redirect()->route('viewfees')->with('error', 'Invalid request.');
     }
 
-    // Method to update a fee
     public function updateFee(Request $request, $id)
     {
         $fee = MerchFee::findOrFail($id);
     
-        // Validate request data
         $request->validate([
             'feeName' => 'required|string|max:500',
             'feeDescr' => 'nullable|string|max:1000',
@@ -102,7 +99,6 @@ class FeeController extends Controller
             'feesql' => 'required|string|max:1250',
         ]);
     
-        // Update fee details
         $fee->FEE_NAME = $request->feeName;
         $fee->FEE_DESCR = $request->feeDescr;
         $fee->FEE_TYPE = $request->feeType;
@@ -111,21 +107,17 @@ class FeeController extends Controller
         $fee->TXN_DESC = $request->feeTXN;
         $fee->FEE_STARTDATE = $request->start_date;
         $fee->FEE_SQL = $request->feesql;
-        $fee->UPDATE_EMPID = auth()->user()->id ?? '6666'; // Example for demo, replace with actual user ID
+        $fee->UPDATE_EMPID = auth()->user()->id ?? '6666';
         $fee->UPDATE_DATE = now();
     
-        // Save updated fee
         $fee->save();
     
         return redirect()->route('viewfees')->with('success', 'Fee updated successfully!');
     }
-    
 
-    // Method to load the add form and handle fee addition
     public function addFee(Request $request)
     {
         if ($request->isMethod('post')) {
-            // Validate request data
             $request->validate([
                 'feeName' => 'required|string|max:500',
                 'feeDescr' => 'nullable|string|max:1000',
@@ -137,7 +129,6 @@ class FeeController extends Controller
                 'feesql' => 'required|string|max:1250',
             ]);
     
-            // Create new fee
             $fee = new MerchFee();
             $fee->FEE_NAME = $request->feeName;
             $fee->FEE_DESCR = $request->feeDescr;
@@ -147,10 +138,9 @@ class FeeController extends Controller
             $fee->TXN_DESC = $request->feeTXN;
             $fee->FEE_STARTDATE = $request->start_date;
             $fee->FEE_SQL = $request->feesql;
-            $fee->UPDATE_EMPID = auth()->user()->id ?? '6666'; // Example for demo, replace with actual user ID
+            $fee->UPDATE_EMPID = auth()->user()->id ?? '6666';
             $fee->UPDATE_DATE = now();
     
-            // Save new fee
             $fee->save();
     
             return redirect()->route('viewfees')->with('success', 'Fee added successfully!');
@@ -158,13 +148,11 @@ class FeeController extends Controller
     
         return view('modal.addfee');
     }
-    
 
-    // Method to delete a fee
     public function deleteFee($id)
     {
         $fee = MerchFee::findOrFail($id);
-        $fee->STATUS = 'D'; // Set status to 'D' for deletion/deactivation
+        $fee->STATUS = 'D';
         $fee->save();
 
         return redirect()->route('viewfees')->with('success', 'Fee deleted successfully!');

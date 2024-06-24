@@ -40,4 +40,5 @@
             </div>
         </div><!--end modal-content-->
     </div><!--end modal-dialog-->
-</div><!--end modal--><?php /**PATH C:\Users\pc\Documents\GitHub\dastone\resources\views/modal/addplace.blade.php ENDPATH**/ ?>
+</div><!--end modal-->
+<?php /**PATH C:\Users\pc\Documents\GitHub\dastone\resources\views/modal/addplace.blade.php ENDPATH**/ ?>

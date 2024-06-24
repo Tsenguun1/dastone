@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\OrgPosition;
@@ -10,46 +9,53 @@ use Yajra\DataTables\Facades\DataTables;
 class PositionController extends Controller
 {
     public function viewpositions()
-{
-    return view('viewposition');
-}
+    {
+        return view('viewposition');
 
-// Method to get positions for DataTables
-public function positionListTable(Request $request)
-{
-    $columns = [
-        'POS_ID', // Include POS_ID in the columns to select
-        'POS_NAME',
-        'STATUS',
-        'SORT_ORDER',
-        'EDIT_DATE'
-    ];
-
-    $query = DB::table('ORG_POSITION')
-        ->where('STATUS', '!=', 'D')
-        ->select($columns);
-
-    // Handle sorting
-    if ($request->has('order') && $request->has('columns')) {
-        $orderByColumn = $columns[$request->input('order.0.column')];
-        $orderByDirection = $request->input('order.0.dir');
-        $query->orderBy($orderByColumn, $orderByDirection);
     }
 
-    return DataTables::of($query)
-        ->addColumn('action', function ($row) {
-            return '
-                <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPositionModal" data-id="' . $row->POS_ID . '">Засах</button>
-                
-                <form action="' . route('deleteposition', $row->POS_ID) . '" method="POST" style="display:inline;">
-                    ' . csrf_field() . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
-                </form>';
-        })
-        ->rawColumns(['action'])
-        ->addIndexColumn()
-        ->make(true);
-}
+    public function positionListTable(Request $request)
+    {
+        $columns = [
+            'POS_ID',
+            'POS_NAME',
+            'STATUS',
+            'SORT_ORDER',
+            'EDIT_DATE'
+        ];
+
+        $query = DB::table('ORG_POSITION')
+            ->where('STATUS', '!=', 'D')
+            ->select($columns);
+
+        if ($request->has('order') && $request->has('columns')) {
+            $orderByColumn = $columns[$request->input('order.0.column')];
+            $orderByDirection = $request->input('order.0.dir');
+            $query->orderBy($orderByColumn, $orderByDirection);
+        }
+
+        return DataTables::of($query)
+            ->editColumn('STATUS', function ($row) {
+                if ($row->STATUS == 'A') {
+                    return 'Идэвхитэй';
+                } elseif ($row->STATUS == 'N') {
+                    return 'Идэвхигүй';
+                } else {
+                    return 'Unknown Status';
+                }
+            })
+            ->addColumn('action', function ($row) {
+                return '
+                    <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPositionModal" data-id="' . $row->POS_ID . '">Засах</button>
+                    <form action="' . route('deleteposition', $row->POS_ID) . '" method="POST" style="display:inline;">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
+                    </form>';
+            })
+            ->rawColumns(['action'])
+            ->addIndexColumn()
+            ->make(true);
+    }
 
     public function addFormpos(Request $request)
     {
@@ -65,7 +71,7 @@ public function positionListTable(Request $request)
             $position->STATUS = $request->status;
             $position->SORT_ORDER = $request->sortOrder;
             $position->EDIT_DATE = now()->addHours(12);
-            $position->EDIT_EMPID = '6666'; // Example editor ID
+            $position->EDIT_EMPID = '6666';
 
             $position->save();
 
@@ -78,7 +84,7 @@ public function positionListTable(Request $request)
     public function deleteposition($id)
     {
         $position = OrgPosition::findOrFail($id);
-        $position->status = 'D'; // Assuming 'D' represents deleted or deactivated status
+        $position->status = 'D';
         $position->save();
 
         return redirect()->route('viewposition');

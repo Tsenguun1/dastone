@@ -11,12 +11,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/place', [PlaceController::class, 'viewPlaces'])->name('viewplace');
-Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
-Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
-Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
-Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
-Route::get('/placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
 
 Route::get('/viewpositions', [PositionController::class, 'viewpositions'])->name('viewposition');
 Route::post('/addposition', [PositionController::class, 'addFormpos'])->name('addformpos');
@@ -24,7 +18,6 @@ Route::delete('/deleteposition/{id}', [PositionController::class, 'deletepositio
 Route::get('/editposition/{id}', [PositionController::class, 'editposition'])->name('editposition');
 Route::put('/updateposition/{id}', [PositionController::class, 'updateposition'])->name('updateposition');
 Route::get('/positions/list', [PositionController::class, 'positionListTable'])->name('positionlisttable');
-
 
 Route::get('/viewemployee', [EmployeeController::class, 'index'])->name('viewemployee');
 Route::delete('/deleteemployee/{id}', [EmployeeController::class, 'destroy'])->name('deleteemployee');
@@ -39,3 +32,12 @@ Route::delete('/deletefee/{id}', [FeeController::class, 'deleteFee'])->name('del
 Route::get('/editfee/{id}', [FeeController::class, 'editFee'])->name('editfee');
 Route::put('/updatefee/{id}', [FeeController::class, 'updateFee'])->name('updatefee');
 Route::get('/feelisttable', [FeeController::class, 'feeListTable'])->name('feelisttable');
+
+Route::get('/place', [PlaceController::class, 'viewPlaces'])->name('viewplace');
+Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
+Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
+Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
+Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
+Route::get('/placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
+
+

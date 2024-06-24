@@ -27,14 +27,14 @@
                             </div>
                             <div class="table-responsive">
                                 <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0"
-                                    style="border-collapse: collapse; width: 100%; font-size: 10px;">
+                                    style="border-collapse: collapse; width: 100%; font-size:10px;">
                                     <thead>
                                         <tr>
                                             <th>Зураг</th>
                                             <th>Эцэг/эхийн нэр</th>
                                             <th>Өөрийн нэр</th>
-                                            <th>Газар нэгж</th>
-                                            <th>Албан тушаал</th>
+                                            <th class="dept-col">Газар нэгж</th>
+                                            <th class="pos-col">Албан тушаал</th>
                                             <th>Регистр</th>
                                             <th>Хүйс</th>
                                             <th>Цахим шуудан</th>
@@ -84,11 +84,11 @@
 
 <script>
 $(document).ready(function () {
-    // Initialize DataTable
     var table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
         responsive: true,
+        autoWidth: false,
         ajax: {
             url: '<?php echo e(route('employeeListTable')); ?>',
             type: 'GET'
@@ -99,8 +99,8 @@ $(document).ready(function () {
             }},
             { data: 'lastname', name: 'lastname' },
             { data: 'firstname', name: 'firstname' },
-            { data: 'department', name: 'department' },
-            { data: 'position', name: 'position' },
+            { data: 'department', name: 'department', className: 'dept-col' },
+            { data: 'position', name: 'position', className: 'pos-col' },
             { data: 'register', name: 'register' },
             { data: 'sex', name: 'sex' },
             { data: 'email', name: 'email' },
@@ -113,7 +113,14 @@ $(document).ready(function () {
         lengthMenu: [
             [10, 25, 50, -1],
             [10, 25, 50, 'All'],
-        ]
+        ],
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Mongolian translation
+        },
+        columnDefs: [
+            { orderable: false, targets: 12 }  // Disable sorting on the 'Action' column
+        ],
+        order: []  // Disable initial sorting
     });
 
     // Status filter functionality
