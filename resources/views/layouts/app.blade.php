@@ -18,7 +18,7 @@
     <link href="/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 
     <!-- App css -->
-
+    <link rel="stylesheet" href="/public/assets/css/custom.css">
     <link rel="stylesheet" href="/resources/css/app.css">
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -50,17 +50,25 @@
                     <a href="javascript: void(0);"><i data-feather="home"
                             class="align-self-center menu-icon"></i><span>Хүний Нөөц</span><span class="menu-arrow"><i
                                 class="mdi mdi-chevron-right"></i></span></a>
-                    <ul class="nav-second-level" aria-expanded="false">
-                        <li class="nav-item"><a class="nav-link" href="{{ route('viewplace') }}"><i
-                                    class="ti-control-record"></i>Газар нэгж</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('viewposition') }}"><i
-                                    class="ti-control-record"></i>Албан тушаал</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('viewemployee') }}"><i
-                                    class="ti-control-record"></i>Ажилтны бүртгэл</a></li>
+                            <ul class="nav-second-level" aria-expanded="false">
+                                <li class="nav-item"><a class="nav-link" href="{{ route('viewplace') }}"><i
+                                            class="ti-control-record"></i>Газар нэгж</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('viewposition') }}"><i
+                                            class="ti-control-record"></i>Албан тушаал</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('viewemployee') }}"><i
+                                            class="ti-control-record"></i>Ажилтны бүртгэл</a></li>
 
-                        <li class="nav-item"><a class="nav-link" href="{{ route('viewfees') }}"><i
+                               
+                            </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);"><i data-feather="messenger"
+                        class="align-self-center menu-icon"></i><span>Гүйлгээний мэдээлэл</span><span class="menu-arrow"><i
+                            class="mdi mdi-chevron-right"></i></span></a>
+                            <ul>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('viewfees') }}"><i
                                     class="ti-control-record"></i>Картын оффлайн шимтгэл</a></li>
-                    </ul>
+                            </ul>
                 </li>
                 <hr class="hr-dashed hr-menu">
             </ul>
