@@ -67,39 +67,39 @@ class PlaceController extends Controller
     }
     
     public function placeListTable(Request $request)
-    {
-        $query = DB::table('ORG_DEPARTMENT')
-            ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
-            ->select(
-                'ORG_DEPARTMENT.DEP_ID',
-                'ORG_DEPARTMENT.DEP_NAME',
-                DB::raw("CONCAT(ORG_EMPLOYEE.FIRSTNAME, ' ', ORG_EMPLOYEE.LASTNAME) AS DIRECTOR"),
-                'ORG_DEPARTMENT.STATUS',
-                'ORG_DEPARTMENT.SORT_ORDER',
-                'ORG_DEPARTMENT.EDIT_DATE',
-                DB::raw("CASE 
-                            WHEN ORG_DEPARTMENT.STATUS = 'A' THEN 'Идэвхитэй' 
-                            WHEN ORG_DEPARTMENT.STATUS = 'N' THEN 'Идэвхгүй' 
-                            ELSE 'Unknown Status' 
-                         END AS STATUSVALUE")
-            )
-            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D')
-            ->orderBy('ORG_DEPARTMENT.SORT_ORDER');
-    
-        return DataTables::of($query)
-            ->addColumn('action', function ($row) {
-                return '
-                    <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editPlaceModal" data-id="' . $row->DEP_ID . '">Засах</button>
-                    
-                    <form action="' . route('deleteplace', $row->DEP_ID) . '" method="POST" style="display:inline;">
-                        ' . csrf_field() . method_field('DELETE') . '
-                        <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
-                    </form>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-    }
-    
+{
+    $query = DB::table('ORG_DEPARTMENT')
+        ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
+        ->select(
+            'ORG_DEPARTMENT.DEP_ID',
+            'ORG_DEPARTMENT.DEP_NAME',
+            DB::raw("CONCAT(ORG_EMPLOYEE.FIRSTNAME, ' ', ORG_EMPLOYEE.LASTNAME) AS DIRECTOR"),
+            'ORG_DEPARTMENT.STATUS',
+            'ORG_DEPARTMENT.SORT_ORDER',
+            'ORG_DEPARTMENT.EDIT_DATE',
+            DB::raw("CASE 
+                        WHEN ORG_DEPARTMENT.STATUS = 'A' THEN 'Идэвхитэй' 
+                        WHEN ORG_DEPARTMENT.STATUS = 'N' THEN 'Идэвхгүй' 
+                        ELSE 'Unknown Status' 
+                     END AS STATUSVALUE")
+        )
+        ->where('ORG_DEPARTMENT.STATUS', '!=', 'D')
+        ->orderBy('ORG_DEPARTMENT.SORT_ORDER');
+
+    return DataTables::of($query)
+        ->addColumn('action', function ($row) {
+            return '
+                <button type="button" class="btn btn-success btn-xs btn-custom" data-bs-toggle="modal" data-bs-target="#editPlaceModal" data-id="' . $row->DEP_ID . '">Засах</button>
+
+                <form action="' . route('deleteplace', $row->DEP_ID) . '" method="POST" style="display:inline;">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger btn-xs btn-custom" style="margin-left: 5px;">Устгах</button>
+                </form>';
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+}
+
     
     private function buildTree(array $elements, $parentId = null)
     {
@@ -116,38 +116,34 @@ class PlaceController extends Controller
         return $branch;
     }
     
-    
-
-    
-    
-
     public function editplace($id)
-    {
-        $place = OrgDepartment::findOrFail($id);
-    
-        if (request()->ajax()) {
-            $departments = DB::table('ORG_DEPARTMENT')
-                ->select('DEP_ID', 'DEP_NAME')
-                ->where('STATUS', '!=', 'D')
-                ->get();
-    
-            $employees = DB::table('ORG_EMPLOYEE')
-                ->select(
-                    'EMP_ID',
-                    DB::raw("CONCAT(FIRSTNAME, '.', LEFT(LASTNAME, 1)) AS EMPNAME"),
-                    'ORG_POSITION.POS_NAME',
-                    'ORG_DEPARTMENT.DEP_NAME'
-                )
-                ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
-                ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
-                ->where('ORG_EMPLOYEE.STATUS', '!=', 'D')
-                ->get();
-    
-            return view('partials.editplaceform', compact('place', 'departments', 'employees'));
-        }
-    
-        return redirect()->route('viewplace')->with('error', 'Invalid request.');
+{
+    $place = OrgDepartment::findOrFail($id);
+
+    if (request()->ajax()) {
+        $departments = DB::table('ORG_DEPARTMENT')
+            ->select('DEP_ID', 'DEP_NAME')
+            ->where('STATUS', '!=', 'D')
+            ->get();
+
+        $employees = DB::table('ORG_EMPLOYEE')
+            ->select(
+                'EMP_ID',
+                DB::raw("CONCAT(FIRSTNAME, '.', LEFT(LASTNAME, 1)) AS EMPNAME"),
+                'ORG_POSITION.POS_NAME',
+                'ORG_DEPARTMENT.DEP_NAME'
+            )
+            ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
+            ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
+            ->where('ORG_EMPLOYEE.STATUS', '!=', 'D')
+            ->get();
+
+        return view('partials.editplaceform', compact('place', 'departments', 'employees'));
     }
+
+    return redirect()->route('viewplace')->with('error', 'Invalid request.');
+}
+
     
     
     
@@ -181,38 +177,38 @@ class PlaceController extends Controller
   
   
     public function addForm(Request $request)
-{
-    if ($request->isMethod('post')) {
-        $request->validate([
-            'depName' => 'required|string|max:255',
-            'status' => 'required|string|max:10',
-            'sortOrder' => 'nullable|integer', // Make sure 'sortOrder' can be nullable if not required
-            'parentDepId' => 'required|integer',
-            'directorEmpId' => 'required|integer',
-        ]);
-
-        $department = new OrgDepartment();
-        $department->dep_name = $request->depName;
-        $department->status = $request->status;
-        $department->sort_order = $request->sortOrder ?? 0; // Default to 0 if not provided
-        $department->parent_depid = $request->parentDepId;
-        $department->director_empid = $request->directorEmpId;
-        $department->approve_empid = '9999';
-        $department->edit_empid = '6666';
-        $department->edit_date = now();
-
-        $department->save();
-
-        return redirect()->route('viewplace');
+    {
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'depName' => 'required|string|max:255',
+                'status' => 'required|string|max:10',
+                'sortOrder' => 'nullable|integer', // Make sure 'sortOrder' can be nullable if not required
+                'parentDepId' => 'required|integer',
+                'directorEmpId' => 'required|integer',
+            ]);
+    
+            $department = new OrgDepartment();
+            $department->dep_name = $request->depName;
+            $department->status = $request->status;
+            $department->sort_order = $request->sortOrder ?? 0; // Default to 0 if not provided
+            $department->parent_depid = $request->parentDepId;
+            $department->director_empid = $request->directorEmpId;
+            $department->approve_empid = '9999';
+            $department->edit_empid = '6666';
+            $department->edit_date = now();
+    
+            $department->save();
+    
+            return redirect()->route('viewplace');
+        }
+    
+        // Load necessary data for the form if needed
+        $departments = OrgDepartment::all();
+        $employees = OrgEmployee::all();
+    
+        return view('addForm', compact('departments', 'employees'));
     }
-
-    // Load necessary data for the form if needed
-    $departments = OrgDepartment::all();
-    $employees = OrgEmployee::all();
-
-    return view('addForm', compact('departments', 'employees'));
-}
-
+    
 
     public function deleteplace($id)
     {
