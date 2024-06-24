@@ -8,7 +8,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <!-- App favicon -->
     <link rel="shortcut icon" href="/assets/images/favicon.ico">
 

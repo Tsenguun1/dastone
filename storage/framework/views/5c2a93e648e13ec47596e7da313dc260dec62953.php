@@ -6,9 +6,11 @@
         <h4 class="page-title" style="margin: 10px;">Газар нэгжийн бүртгэл</h4>
     </nav>
 </div>
-<div class="container-fluid">
+<div class="page-content">
+
     <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;"
     data-bs-toggle="modal" data-bs-target="#AddPlaceForm">+ Шинээр бүртгэх</button>
+<div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -45,7 +47,8 @@
             </div>
         </div> <!-- end col -->
     </div> <!-- end row -->
-</div>
+</div> <!-- end container -->
+</div> <!-- end row -->
 
 <!-- Edit Place Modal -->
 <div class="modal fade" id="editPlaceModal" tabindex="-1" role="dialog" aria-labelledby="editPlaceModalLabel"
@@ -69,14 +72,7 @@
 <script>
    $(document).ready(function () {
     // Initialize DataTable with AJAX
-    var table = $('#datatable').DataTable({
-        processing: true,
-        serverSide: true,
-        responsive: true,
-        ajax: {
-            url: '<?php echo e(route('placelisttable')); ?>',
-            type: 'GET'
-        },
+  
         columns: [
             { data: 'DEP_NAME', name: 'DEP_NAME' },
             { data: 'DIRECTOR', name: 'DIRECTOR' },
@@ -142,7 +138,6 @@
         });
     });
 });
-
 </script>
 <?php $__env->stopSection(); ?>
 
