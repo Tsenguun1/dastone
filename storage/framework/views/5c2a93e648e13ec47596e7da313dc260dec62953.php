@@ -31,12 +31,12 @@
                             <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th data-sortable="false">Нэр</th> <!-- Name -->
-                                        <th data-sortable="true">Захирал</th> <!-- Director -->
-                                        <th data-sortable="true">Төлөв</th> <!-- Status -->
-                                        <th data-sortable="true">Эрэмбэ</th> <!-- Order -->
-                                        <th data-sortable="true">Зассан</th> <!-- Edited -->
-                                        <th data-sortable="false" style="text-align: center;">Үйлдэл</th> <!-- Action -->
+                                        <th>Нэр</th> <!-- Name -->
+                                        <th>Захирал</th> <!-- Director -->
+                                        <th>Төлөв</th> <!-- Status -->
+                                        <th>Эрэмбэ</th> <!-- Order -->
+                                        <th>Зассан</th> <!-- Edited -->
+                                        <th>Үйлдэл</th> <!-- Action -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -113,75 +113,76 @@
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  $(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    var table = $('#datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '<?php echo route('placelisttable'); ?>',
+        columns: [
+            { data: 'DEP_NAME', name: 'DEP_NAME', orderable: false },
+            { data: 'DIRECTOR', name: 'DIRECTOR', orderable: false },
+            { data: 'STATUSVALUE', name: 'STATUSVALUE' },
+            { data: 'SORT_ORDER', name: 'SORT_ORDER' },
+            { data: 'EDIT_DATE', name: 'EDIT_DATE' },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All']
+        ],
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Mongolian translation
+        },
+        columnDefs: [
+            { orderable: false, targets: -1 }  // Disable sorting on the 'Action' column
+        ],
+        order: []  // Disable initial sorting
+    });
+
+    // Status filter functionality
+    $('#statusFilter').on('change', function () {
+        var selectedStatus = $(this).val();
+        table.column(2).search(selectedStatus).draw();
+    });
+
+    // Attach click event to the edit button
+    $('#datatable').on('click', '.edit-button', function () {
+        var placeId = $(this).data('id');
+        $.ajax({
+            url: 'editplace/' + placeId,
+            type: 'GET',
+            success: function (response) {
+                $('#editPlaceModal .modal-content').html(response);
+                $('#editPlaceModal').modal('show');
             }
         });
+    });
 
-        var table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '<?php echo route('placelisttable'); ?>',
-            columns: [
-                { data: 'DEP_NAME', name: 'DEP_NAME' },
-                { data: 'DIRECTOR', name: 'DIRECTOR' },
-                { data: 'STATUSVALUE', name: 'STATUSVALUE' },
-                { data: 'SORT_ORDER', name: 'SORT_ORDER' },
-                { data: 'EDIT_DATE', name: 'EDIT_DATE' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ],
-            lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, 'All']
-            ],
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json" // Mongolian translation
-            },
-            columnDefs: [
-                { orderable: false, targets: 5 }  // Disable sorting on the 'Action' column
-            ],
-            order: []  // Disable initial sorting
-        });
-
-        // Status filter functionality
-        $('#statusFilter').on('change', function () {
-            var selectedStatus = $(this).val();
-            table.column(2).search(selectedStatus).draw();
-        });
-
-        // Attach click event to the edit button
-        $('#datatable').on('click', '.edit-button', function () {
-            var placeId = $(this).data('id');
-            $.ajax({
-                url: 'editplace/' + placeId,
-                type: 'GET',
-                success: function (response) {
-                    $('#editPlaceModal .modal-content').html(response);
-                    $('#editPlaceModal').modal('show');
+    // Attach submit event to the edit form
+    $('#editPlaceModal').on('submit', '#editPlaceForm', function (e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    $('#editPlaceModal').modal('hide');
+                    table.ajax.reload(); // Reload the DataTable to reflect changes
+                    // Optionally, you can show a success message to the user
                 }
-            });
-        });
-
-        // Attach submit event to the edit form
-        $('#editPlaceModal').on('submit', '#editPlaceForm', function (e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    if (response.success) {
-                        $('#editPlaceModal').modal('hide');
-                        table.ajax.reload(); // Reload the DataTable to reflect changes
-                        // Optionally, you can show a success message to the user
-                    }
-                }
-            });
+            }
         });
     });
+});
+
 </script>
 <?php $__env->stopSection(); ?>
 
