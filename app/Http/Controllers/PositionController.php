@@ -11,7 +11,6 @@ class PositionController extends Controller
     public function viewpositions()
     {
         return view('viewposition');
-
     }
 
     public function positionListTable(Request $request)
@@ -59,26 +58,22 @@ class PositionController extends Controller
 
     public function addFormpos(Request $request)
     {
-        if ($request->isMethod('post')) {
-            $request->validate([
-                'posName' => 'required|string|max:255',
-                'status' => 'required|string|max:10',
-                'sortOrder' => 'required|integer',
-            ]);
+        $request->validate([
+            'posName' => 'required|string|max:255',
+            'status' => 'required|string|max:10',
+            'sortOrder' => 'required|integer',
+        ]);
 
-            $position = new OrgPosition();
-            $position->POS_NAME = $request->posName;
-            $position->STATUS = $request->status;
-            $position->SORT_ORDER = $request->sortOrder;
-            $position->EDIT_DATE = now()->addHours(12);
-            $position->EDIT_EMPID = '6666';
+        $position = new OrgPosition();
+        $position->POS_NAME = $request->posName;
+        $position->STATUS = $request->status;
+        $position->SORT_ORDER = $request->sortOrder;
+        $position->EDIT_DATE = now();
+        $position->EDIT_EMPID = '6666';
 
-            $position->save();
+        $position->save();
 
-            return redirect()->route('viewposition');
-        }
-
-        return view('addposition');
+        return response()->json(['success' => true]);
     }
 
     public function deleteposition($id)
@@ -95,14 +90,8 @@ class PositionController extends Controller
         $position = OrgPosition::findOrFail($id);
 
         if (request()->ajax()) {
-            $positions = DB::table('ORG_POSITION')
-                ->select('POS_ID', 'POS_NAME')
-                ->where('STATUS', '!=', 'D')
-                ->get();
-
             return view('partials.editpositionform', [
-                'position' => $position,
-                'positions' => $positions
+                'position' => $position
             ]);
         }
         return redirect()->route('viewposition')->with('error', 'Invalid request.');

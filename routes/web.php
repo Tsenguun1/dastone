@@ -11,7 +11,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('/viewpositions', [PositionController::class, 'viewpositions'])->name('viewposition');
 Route::post('/addposition', [PositionController::class, 'addFormpos'])->name('addformpos');
 Route::delete('/deleteposition/{id}', [PositionController::class, 'deleteposition'])->name('deleteposition');
