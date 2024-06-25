@@ -42,6 +42,30 @@
     </div>
 </div>
 
+<!-- Add Position Modal -->
+<div class="modal fade" id="AddPositionForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 900px;">
+        <div class="modal-content">
+            <div class="form-container" id="formContainer">
+                <form id="registrationForm" method="POST" action="{{ route('addformpos') }}">
+                    @csrf
+                    <label for="posName" class="form-check-label">Албан тушаалын нэршил</label>
+                    <input type="text" class="form-check-input" id="posName" name="posName" required>
+                    <label for="status" class="form-check-label">Төлөв</label>
+                    <select id="status" name="status" required>
+                        <option value="A">Идэвхитэй</option>
+                        <option value="N">Идэвхгүй</option>
+                    </select>
+                    <label for="sortOrder" class="form-check-label">Эрэмбэ</label>
+                    <input type="text" class="form-check-input" id="sortOrder" name="sortOrder" required>
+                    <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
+                </form>
+            </div><!--end modal-content-->
+        </div>
+    </div><!--end modal-dialog-->
+</div><!--end modal-->
+
 <!-- Edit Position Modal -->
 <div class="modal fade" id="editPositionModal" tabindex="-1" role="dialog" aria-labelledby="editPositionModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
@@ -51,17 +75,21 @@
     </div>
 </div>
 
-<!-- Add Position Modal -->
-@include('modal.addposition')
-
 <!-- Include jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/mn.json"></script>
 <script>
 $(document).ready(function () {
+    // Setup CSRF token for AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     // Initialize DataTable with AJAX
     var table = $('#datatable').DataTable({
         processing: true,
@@ -125,6 +153,27 @@ $(document).ready(function () {
             success: function (response) {
                 $('#editPositionModal').modal('hide');
                 table.ajax.reload(); // Reload the DataTable to see the changes
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+    
+    // Add position form submission
+    $('#registrationForm').on('submit', function (e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    $('#AddPositionForm').modal('hide');
+                    table.ajax.reload(); // Reload the DataTable to reflect changes
+                }
             },
             error: function (xhr) {
                 console.log(xhr.responseText);
