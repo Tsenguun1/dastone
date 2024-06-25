@@ -40,6 +40,7 @@ Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
 // Route::get('/placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
 
 
+Route::post('addform', [PlaceController::class, 'addPlace'])->name('addform');
 
 Route::get('viewplace', [PlaceController::class, 'viewPlaces'])->name('viewplace');
 Route::get('placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
