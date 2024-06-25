@@ -160,28 +160,33 @@
             success: function (response) {
                 $('#editPlaceModal .modal-content').html(response);
                 $('#editPlaceModal').modal('show');
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
             }
         });
     });
 
-    // Attach submit event to the edit form
-    $('#editPlaceModal').on('submit', '#editPlaceForm', function (e) {
-        e.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            success: function (response) {
-                if (response.success) {
-                    $('#editPlaceModal').modal('hide');
-                    table.ajax.reload(); // Reload the DataTable to reflect changes
-                    // Optionally, you can show a success message to the user
+    $('#datatable').on('click', '.delete-button', function () {
+        var placeId = $(this).data('id');
+        if (confirm('Та устгахдаа итгэлтэй байна уу?')) {
+            $.ajax({
+                url: 'deleteplace/' + placeId,
+                type: 'POST',
+                data: {
+                    _method: 'DELETE',
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    table.ajax.reload();
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
                 }
-            }
-        });
+            });
+        }
     });
-});
-
+  });
 </script>
+
 @endsection
