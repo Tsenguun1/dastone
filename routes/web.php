@@ -33,11 +33,18 @@ Route::get('/editfee/{id}', [FeeController::class, 'editFee'])->name('editfee');
 Route::put('/updatefee/{id}', [FeeController::class, 'updateFee'])->name('updatefee');
 Route::get('/feelisttable', [FeeController::class, 'feeListTable'])->name('feelisttable');
 
-Route::get('/place', [PlaceController::class, 'viewPlaces'])->name('viewplace');
+// Route::get('/place', [PlaceController::class, 'viewPlaces'])->name('viewplace');
 Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
-Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
-Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
-Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
-Route::get('/placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
+// Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
+// Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
+// Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
+// Route::get('/placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
 
+
+
+Route::get('viewplace', [PlaceController::class, 'viewPlaces'])->name('viewplace');
+Route::get('placelisttable', [PlaceController::class, 'placeListTable'])->name('placelisttable');
+Route::get('editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
+Route::put('updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');
+Route::delete('deleteplace/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
 

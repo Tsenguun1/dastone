@@ -1,4 +1,5 @@
 <!-- resources/views/partials/editplaceform.blade.php -->
+<div class="form-container" id="formContainer">
 <form id="editPlaceForm" method="POST" action="{{ route('updateplace', $place->DEP_ID) }}">
     @csrf
     @method('PUT')
@@ -33,3 +34,5 @@
     <button class="btn btn-primary" type="submit" name="submit">Хадгалах</button>
     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
 </form>
+
+</div>
