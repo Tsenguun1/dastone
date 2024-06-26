@@ -31,5 +31,4 @@
     <?php $__currentLoopData = $department->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <?php echo $__env->make('partials.department_row', ['department' => $child, 'level' => $level + 1], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-<?php endif; ?>
-<?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/partials/department_row.blade.php ENDPATH**/ ?>
+<?php endif; ?><?php /**PATH C:\Users\hp\Desktop\dastone\resources\views/partials/department_row.blade.php ENDPATH**/ ?>
