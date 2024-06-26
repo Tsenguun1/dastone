@@ -34,7 +34,7 @@ Route::put('/updatefee/{id}', [FeeController::class, 'updateFee'])->name('update
 Route::get('/feelisttable', [FeeController::class, 'feeListTable'])->name('feelisttable');
 
 // Route::get('/place', [PlaceController::class, 'viewPlaces'])->name('viewplace');
-Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
+// Route::post('/addform', [PlaceController::class, 'addForm'])->name('addform');
 // Route::delete('/delete-place/{id}', [PlaceController::class, 'deleteplace'])->name('deleteplace');
 // Route::get('/editplace/{id}', [PlaceController::class, 'editplace'])->name('editplace');
 // Route::put('/updateplace/{id}', [PlaceController::class, 'updateplace'])->name('updateplace');

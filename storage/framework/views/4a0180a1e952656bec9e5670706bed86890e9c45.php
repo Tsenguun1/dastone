@@ -21,8 +21,8 @@
                                 <label for="statusFilter" class="form-check-label">Төлөв:</label>
                                 <select id="statusFilter" class="form-control">
                                     <option value="">Бүх</option>
-                                    <option value="Идэвхитэй">Идэвхитэй</option>
-                                    <option value="Идэвхгүй">Идэвхгүй</option>
+                                    <option value="A">Идэвхитэй</option>
+                                    <option value="N">Идэвхгүй</option>
                                 </select>
                             </div>
                             <table id="feeTable" class="table table-bordered dt-responsive nowrap table-striped mb-0"

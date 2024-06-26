@@ -40,9 +40,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $__currentLoopData = $departmentTree; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php echo $__env->make('partials.department_row', ['department' => $department, 'level' => 0], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
                         </div>
