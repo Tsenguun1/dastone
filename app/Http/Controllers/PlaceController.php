@@ -65,7 +65,6 @@ class PlaceController extends Controller
 
     public function placeListTable(Request $request)
     {
-        // Fetch departments with their directors
         $departments = DB::table('ORG_DEPARTMENT')
             ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
             ->select(
@@ -79,21 +78,18 @@ class PlaceController extends Controller
                 'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME',
                 'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
             )
-            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
+            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D')
             ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
             ->get();
-        
-        // Prepare departments for DataTable
+    
         foreach ($departments as $department) {
             $department->DIRECTOR = $department->DIRECTOR_FIRSTNAME . ' ' . $department->DIRECTOR_LASTNAME;
             $department->STATUSVALUE = $department->STATUS == 'A' ? 'Идэвхитэй' : ($department->STATUS == 'N' ? 'Идэвхгүй' : 'Unknown Status');
         }
-        
-        // Build department tree with indentation levels and flatten it
+    
         $flattenedTree = [];
         $this->flattenTreeWithIndentation($departments->toArray(), null, 0, $flattenedTree);
-        
-        // Prepare DataTable response
+    
         return DataTables::of($flattenedTree)
             ->addColumn('action', function ($row) {
                 return '
@@ -106,7 +102,7 @@ class PlaceController extends Controller
             ->addColumn('DIRECTOR', function ($row) {
                 return !empty($row->DIRECTOR) ? $row->DIRECTOR : 'Director Not Assigned';
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['DEP_NAME', 'action'])
             ->make(true);
     }
     
@@ -114,8 +110,10 @@ class PlaceController extends Controller
     {
         foreach ($elements as $element) {
             if ($element->PARENT_DEPID == $parentId) {
-                // Use spaces for indentation
-                $element->DEP_NAME = str_repeat('s', $level * 16) . $element->DEP_NAME;
+                $indent = '<span style="display:inline-block; width:' . ($level * 40) . 'px;"></span>';
+                $element->DEP_NAME = $indent . htmlspecialchars($element->DEP_NAME, ENT_QUOTES, 'UTF-8');
+                $element->indent_level = $level;
+    
                 $flattenedTree[] = $element;
                 $this->flattenTreeWithIndentation($elements, $element->DEP_ID, $level + 1, $flattenedTree);
             }
@@ -123,7 +121,9 @@ class PlaceController extends Controller
     }
     
     
-    
+
+
+
 
     private function buildTree(array $elements, $parentId = null)
     {
