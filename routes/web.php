@@ -29,6 +29,7 @@ Route::get('/viewFees', [FeeController::class, 'viewFees'])->name('viewfees');
 Route::post('/addfee', [FeeController::class, 'addFee'])->name('addfee');
 Route::delete('/deletefee/{id}', [FeeController::class, 'deleteFee'])->name('deletefee');
 Route::get('/editfee/{id}', [FeeController::class, 'editFee'])->name('editfee');
+Route::get('/detailsfee/{id}', [FeeController::class, 'showFeeDetails'])->name('deltailsfee');
 Route::put('/updatefee/{id}', [FeeController::class, 'updateFee'])->name('updatefee');
 Route::get('/feelisttable', [FeeController::class, 'feeListTable'])->name('feelisttable');
 
