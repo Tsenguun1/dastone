@@ -29,26 +29,6 @@
     <link href="/assets/dastone/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <?php echo $__env->yieldPushContent('styles'); ?>
     <!-- In the <head> section or your external CSS file -->
-    <style>
-        .indent-level-0 {
-            padding-left: 0;
-        }
-
-        .indent-level-1 {
-            padding-left: 16px;
-        }
-
-        /* Adjust as necessary */
-        .indent-level-2 {
-            padding-left: 32px;
-        }
-
-        .indent-level-3 {
-            padding-left: 48px;
-        }
-
-        /* Continue as needed */
-    </style>
 
 </head>
 
@@ -236,6 +216,18 @@
                 });
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('start_date').setAttribute('max', today);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var maxDate = new Date('1999-12-31').toISOString().split('T')[0];
+            document.getElementById('birth_date').setAttribute('max', maxDate);
+        });
+
+        
     </script>
 </body>
 

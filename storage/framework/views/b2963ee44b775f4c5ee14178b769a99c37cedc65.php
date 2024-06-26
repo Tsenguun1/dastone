@@ -14,7 +14,7 @@
                 <div class="col-md-6">
                     <label for="REGISTER" class="form-check-label">Регистр</label>
                     <input type="text" class="form-control" id="REGISTER" name="REGISTER"
-                        value="<?php echo e($employee->REGISTER); ?>" required>
+                        value="<?php echo e($employee->REGISTER); ?>" required minlength="10" maxlength="10" size="10">
 
                     <label for="FIRSTNAME" class="form-check-label">Эцэг/эхийн нэр</label>
                     <input type="text" class="form-control" id="FIRSTNAME" name="FIRSTNAME"
@@ -46,7 +46,8 @@
                     <div class="form-group">
                         <label for="WORK_DATE" class="form-check-label">Ажилд орсон огноо</label>
                         <input type="date" class="form-control" id="WORK_DATE" name="WORK_DATE"
-                            value="<?php echo e(old('WORK_DATE', date('Y-m-d', strtotime($employee->WORK_DATE)))); ?>" required>
+                            value="<?php echo e(old('WORK_DATE', $employee->WORK_DATE ? date('Y-m-d', strtotime($employee->WORK_DATE)) : '')); ?>"
+                            max="<?php echo e(date('Y-m-d')); ?>" required>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -58,14 +59,14 @@
 
                     <label for="HANDPHONE" class="form-check-label">Гар утас</label>
                     <input type="text" class="form-control" id="HANDPHONE" name="HANDPHONE"
-                        value="<?php echo e($employee->HANDPHONE); ?>" required>
+                        value="<?php echo e($employee->HANDPHONE); ?>" required minlength="8" maxlength="8" size="8">
                     <label for="HOMEPHONE" class="form-check-label">Гэрийн утас</label>
                     <input type="text" class="form-control" id="HOMEPHONE" name="HOMEPHONE"
-                        value="<?php echo e($employee->HOMEPHONE); ?>">
+                        value="<?php echo e($employee->HOMEPHONE); ?>" minlength="8" maxlength="8" size="8">
 
                     <label for="WORKPHONE" class="form-check-label">Ажлын утас</label>
                     <input type="text" class="form-control" id="WORKPHONE" name="WORKPHONE"
-                        value="<?php echo e($employee->WORKPHONE); ?>">
+                        value="<?php echo e($employee->WORKPHONE); ?>" minlength="8" maxlength="10" size="10">
 
                     <label for="SEX" class="form-check-label">Хүйс</label>
                     <select id="SEX" name="SEX" class="form-control" required>
@@ -77,7 +78,9 @@
                     <div class="form-group">
                         <label for="BIRTHDATE" class="form-check-label">Төрсөн огноо</label>
                         <input type="date" class="form-control" id="BIRTHDATE" name="BIRTHDATE"
-                            value="<?php echo e(old('BIRTHDATE', date('Y-m-d', strtotime($employee->BIRTHDATE)))); ?>" required>
+                            value="<?php echo e(old('BIRTHDATE', date('Y-m-d', strtotime($employee->BIRTHDATE)))); ?>"
+                            max="1999-12-31" required>
+
                     </div>
                 </div>
             </div>
