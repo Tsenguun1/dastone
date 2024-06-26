@@ -2,6 +2,11 @@
 
 
 ##  Laravel
+viewplace.blade.php : 
+<img src="/read/image2.png">
 
-<img src="/read/image.png">
+viewemployee.blade.php : 
 <img src="/read/image1.png">
+
+Edit employee : 
+<img src="/read/image.png">
