@@ -40,9 +40,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($departmentTree as $department)
-                                        @include('partials.department_row', ['department' => $department, 'level' => 0])
-                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

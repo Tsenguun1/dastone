@@ -65,25 +65,36 @@ class PlaceController extends Controller
 
     public function placeListTable(Request $request)
     {
-        $query = DB::table('ORG_DEPARTMENT')
+        // Fetch departments with their directors
+        $departments = DB::table('ORG_DEPARTMENT')
             ->leftJoin('ORG_EMPLOYEE', 'ORG_DEPARTMENT.DIRECTOR_EMPID', '=', 'ORG_EMPLOYEE.EMP_ID')
             ->select(
                 'ORG_DEPARTMENT.DEP_ID',
                 'ORG_DEPARTMENT.DEP_NAME',
-                DB::raw("CONCAT(ORG_EMPLOYEE.FIRSTNAME, ' ', ORG_EMPLOYEE.LASTNAME) AS DIRECTOR"),
                 'ORG_DEPARTMENT.STATUS',
                 'ORG_DEPARTMENT.SORT_ORDER',
+                'ORG_DEPARTMENT.PARENT_DEPID',
+                'ORG_DEPARTMENT.DIRECTOR_EMPID',
                 'ORG_DEPARTMENT.EDIT_DATE',
-                DB::raw("CASE 
-                            WHEN ORG_DEPARTMENT.STATUS = 'A' THEN 'Идэвхитэй' 
-                            WHEN ORG_DEPARTMENT.STATUS = 'N' THEN 'Идэвхгүй' 
-                            ELSE 'Unknown Status' 
-                         END AS STATUSVALUE")
+                'ORG_EMPLOYEE.FIRSTNAME as DIRECTOR_FIRSTNAME',
+                'ORG_EMPLOYEE.LASTNAME as DIRECTOR_LASTNAME'
             )
-            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D')
-            ->orderBy('ORG_DEPARTMENT.SORT_ORDER');
-
-        return DataTables::of($query)
+            ->where('ORG_DEPARTMENT.STATUS', '!=', 'D') // Exclude deleted departments
+            ->orderBy('ORG_DEPARTMENT.SORT_ORDER')
+            ->get();
+        
+        // Prepare departments for DataTable
+        foreach ($departments as $department) {
+            $department->DIRECTOR = $department->DIRECTOR_FIRSTNAME . ' ' . $department->DIRECTOR_LASTNAME;
+            $department->STATUSVALUE = $department->STATUS == 'A' ? 'Идэвхитэй' : ($department->STATUS == 'N' ? 'Идэвхгүй' : 'Unknown Status');
+        }
+        
+        // Build department tree with indentation levels and flatten it
+        $flattenedTree = [];
+        $this->flattenTreeWithIndentation($departments->toArray(), null, 0, $flattenedTree);
+        
+        // Prepare DataTable response
+        return DataTables::of($flattenedTree)
             ->addColumn('action', function ($row) {
                 return '
                     <button type="button" class="btn btn-success btn-xs btn-custom edit-button" data-id="' . $row->DEP_ID . '">Засах</button>
@@ -92,9 +103,27 @@ class PlaceController extends Controller
                         <button type="submit" class="btn btn-danger btn-xs btn-custom" style="margin-left: 5px;">Устгах</button>
                     </form>';
             })
+            ->addColumn('DIRECTOR', function ($row) {
+                return !empty($row->DIRECTOR) ? $row->DIRECTOR : 'Director Not Assigned';
+            })
             ->rawColumns(['action'])
             ->make(true);
     }
+    
+    private function flattenTreeWithIndentation(array $elements, $parentId, $level, &$flattenedTree)
+    {
+        foreach ($elements as $element) {
+            if ($element->PARENT_DEPID == $parentId) {
+                // Use spaces for indentation
+                $element->DEP_NAME = str_repeat('-', $level * 16) . $element->DEP_NAME;
+                $flattenedTree[] = $element;
+                $this->flattenTreeWithIndentation($elements, $element->DEP_ID, $level + 1, $flattenedTree);
+            }
+        }
+    }
+    
+    
+    
 
     private function buildTree(array $elements, $parentId = null)
     {
@@ -113,26 +142,35 @@ class PlaceController extends Controller
 
     public function addPlace(Request $request)
     {
-        $request->validate([
-            'depName' => 'required|string|max:255',
-            'status' => 'required|string|max:10',
-            'sortOrder' => 'required|integer',
-            'parentDepId' => 'required|integer',
-            'directorEmpId' => 'required|integer',
-        ]);
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'depName' => 'required|string|max:255',
+                'status' => 'required|string|max:10',
+                'sortOrder' => 'nullable|integer', // Make sure 'sortOrder' can be nullable if not required
+                'parentDepId' => 'required|integer',
+                'directorEmpId' => 'required|integer',
+            ]);
 
-        OrgDepartment::create([
-            'DEP_NAME' => $request->depName,
-            'STATUS' => $request->status,
-            'SORT_ORDER' => $request->sortOrder,
-            'PARENT_DEPID' => $request->parentDepId,
-            'DIRECTOR_EMPID' => $request->directorEmpId,
-            'APPROVE_EMPID' => '9999',  // You can change these values as needed
-            'EDIT_EMPID' => '6666',
-            'EDIT_DATE' => now(),
-        ]);
+            $department = new OrgDepartment();
+            $department->dep_name = $request->depName;
+            $department->status = $request->status;
+            $department->sort_order = $request->sortOrder ?? 0; // Default to 0 if not provided
+            $department->parent_depid = $request->parentDepId;
+            $department->director_empid = $request->directorEmpId;
+            $department->approve_empid = '9999';
+            $department->edit_empid = '6666';
+            $department->edit_date = now();
 
-        return redirect()->route('viewplace')->with('success', 'Department added successfully.');
+            $department->save();
+
+            return redirect()->route('viewplace');
+        }
+
+        // Load necessary data for the form if needed
+        $departments = OrgDepartment::all();
+        $employees = OrgEmployee::all();
+
+        return view('addForm', compact('departments', 'employees'));
     }
 
 
