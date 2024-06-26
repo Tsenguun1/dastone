@@ -63,7 +63,8 @@
 </div>
 
 <!-- Add Place Modal -->
-<div class="modal fade" id="AddPlaceForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel" aria-hidden="true">
+<div class="modal fade" id="AddPlaceForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalDefaultLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <div class="form-container" id="formContainer">
@@ -105,6 +106,7 @@
         </div><!--end modal-content-->
     </div><!--end modal-dialog-->
 </div><!--end modal-->
+
 
 <!-- Include jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
