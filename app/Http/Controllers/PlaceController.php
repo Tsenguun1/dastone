@@ -96,30 +96,6 @@ class PlaceController extends Controller
             ->make(true);
     }
 
-    public function addPlace(Request $request)
-{
-    $request->validate([
-        'depName' => 'required|string|max:255',
-        'status' => 'required|string|max:10',
-        'sortOrder' => 'required|integer',
-        'parentDepId' => 'required|integer',
-        'directorEmpId' => 'required|integer',
-    ]);
-
-    OrgDepartment::create([
-        'DEP_NAME' => $request->depName,
-        'STATUS' => $request->status,
-        'SORT_ORDER' => $request->sortOrder,
-        'PARENT_DEPID' => $request->parentDepId,
-        'DIRECTOR_EMPID' => $request->directorEmpId,
-        'APPROVE_EMPID' => '9999',  // You can change these values as needed
-        'EDIT_EMPID' => '6666',
-        'EDIT_DATE' => now(),
-    ]);
-
-    return redirect()->route('viewplace')->with('success', 'Department added successfully.');
-}
-
     private function buildTree(array $elements, $parentId = null)
     {
         $branch = [];
@@ -134,6 +110,31 @@ class PlaceController extends Controller
         }
         return $branch;
     }
+
+    public function addPlace(Request $request)
+    {
+        $request->validate([
+            'depName' => 'required|string|max:255',
+            'status' => 'required|string|max:10',
+            'sortOrder' => 'required|integer',
+            'parentDepId' => 'required|integer',
+            'directorEmpId' => 'required|integer',
+        ]);
+
+        OrgDepartment::create([
+            'DEP_NAME' => $request->depName,
+            'STATUS' => $request->status,
+            'SORT_ORDER' => $request->sortOrder,
+            'PARENT_DEPID' => $request->parentDepId,
+            'DIRECTOR_EMPID' => $request->directorEmpId,
+            'APPROVE_EMPID' => '9999',  // You can change these values as needed
+            'EDIT_EMPID' => '6666',
+            'EDIT_DATE' => now(),
+        ]);
+
+        return redirect()->route('viewplace')->with('success', 'Department added successfully.');
+    }
+
 
     public function editplace($id)
     {

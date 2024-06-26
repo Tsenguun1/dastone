@@ -7,7 +7,8 @@
     </nav>
 </div>
 <div class="page-content">
-    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal" data-bs-target="#AddFeeForm">
+    <button type="button" class="btn btn-sm btn-soft-primary" style="margin: 15px;" data-bs-toggle="modal"
+        data-bs-target="#AddFeeForm">
         + Шинээр бүртгэх
     </button>
     <div class="container-fluid">
@@ -55,7 +56,8 @@
 @include('modal.addfee')
 
 <!-- Edit Fee Modal -->
-<div class="modal fade" id="editFeeModal" tabindex="-1" role="dialog" aria-labelledby="editFeeModalLabel" aria-hidden="true">
+<div class="modal fade" id="editFeeModal" tabindex="-1" role="dialog" aria-labelledby="editFeeModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <!-- Content will be loaded via AJAX -->
@@ -64,7 +66,8 @@
 </div>
 
 <!-- Details Fee Modal -->
-<div class="modal fade" id="detailsFeeModal" tabindex="-1" role="dialog" aria-labelledby="detailsFeeModalLabel" aria-hidden="true">
+<div class="modal fade" id="detailsFeeModal" tabindex="-1" role="dialog" aria-labelledby="detailsFeeModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 900px;">
         <div class="modal-content">
             <!-- Content will be loaded here via AJAX -->
@@ -81,76 +84,94 @@
 <script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
 
 <script>
-  $(document).ready(function () {
-    // Initialize DataTable
-    var table = $('#feeTable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '{{ route('feelisttable') }}',
-            type: 'GET'
-        },
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'FEE_ID', name: 'FEE_ID' },
-            { data: 'FEE_TYPE', name: 'FEE_TYPE' },
-            { data: 'FEE_NAME', name: 'FEE_NAME' },
-            { data: 'FEE_DESCR', name: 'FEE_DESCR' },
-            { data: 'ORDER_NO', name: 'ORDER_NO' },
-            { data: 'FEE_STARTDATE', name: 'FEE_STARTDATE' },
-            { data: 'STATUS', name: 'STATUS' },
-            { data: 'action', name: 'action', orderable: false, searchable: false }
-        ],
-        lengthMenu: [
-            [10, 25, 50, -1],
-            [10, 25, 50, 'All'],
-        ]
-    });
-
-    // Status filter functionality
-    $('#statusFilter').on('change', function () {
-        var selectedStatus = $(this).val();
-        table.column(7).search(selectedStatus).draw();
-    });
-
-    // Edit fee modal
-    $('#editFeeModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var feeId = button.data('id');
-        var modal = $(this);
-
-        $.ajax({
-            url: '/editfee/' + feeId,
-            method: 'GET',
-            success: function (response) {
-                modal.find('.modal-content').html(response);
+    $(document).ready(function () {
+        // Initialize DataTable
+        var table = $('#feeTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route('feelisttable') }}',
+                type: 'GET'
             },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'FEE_ID', name: 'FEE_ID' },
+                { data: 'FEE_TYPE', name: 'FEE_TYPE' },
+                { data: 'FEE_NAME', name: 'FEE_NAME' },
+                { data: 'FEE_DESCR', name: 'FEE_DESCR' },
+                { data: 'ORDER_NO', name: 'ORDER_NO' },
+                { data: 'FEE_STARTDATE', name: 'FEE_STARTDATE' },
+                { data: 'STATUS', name: 'STATUS' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ],
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, 'All'],
+            ]
+        });
+
+        // Status filter functionality
+        $('#statusFilter').on('change', function () {
+            var selectedStatus = $(this).val();
+            table.column(7).search(selectedStatus).draw();
+        });
+
+        // Edit fee modal
+        $('#editFeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var feeId = button.data('id');
+            var modal = $(this);
+
+            $.ajax({
+                url: '/editfee/' + feeId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Details fee modal
+        $('#detailsFeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var feeId = button.data('id');
+            var modal = $(this);
+
+            $.ajax({
+                url: '/detailsfee/' + feeId,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('.modal-content').html(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // Save changes in the edit fee modal
+        $(document).on('click', '#saveFeeChanges', function () {
+            var form = $('#editFeeModal').find('form');
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#editFeeModal').modal('hide');
+                    table.ajax.reload(); // Reload the DataTable to see the changes
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
         });
     });
-
-    // Save changes in the edit fee modal
-    $(document).on('click', '#saveFeeChanges', function () {
-        var form = $('#editFeeModal').find('form');
-        var formData = new FormData(form[0]);
-
-        $.ajax({
-            url: form.attr('action'),
-            method: form.attr('method'),
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                $('#editFeeModal').modal('hide');
-                table.ajax.reload(); // Reload the DataTable to see the changes
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-  });
 </script>
 @endsection
