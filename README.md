@@ -10,5 +10,3 @@ viewemployee.blade.php :
 
 Edit employee : 
 <img src="/read/image.png">       
-
-&
