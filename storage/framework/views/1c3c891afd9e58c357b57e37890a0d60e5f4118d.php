@@ -217,16 +217,6 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            var today = new Date().toISOString().split('T')[0];
-            document.getElementById('start_date').setAttribute('max', today);
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var maxDate = new Date('1999-12-31').toISOString().split('T')[0];
-            document.getElementById('birth_date').setAttribute('max', maxDate);
-        });
-
         
     </script>
 </body>

@@ -73,19 +73,22 @@
         <div class="modal-content">
             <div class="form-container" id="formContainer">
                 <form id="registrationForm" action="{{ route('storeemployee') }}" method="POST"
-                    enctype="multipart/form-data">
+                    enctype="multipart/form-data" novalidate>
                     @csrf
                     <div class="row">
                         <div class="col-md-6">
                             <label for="last_name">Эцэг/эхийн нэр:</label>
                             <input class="form-control" type="text" id="last_name" name="LASTNAME" required
-                                pattern="^[^0-9]*$" title="Lastname must not contain numbers">
+                                pattern="^[^0-9]*$" title="Lastname must not contain numbers"
+                                placeholder="Lastname">
+                            <div class="invalid-feedback" id="last_name_error"></div>
 
                             <label for="reg_number">Регистрийн дугаар:</label>
                             <input class="form-control" type="text" id="reg_number" name="REGISTER" required
                                 pattern="[A-Za-z]{2}[0-9]{8}"
-                                title="The first 2 characters must be letters and the next 8 characters must be numbers"
-                                minlength="10" maxlength="10" size="10">
+                                title="The first 2 characters must be letters and the next 8 digits must be numbers"
+                                minlength="10" maxlength="10" size="10" placeholder="AA12345678">
+                            <div class="invalid-feedback" id="reg_number_error"></div>
 
                             <label for="position">Албан тушаал:</label>
                             <select class="form-control" id="position" name="POS_ID" required>
@@ -99,7 +102,8 @@
                             <input class="form-control" type="text" id="phone_number" name="HANDPHONE" required
                                 pattern="[6-9][0-9]{7}"
                                 title="Mobile phone number must be 8 digits and cannot start with numbers 1-5"
-                                minlength="8" maxlength="8" size="8">
+                                minlength="8" maxlength="8" size="8" >
+                            <div class="invalid-feedback" id="phone_number_error"></div>
 
                             <label for="birth_date">Төрсөн өдөр:</label>
                             <input class="form-control" type="date" id="birth_date" name="BIRTHDATE" required>
@@ -108,7 +112,8 @@
                             <input class="form-control" type="text" id="work_number" name="WORKPHONE"
                                 pattern="[6-9][0-9]{7}"
                                 title="Work phone number must be 8 digits and cannot start with numbers 1-5"
-                                minlength="8" maxlength="10" size="10">
+                                minlength="8" maxlength="10" size="10" >
+                            <div class="invalid-feedback" id="work_number_error"></div>
 
                             <label for="state">Төлөв:</label>
                             <select class="form-control" id="state" name="STATUS" required>
@@ -119,7 +124,9 @@
                         <div class="col-md-6">
                             <label for="first_name">Өөрийн нэр:</label>
                             <input class="form-control" type="text" id="first_name" name="FIRSTNAME" required
-                                pattern="^[^0-9]*$" title="Firstname must not contain numbers">
+                                pattern="^[^0-9]*$" title="Firstname must not contain numbers"
+                                placeholder="Firstname">
+                            <div class="invalid-feedback" id="first_name_error"></div>
 
                             <label for="place">Газар нэгж:</label>
                             <select class="form-control" id="place" name="DEP_ID" required>
@@ -130,7 +137,9 @@
                             </select>
 
                             <label for="email">И-мэйл:</label>
-                            <input class="form-control" type="email" id="email" name="EMAIL" required>
+                            <input class="form-control" type="email" id="email" name="EMAIL" required
+                                placeholder="example@gmail.com">
+                            <div class="invalid-feedback" id="email_error"></div>
 
                             <label for="gender">Хүйс:</label>
                             <select class="form-control" id="gender" name="SEX" required>
@@ -146,6 +155,7 @@
                                 pattern="[6-9][0-9]{7}"
                                 title="Home phone number must be 8 digits and cannot start with numbers 1-5"
                                 minlength="8" maxlength="8" size="8">
+                            <div class="invalid-feedback" id="home_number_error"></div>
 
                             <label for="photo">Зураг:</label>
                             <input class="form-control" type="file" id="photo" name="PICTURE_LINK">
@@ -162,6 +172,7 @@
         </div>
     </div>
 </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -278,5 +289,51 @@
         var maxDate = new Date('1999-12-31').toISOString().split('T')[0];
         document.getElementById('birth_date').setAttribute('max', maxDate);
     });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const fields = [
+            { id: 'last_name', errorId: 'last_name_error', pattern: /^[^0-9]*$/, errorMessage: 'Lastname must not contain numbers' },
+            { id: 'reg_number', errorId: 'reg_number_error', pattern: /^[A-Za-z]{2}[0-9]{8}$/, errorMessage: 'The first 2 characters must be letters and the next 8 digits must be numbers' },
+            { id: 'phone_number', errorId: 'phone_number_error', pattern: /^[6-9][0-9]{7}$/, errorMessage: 'Mobile phone number must be 8 digits and cannot start with numbers 1-5' },
+            { id: 'work_number', errorId: 'work_number_error', pattern: /^[6-9][0-9]{7}$/, errorMessage: 'Work phone number must be 8 digits and cannot start with numbers 1-5' },
+            { id: 'first_name', errorId: 'first_name_error', pattern: /^[^0-9]*$/, errorMessage: 'Firstname must not contain numbers' },
+            { id: 'home_number', errorId: 'home_number_error', pattern: /^[6-9][0-9]{7}$/, errorMessage: 'Home phone number must be 8 digits and cannot start with numbers 1-5' },
+            { id: 'email', errorId: 'email_error', type: 'email', errorMessage: 'Enter a valid email address' }
+        ];
+
+        fields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const error = document.getElementById(field.errorId);
+
+            input.addEventListener('input', function () {
+                if (field.pattern) {
+                    if (!field.pattern.test(input.value)) {
+                        input.classList.add('is-invalid');
+                        error.textContent = field.errorMessage;
+                    } else {
+                        input.classList.remove('is-invalid');
+                        error.textContent = '';
+                    }
+                } else if (field.type === 'email') {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                        error.textContent = field.errorMessage;
+                    } else {
+                        input.classList.remove('is-invalid');
+                        error.textContent = '';
+                    }
+                }
+            });
+        });
+    });
+
 </script>
+
+
+<style>
+    .invalid-feedback {
+        display: block;
+    }
+</style>
 @endsection
