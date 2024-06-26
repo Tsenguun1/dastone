@@ -37,6 +37,15 @@ class FeeController extends Controller
         }
 
         return DataTables::of($query)
+            ->editColumn('STATUS', function ($row) {
+                if ($row->STATUS == 'A') {
+                    return 'Идэвхитэй';
+                } elseif ($row->STATUS == 'N') {
+                    return 'Идэвхигүй';
+                } else {
+                    return 'Unknown Status';
+                }
+            })
             ->addColumn('action', function ($row) {
                 return '
                     <button type="button" class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#detailsFeeModal" data-id="' . $row->FEE_ID . '">Дэлгэрэнгүй</button>

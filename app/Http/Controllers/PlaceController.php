@@ -115,7 +115,7 @@ class PlaceController extends Controller
         foreach ($elements as $element) {
             if ($element->PARENT_DEPID == $parentId) {
                 // Use spaces for indentation
-                $element->DEP_NAME = str_repeat('-', $level * 16) . $element->DEP_NAME;
+                $element->DEP_NAME = str_repeat('s', $level * 16) . $element->DEP_NAME;
                 $flattenedTree[] = $element;
                 $this->flattenTreeWithIndentation($elements, $element->DEP_ID, $level + 1, $flattenedTree);
             }
