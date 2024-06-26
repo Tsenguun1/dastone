@@ -1,0 +1,12 @@
+.dept-col {
+    width: 80px !important;
+}
+
+.pos-col {
+    width: 100px !important;
+}
+
+.dataTables_wrapper .dataTables_scroll {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+}

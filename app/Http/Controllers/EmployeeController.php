@@ -1,38 +1,80 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\OrgEmployee;
-use App\Models\OrgDepartment;
 use App\Models\OrgPosition;
+use Illuminate\Http\Request;
+use App\Models\OrgDepartment;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+use Yajra\DataTables\Html\Builder;
 
 class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = DB::table('ORG_EMPLOYEE')
-            ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
-            ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
-            ->select('ORG_EMPLOYEE.*', 'ORG_POSITION.POS_NAME', 'ORG_DEPARTMENT.DEP_NAME')
-            ->get();
-
         $departments = DB::table('ORG_DEPARTMENT')->get();
         $positions = DB::table('ORG_POSITION')->get();
 
-        // Assuming STATUS is relevant for employees, not positions
-        foreach ($employees as $employee) {
-            if ($employee->STATUS == 'A') {
-                $employee->STATUSVALUE = 'Идэвхитэй';
-            } elseif ($employee->STATUS == 'N') {
-                $employee->STATUSVALUE = 'Идэвхгүй';
-            } else {
-                $employee->STATUSVALUE = 'Unknown Status';
-            }
-        }
-
-        return view('viewemployee', compact('employees', 'departments', 'positions'));
+        return view('viewemployee', compact('departments', 'positions'));
     }
+
+    public function employeeListTable(Request $request)
+{
+    $query = DB::table('ORG_EMPLOYEE')
+        ->join('ORG_POSITION', 'ORG_EMPLOYEE.POS_ID', '=', 'ORG_POSITION.POS_ID')
+        ->join('ORG_DEPARTMENT', 'ORG_EMPLOYEE.DEP_ID', '=', 'ORG_DEPARTMENT.DEP_ID')
+        ->select([
+            'ORG_EMPLOYEE.EMP_ID as id',
+            'ORG_EMPLOYEE.PICTURE_LINK as picture',
+            'ORG_EMPLOYEE.LASTNAME as lastname',
+            'ORG_EMPLOYEE.FIRSTNAME as firstname',
+            'ORG_DEPARTMENT.DEP_NAME as department',
+            'ORG_POSITION.POS_NAME as position',
+            'ORG_EMPLOYEE.REGISTER as register',
+            'ORG_EMPLOYEE.SEX as sex',
+            'ORG_EMPLOYEE.EMAIL as email',
+            'ORG_EMPLOYEE.BIRTHDATE as birthdate',
+            'ORG_EMPLOYEE.HANDPHONE as handphone',
+            'ORG_EMPLOYEE.WORKPHONE as workphone',
+            'ORG_EMPLOYEE.STATUS as status'
+        ]);
+
+    return DataTables::of($query)
+        ->editColumn('status', function ($row) {
+            switch ($row->status) {
+                case 'A':
+                    return 'Идэвхитэй';
+                case 'N':
+                    return 'Идэвхигүй';
+                default:
+                    return 'Unknown';
+            }
+        })
+        ->editColumn('sex', function ($row) {
+            switch ($row->sex) {
+                case 'M':
+                    return 'Эрэгтэй';
+                case 'F':
+                    return 'Эмэгтэй';
+                default:
+                    return 'Unknown';
+            }
+        })
+        ->addColumn('action', function ($row) {
+            return '
+                <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#editEmployeeModal" data-id="' . $row->id . '">Засах</button>
+                
+                <form action="' . route('deleteemployee', $row->id) . '" method="POST" style="display:inline;">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger btn-xs" style="margin-left: 5px;">Устгах</button>
+                </form>';
+        })
+        ->rawColumns(['action'])
+        ->addIndexColumn()
+        ->make(true);
+}
+
 
     public function store(Request $request)
     {
