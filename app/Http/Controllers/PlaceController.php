@@ -120,11 +120,6 @@ class PlaceController extends Controller
         }
     }
     
-    
-
-
-
-
     private function buildTree(array $elements, $parentId = null)
     {
         $branch = [];
@@ -201,7 +196,7 @@ class PlaceController extends Controller
 
         return redirect()->route('viewplace')->with('error', 'Invalid request.');
     }
-
+    
     public function updateplace(Request $request, $id)
     {
         $place = OrgDepartment::findOrFail($id);
