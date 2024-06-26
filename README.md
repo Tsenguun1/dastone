@@ -9,4 +9,6 @@ viewemployee.blade.php :
 <img src="/read/image1.png">
 
 Edit employee : 
-<img src="/read/image.png">
+<img src="/read/image.png">       
+
+&
