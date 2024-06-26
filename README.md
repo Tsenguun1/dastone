@@ -3,5 +3,5 @@
 
 ##  Laravel
 
-<img src="/image.png alt="License">
-<img src="/image1.png alt="License">
+<img src="/read/image.png">
+<img src="/read/image1.png">
